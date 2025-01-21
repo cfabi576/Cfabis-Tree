@@ -25,4 +25,7 @@ addLayer("p", {
         {key: "p", description: "CR: Reset for CRays points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown(){return true}
-})
+
+
+    },
+)
