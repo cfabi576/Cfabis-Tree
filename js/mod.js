@@ -43,6 +43,14 @@ function getPointGen() {
 
 	let gain = new Decimal(1)
 	return gain
+	upgrades: {
+		11: {
+			description: "Blah",
+			cost: new Decimal(10),
+			etc
+		},
+		etc
+	}
 }
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
