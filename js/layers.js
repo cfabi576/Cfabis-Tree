@@ -25,7 +25,13 @@ addLayer("p", {
         {key: "p", description: "CR: Reset for CRays points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown(){return true}
+    upgrades: { 11: {
+        title: "First Upgrade Ever on the like",
+        description: "Double your point gain.",
+        cost: new Decimal(1),
+ 
 
+        if (hasUpgrade('p', 11)) gain = gain.times(2)
 
     },
 )
