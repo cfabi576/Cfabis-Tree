@@ -48,6 +48,8 @@ function getPointGen() {
 				if (hasUpgrade('p', 14)) gain = gain.times(3.14)
 					if (hasUpgrade('p', 15)) gain = gain.times(upgradeEffect('p', 15))
 						if (hasUpgrade('p', 16)) gain = gain.times(1.1)
+							if (hasUpgrade('p', 17)) gain = gain.times(5)
+								if (hasUpgrade('p', 18)) gain = gain.times(upgradeEffect('p', 18))
 	return gain
 }
 

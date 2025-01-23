@@ -33,12 +33,12 @@ addLayer("p", {
         },
         12: {
             title: "Small Boost (L2)",
-            description: "x1.5 L Gain.",
+            description: "x1.5 Point Gain.",
             cost: new Decimal(3),
         },
         13: {
-            title: "Announcements (L3)",
-            description: "The researchers come out, meaning x4 Leaves.",
+            title: "Announcements I (L3)",
+            description: "The researchers come out, meaning x4 Points.",
             cost: new Decimal(5),
         },
         14: {
@@ -61,9 +61,18 @@ addLayer("p", {
                 cost: new Decimal(45),
             },
             17: {
-                title: "FIRST LEAVES BOOSTER EVER SEEN! (L7)",
-                description: "x2 Leaves",
-                cost: new Decimal(65),
+                title: "Announcements II (L7)",
+                description: "X5 Points",
+                cost: new Decimal(105),
+            },
+            18: {
+                title: "Synergism 2! (L8)",
+                description: "Points Gets Increased by Leaves but a reduced effect",
+                cost: new Decimal(19),
+                effect() {
+                    return player[this.layer].points.add(1).pow(0.3)
+                },
+                effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
             },
         },
     })
