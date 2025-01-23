@@ -48,7 +48,7 @@ addLayer("p", {
         },
         15: {
             title: "Synergism?! (L5)",
-            description: "Leaves Gets Increased by.. POINTS???!",
+            description: "Points Gets Increased by.. Leaves.",
             cost: new Decimal(19),
             effect() {
                 return player[this.layer].points.add(1).pow(0.5)
