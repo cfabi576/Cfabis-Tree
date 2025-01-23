@@ -102,6 +102,11 @@ addLayer("p", {
                 description: "x42 Points",
                 cost: new Decimal(1e12),
             },
+            28: {
+                title: "F4 go to the f word (L14)",
+                description: "gets x5! that means x120 points.. HUGE!",
+                cost: new Decimal(1e17),
+            },
 
         },
         gainMult() {
