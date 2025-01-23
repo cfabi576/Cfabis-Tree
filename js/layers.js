@@ -74,5 +74,18 @@ addLayer("p", {
                 },
                 effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
             },
+            19: {
+                title: "DONT TELL ME THAT IS A LEAVES SYNERGISM?",
+                description: "Boost your leaves gain in points",
+                cost: new Decimal(3.58e3),
+                effect() {
+                    return player.points.add(1).pow(0.105)
+                },
+            },
+        },
+        gainMult() {
+            let mult = new Decimal(1)
+            if (hasUpgrade('p', 19)) mult = mult.times(upgradeEffect('p', 19))
+            return mult
         },
     })
