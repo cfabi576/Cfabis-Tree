@@ -179,7 +179,7 @@ addLayer("p", {
             28: {
                 title: "MAXIMIUN OVERDRIVE (F5)",
                 description: "op reset layer UGU!!",
-                cost: new Decimal(33),
+                cost: new Decimal(763),
             },
         },
     })
