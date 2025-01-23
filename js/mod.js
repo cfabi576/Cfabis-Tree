@@ -38,20 +38,16 @@ function canGenPoints(){
 
 // Calculate points/sec!
 function getPointGen() {
+
+
+	}
 	if(!canGenPoints())
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
 	return gain
-	upgrades: {
-		11: {
-			description: "Blah",
-			cost: new Decimal(10),
-			etc
-		},
-		etc
-	}
-}
+
+
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {

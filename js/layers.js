@@ -26,6 +26,14 @@ addLayer("p", {
     ],
     layerShown(){return true}
 
-
+    ,
+    upgrades: {
+        11: {
+            description: "First Upgrade Ever on life",
+            cost: new Decimal(1),
+            etc
+        },
+        etc
+    }
     },
 )
