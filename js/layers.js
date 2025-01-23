@@ -102,6 +102,7 @@ addLayer("p", {
                 description: "x42 Points",
                 cost: new Decimal(1e12),
             },
+
         },
         gainMult() {
             let mult = new Decimal(1)
@@ -110,6 +111,7 @@ addLayer("p", {
                     if (hasUpgrade('p', 21)) mult = mult.times(1.5)
                         if (hasUpgrade('p', 22)) mult = mult.times(4)
                             if (hasUpgrade('f', 24)) mult = mult.times(8)
+                                if (hasUpgrade('f', 27)) mult = mult.times(5)
             return mult
         },
     })
@@ -163,6 +165,10 @@ addLayer("p", {
                 },
                 effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add for
             },
-     
+            27: {
+                title: "Damned Upgrade? (F4)",
+                description: "gives /5 of something but x5 of other...",
+                cost: new Decimal(1e18),
+            },
         },
     })
