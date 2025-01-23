@@ -190,7 +190,7 @@ addLayer("p", {
             points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
         }},
     
-        color: "#FF1212",                       // The color for this layer, which affects many elements.
+        color: "#FFFFFF",                       // The color for this layer, which affects many elements.
         resource: "Oxygen",        // The name of this layer's main prestige resource.
         row: 1,                                 // The row this layer is on (0 is the first row).
         position: 0,
