@@ -247,7 +247,7 @@ addLayer("p", {
                 description: "oxigen does (mega boosted) thingy to points",
                 cost: new Decimal(123),
                 effect() {
-                    return player[this.layer].points.add(1).pow(1.485)
+                    return player[this.layer].points.add(1).pow(12.5)
                 },
                 effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add for
             },
