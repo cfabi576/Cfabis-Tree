@@ -51,6 +51,7 @@ function getPointGen() {
 							if (hasUpgrade('p', 17)) gain = gain.times(5)
 								if (hasUpgrade('p', 18)) gain = gain.times(upgradeEffect('p', 18))
 									if (hasUpgrade('p', 21)) gain = gain.times(1.5)
+										if (hasUpgrade('f', 23)) gain = gain.times(10)
 	return gain
 }
 

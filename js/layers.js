@@ -138,6 +138,10 @@ addLayer("p", {
         layerShown() { return true },          // Returns a bool for if this layer's node should be visible in the tree.
     
         upgrades: {
-            // Look in the upgrades docs to see what goes here!
+            23: {
+                title: "Welcome! (F1)",
+                description: "x10 Points",
+                cost: new Decimal(1),
+            },
         },
     })
