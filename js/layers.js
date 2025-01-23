@@ -117,6 +117,7 @@ addLayer("p", {
                         if (hasUpgrade('p', 22)) mult = mult.times(4)
                             if (hasUpgrade('f', 24)) mult = mult.times(8)
                                 if (hasUpgrade('f', 27)) mult = mult.times(5)
+                                    if (hasUpgrade('o', 29)) mult = mult.times(1e6)
             return mult
         },
     })
@@ -174,6 +175,50 @@ addLayer("p", {
                 title: "Damned Upgrade? (F4)",
                 description: "gives /5 of something but x5 of other...",
                 cost: new Decimal(33),
+            },
+            28: {
+                title: "MAXIMIUN OVERDRIVE (F5)",
+                description: "op reset layer UGU!!",
+                cost: new Decimal(33),
+            },
+        },
+    })
+
+    addLayer("o", {
+        startData() { return {                  // startData is a function that returns default data for a layer. 
+            unlocked: true,                     // You can add more variables here to add them to your layer.
+            points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
+        }},
+    
+        color: "#FF1212",                       // The color for this layer, which affects many elements.
+        resource: "Oxygen",        // The name of this layer's main prestige resource.
+        row: 1,                                 // The row this layer is on (0 is the first row).
+        position: 0,
+        branches: ["d"],
+    
+        baseResource: "Fruits",             // The name of the resource your prestige gain is based on.
+        baseAmount() { return player.f },  // A function to return the current amount of baseResource.
+    
+        requires: new Decimal(1000),              // The amount of the base needed to  gain 1 of the prestige currency.
+                                                // Also the amount required to unlock the layer.
+    
+        type: "normal",                         // Determines the formula used for calculating prestige currency.
+        exponent: 0.1,                          // "normal" prestige gain is (currency^exponent).
+    
+        gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
+            return new Decimal(1)               // Factor in any bonuses multiplying gain here.
+        },
+        gainExp() {                             // Returns the exponent to your gain of the prestige resource.
+            return new Decimal(1)
+        },
+    
+        layerShown() { return true },          // Returns a bool for if this layer's node should be visible in the tree.
+    
+        upgrades: {
+            29: {
+                title: "OP UPGRADE! (O1)",
+                description: "x1M POINTS-LEAVES",
+                cost: new Decimal(1),
             },
         },
     })
