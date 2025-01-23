@@ -107,6 +107,12 @@ addLayer("p", {
                 description: "gets x5! that means x120 points.. HUGE!",
                 cost: new Decimal(1e17),
             },
+            35: {
+                title: "Be Preapared II! (L15)",
+                description: "x100 points",
+                cost: new Decimal(1e104),
+            },
+
 
 
         },
@@ -119,6 +125,8 @@ addLayer("p", {
                             if (hasUpgrade('f', 24)) mult = mult.times(8)
                                 if (hasUpgrade('f', 27)) mult = mult.times(5)
                                     if (hasUpgrade('o', 29)) mult = mult.times(1e6)
+                                        if (hasUpgrade('f', 34)) mult = mult.times(5)
+                                            if (hasUpgrade('a', 36)) mult = mult.times(1e20)
             return mult
         },
     })
@@ -145,7 +153,7 @@ addLayer("p", {
         exponent: 0.1,                          // "normal" prestige gain is (currency^exponent).
     
         gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
-            return new Decimal(1)               // Factor in any bonuses multiplying gain here.
+            return new Decimal(1)  
         },
         gainExp() {                             // Returns the exponent to your gain of the prestige resource.
             return new Decimal(1)
@@ -179,19 +187,26 @@ addLayer("p", {
                 cost: new Decimal(33),
             },
             28: {
-                title: "MAXIMIUN OVERDRIVE (F5)",
-                description: "op reset layer UGU!!",
+                title: "No (F5)",
+                description: "x(1+10^-70) fruits",
                 cost: new Decimal(763),
             },
+            34: {
+                title: "Announcements III (F6)",
+                description: "x50 Leaves",
+                cost: new Decimal(1e12),
+            },
         },
-    })
+})
 
-    addLayer("o", {
+
+   addLayer("o", {
         startData() { return {                  // startData is a function that returns default data for a layer. 
             unlocked: true,                     // You can add more variables here to add them to your layer.
             points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
         }},
     
+        symbol: "O2",
         color: "#FFFFFF",                       // The color for this layer, which affects many elements.
         resource: "Oxygen",        // The name of this layer's main prestige resource.
         row: 1,                                 // The row this layer is on (0 is the first row).
@@ -223,9 +238,65 @@ addLayer("p", {
                 cost: new Decimal(1),
             },
             31: {
-                title: "Vigintillion! (O2)",
-                description: "x1e6 Points!",
-                cost: new Decimal(10),
+                title: "ITS SOO BOOST (O2)",
+                description: "x1M POINTS",
+                cost: new Decimal(3),
+            },
+            32: {
+                title: "Ozone (O3)",
+                description: "Leaves boost Points EVEN MORE!",
+                cost: new Decimal(123),
+                effect() {
+                    return player[this.layer].points.add(1).pow(1.085)
+                },
+                effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add for
+            },
+            33: {
+                title: "Nytrogenious (O4)",
+                description: "Apply L1 25 times meaning a huge x3e7 boost",
+                cost: new Decimal(5710),
             },
         },
     })
+
+    addLayer("a", {
+        startData() { return {                  // startData is a function that returns default data for a layer. 
+            unlocked: true,                     // You can add more variables here to add them to your layer.
+            points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
+        }},
+
+        symbol: "🌳", // This appears on the layer's node. Default is the id with the first letter capitalized
+        color: "#FF1212",                       // The color for this layer, which affects many elements.
+        resource: "Tree Fragments",        // The name of this layer's main prestige resource.
+        row: 2,                                 // The row this layer is on (0 is the first row).
+        position: 0,
+        branches: ["d"],
+    
+        baseResource: "points",             // The name of the resource your prestige gain is based on.
+        baseAmount() { return player.points },  // A function to return the current amount of baseResource.
+    
+        requires: new Decimal(1.79e308),              // The amount of the base needed to  gain 1 of the prestige currency.
+                                                // Also the amount required to unlock the layer.
+    
+        type: "normal",                         // Determines the formula used for calculating prestige currency.
+        exponent: 0.05,                          // "normal" prestige gain is (currency^exponent).
+    
+        gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
+            return new Decimal(1)  
+        },
+        gainExp() {                             // Returns the exponent to your gain of the prestige resource.
+            return new Decimal(1)
+        },
+    
+        layerShown() { return true },          // Returns a bool for if this layer's node should be visible in the tree.
+    
+        upgrades: {
+            36: {
+                title: "Tier 1: Hydrogen (T1)",
+                description: "x1e33 Points, x1e20 Leaves",
+                cost: new Decimal(1),
+            },
+
+            },
+        })
+    
