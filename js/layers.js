@@ -97,6 +97,11 @@ addLayer("p", {
                 description: "x4 Leaves.... rip progress",
                 cost: new Decimal(12000),
             },
+            26: {
+                title: "wth (L13)",
+                description: "x42 Points",
+                cost: new Decimal(1e12),
+            },
         },
         gainMult() {
             let mult = new Decimal(1)
@@ -149,5 +154,15 @@ addLayer("p", {
                 description: "x8 Leaves",
                 cost: new Decimal(3),
             },
+            25: {
+                title: "CoolBox (F3)",
+                description: "Fruits boosts points",
+                cost: new Decimal(6),
+                effect() {
+                    return player[this.layer].points.add(1).pow(0.8)
+                },
+                effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add for
+            },
+     
         },
     })
