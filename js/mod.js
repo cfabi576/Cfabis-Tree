@@ -1,5 +1,5 @@
 let modInfo = {
-	name: "The Cfabis Tree",
+	name: "The Upgrade tree for the life x live",
 	author: "Cfabi",
 	pointsName: "points",
 	modFiles: ["layers.js", "tree.js"],
@@ -7,13 +7,13 @@ let modInfo = {
 	discordName: "",
 	discordLink: "",
 	initialStartPoints: new Decimal (10), // Used for hard resets and new players
-	offlineLimit: 1,  // In hours
+	offlineLimit: 10000000,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0",
-	name: "The release",
+	num: "0.01",
+	name: "First Version",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -38,16 +38,12 @@ function canGenPoints(){
 
 // Calculate points/sec!
 function getPointGen() {
-
-
-	}
 	if(!canGenPoints())
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
 	return gain
-
-
+}
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
