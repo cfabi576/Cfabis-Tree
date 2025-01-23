@@ -168,7 +168,7 @@ addLayer("p", {
             27: {
                 title: "Damned Upgrade? (F4)",
                 description: "gives /5 of something but x5 of other...",
-                cost: new Decimal(1e18),
+                cost: new Decimal(33),
             },
         },
     })
