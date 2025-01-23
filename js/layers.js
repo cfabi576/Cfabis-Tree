@@ -24,6 +24,12 @@ addLayer("p", {
     hotkeys: [
         {key: "p", description: "P: Reset for leaves!", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){return true}
-
+    layerShown(){return true},
+    upgrades: {
+        11: {
+            title: "First Upgrade (L1)",
+            description: "Double your Point Gain.",
+            cost: new Decimal(1),
+        },
+    },
 })
