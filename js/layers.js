@@ -31,5 +31,15 @@ addLayer("p", {
             description: "Double your Point Gain.",
             cost: new Decimal(1),
         },
+        12: {
+            title: "Small Boost (L2)",
+            description: "x1.5 L Gain.",
+            cost: new Decimal(3),
+        },
+        13: {
+            title: "Announcements (L3)",
+            description: "The researchers come out, meaning x4 Leaves.",
+            cost: new Decimal(5),
+        },
     },
 })
