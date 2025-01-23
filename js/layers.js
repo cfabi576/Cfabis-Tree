@@ -137,7 +137,7 @@ addLayer("p", {
         }},
 
         symbol: "🍒", // This appears on the layer's node. Default is the id with the first letter capitalized
-        color: "#69FF7D",                       // The color for this layer, which affects many elements.
+        color: "#FF1212",                       // The color for this layer, which affects many elements.
         resource: "Fruits",        // The name of this layer's main prestige resource.
         row: 1,                                 // The row this layer is on (0 is the first row).
         position: 0,
@@ -266,7 +266,7 @@ addLayer("p", {
         }},
 
         symbol: "🌳", // This appears on the layer's node. Default is the id with the first letter capitalized
-        color: "#FF1212",                       // The color for this layer, which affects many elements.
+        color: "#69ff7d",                       // The color for this layer, which affects many elements.
         resource: "Tree Fragments",        // The name of this layer's main prestige resource.
         row: 2,                                 // The row this layer is on (0 is the first row).
         position: 0,
