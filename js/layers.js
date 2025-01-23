@@ -75,17 +75,35 @@ addLayer("p", {
                 effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
             },
             19: {
-                title: "DONT TELL ME THAT IS A LEAVES SYNERGISM?",
+                title: "DONT TELL ME THAT IS A LEAVES SYNERGISM? (L9)",
                 description: "Boost your leaves gain in points",
-                cost: new Decimal(75),
+                cost: new Decimal(775),
                 effect() {
                     return player.points.add(1).pow(0.105)
                 },
+            },
+            20: {
+                title: "2 upgrades to the next layer! (L10)",
+                description: "x4.5 Leaves",
+                cost: new Decimal(2120),
+            },
+            21: {
+                title: "Pistol (L11)",
+                description: "x1.5 Leaves and x1.5 Points",
+                cost: new Decimal(3920),
+            },
+            22: {
+                title: "Preparation! (L12)",
+                description: "x4 Leaves.... rip progress",
+                cost: new Decimal(12000),
             },
         },
         gainMult() {
             let mult = new Decimal(1)
             if (hasUpgrade('p', 19)) mult = mult.times(upgradeEffect('p', 19))
+                if (hasUpgrade('p', 20)) mult = mult.times(4.5)
+                    if (hasUpgrade('p', 21)) mult = mult.times(1.5)
+                        if (hasUpgrade('p', 22)) mult = mult.times(4)
             return mult
         },
     })
