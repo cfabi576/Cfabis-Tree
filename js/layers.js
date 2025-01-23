@@ -104,6 +104,7 @@ addLayer("p", {
                 if (hasUpgrade('p', 20)) mult = mult.times(4.5)
                     if (hasUpgrade('p', 21)) mult = mult.times(1.5)
                         if (hasUpgrade('p', 22)) mult = mult.times(4)
+                            if (hasUpgrade('f', 24)) mult = mult.times(8)
             return mult
         },
     })
@@ -142,6 +143,11 @@ addLayer("p", {
                 title: "Welcome! (F1)",
                 description: "x10 Points",
                 cost: new Decimal(1),
+            },
+            24: {
+                title: "Strong I (F2)",
+                description: "x8 Leaves",
+                cost: new Decimal(3),
             },
         },
     })
