@@ -107,11 +107,7 @@ addLayer("p", {
                 description: "gets x5! that means x120 points.. HUGE!",
                 cost: new Decimal(1e17),
             },
-            30: {
-                title: "Vigintillion! (L15)",
-                description: "x1e6 Points!",
-                cost: new Decimal(1e33),
-            },
+
 
         },
         gainMult() {
@@ -225,6 +221,11 @@ addLayer("p", {
                 title: "OP UPGRADE! (O1)",
                 description: "x1M POINTS-LEAVES",
                 cost: new Decimal(1),
+            },
+            30: {
+                title: "Vigintillion! (O2)",
+                description: "x1e6 Points!",
+                cost: new Decimal(10),
             },
         },
     })
