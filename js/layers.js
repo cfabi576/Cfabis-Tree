@@ -41,5 +41,19 @@ addLayer("p", {
             description: "The researchers come out, meaning x4 Leaves.",
             cost: new Decimal(5),
         },
+        14: {
+            title: "pi (L4)",
+            description: "xpi points",
+            cost: new Decimal(12),
+        },
+        15: {
+            title: "Synergism?! (L5)",
+            description: "Leaves Gets Increased by.. POINTS???!",
+            cost: new Decimal(19),
+            effect() {
+                return player[this.layer].points.add(1).pow(0.5)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
     },
 })
