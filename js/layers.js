@@ -25,4 +25,12 @@ addLayer("p", {
         {key: "p", description: "P: Reset for leaves!", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown(){return true}
+    ,upgrades: {
+        11: {
+            description: "First Upgrade",
+            cost: new Decimal(1),
+            etc
+        },
+        etc
+    }
 })
