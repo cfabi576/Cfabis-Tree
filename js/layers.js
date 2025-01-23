@@ -196,8 +196,8 @@ addLayer("p", {
         position: 0,
         branches: ["d"],
     
-        baseResource: "Fruits",             // The name of the resource your prestige gain is based on.
-        baseAmount() { return player.f },  // A function to return the current amount of baseResource.
+        baseResource: "Points",             // The name of the resource your prestige gain is based on.
+        baseAmount() { return player.points },  // A function to return the current amount of baseResource.
     
         requires: new Decimal(1000),              // The amount of the base needed to  gain 1 of the prestige currency.
                                                 // Also the amount required to unlock the layer.
