@@ -54,6 +54,21 @@ addLayer("p", {
                 return player[this.layer].points.add(1).pow(0.5)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+            16: {
+                title: "no title (L6)",
+                description: "x1.1 Points, useless?",
+                cost: new Decimal(45),
+            },
+            17: {
+                title: "FIRST LEAVES BOOSTER EVER SEEN! (L7)",
+                description: "x2 Leaves",
+                cost: new Decimal(65),
+            },
         },
+    },
+    gainMult() {
+        let mult = new Decimal(1)
+        if (hasUpgrade('p', 17)) mult = mult.times(2)
+        return mult
     },
 })
