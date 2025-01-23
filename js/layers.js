@@ -222,7 +222,7 @@ addLayer("p", {
                 description: "x1M POINTS-LEAVES",
                 cost: new Decimal(1),
             },
-            30: {
+            31: {
                 title: "Vigintillion! (O2)",
                 description: "x1e6 Points!",
                 cost: new Decimal(10),
