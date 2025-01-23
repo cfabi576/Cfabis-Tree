@@ -68,7 +68,7 @@ addLayer("p", {
             18: {
                 title: "Synergism 2! (L8)",
                 description: "Points Gets Increased by Leaves but a reduced effect",
-                cost: new Decimal(19),
+                cost: new Decimal(1e3),
                 effect() {
                     return player[this.layer].points.add(1).pow(0.3)
                 },
