@@ -63,21 +63,21 @@ addLayer("p", {
             17: {
                 title: "Announcements II (L7)",
                 description: "X5 Points",
-                cost: new Decimal(105),
+                cost: new Decimal(95),
             },
             18: {
                 title: "Synergism 2! (L8)",
-                description: "Points Gets Increased by Leaves but a reduced effect",
-                cost: new Decimal(1e3),
+                description: "Points Gets Increased by Leaves but better",
+                cost: new Decimal(255),
                 effect() {
-                    return player[this.layer].points.add(1).pow(0.3)
+                    return player[this.layer].points.add(1).pow(0.6)
                 },
                 effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
             },
             19: {
                 title: "DONT TELL ME THAT IS A LEAVES SYNERGISM?",
                 description: "Boost your leaves gain in points",
-                cost: new Decimal(3.58e3),
+                cost: new Decimal(75),
                 effect() {
                     return player.points.add(1).pow(0.105)
                 },
