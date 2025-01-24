@@ -14,7 +14,7 @@ addLayer("p", {
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.55, // Prestige currency exponent
     softcap: new Decimal(1e1200000),
-    softcapPower: new Decimal(0.05),
+    softcapPower: new Decimal(0.015),
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         return mult
@@ -158,7 +158,7 @@ addLayer("p", {
         type: "normal",                         // Determines the formula used for calculating prestige currency.
         exponent: 0.1,  
         softcap: new Decimal(1e100000),
-    softcapPower: new Decimal(0.015),                        // "normal" prestige gain is (currency^exponent).
+    softcapPower: new Decimal(0.005),                        // "normal" prestige gain is (currency^exponent).
     
         gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
             return new Decimal(1)  
@@ -231,7 +231,7 @@ addLayer("p", {
         type: "normal",                         // Determines the formula used for calculating prestige currency.
         exponent: 0.05,       
         softcap: new Decimal(1e50000),
-    softcapPower: new Decimal(0.0066),                   // "normal" prestige gain is (currency^exponent).
+    softcapPower: new Decimal(0.000066),                   // "normal" prestige gain is (currency^exponent).
     
         gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
             return new Decimal(1)               // Factor in any bonuses multiplying gain here.
