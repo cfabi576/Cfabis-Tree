@@ -162,7 +162,8 @@ addLayer("p", {
         gainExp() {                             // Returns the exponent to your gain of the prestige resource.
             return new Decimal(1)
         },
-    
+        passiveGeneration() {if (hasUpgrade("a", 42)) return 1; else return 0},
+        autoUpgrade() {if (hasUpgrade('a', 42)) return true; else return false},
         layerShown() { return true },          // Returns a bool for if this layer's node should be visible in the tree.
     
         upgrades: {
@@ -317,7 +318,7 @@ addLayer("p", {
                 effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add for
             },
             39: {
-                title: "Mutation I (T4)",
+                title: "Auto I (T4)",
                 description: "x1e100 Points, x1e100 Leaves and automate leaves upgrades + gain 100% of him gain",
                 cost: new Decimal(1e18),
             },
@@ -325,6 +326,11 @@ addLayer("p", {
                 title: "Strong 2 (T5)",
                 description: "x1e6 Oxygen and increase leaves exponent",
                 cost: new Decimal(1.24e31),
+            },
+            42: {
+                title: "Auto II (T6)",
+                description: "automate fruits upgrades + gain 100% of him gain",
+                cost: new Decimal(1.99e118),
             },
 
             },
