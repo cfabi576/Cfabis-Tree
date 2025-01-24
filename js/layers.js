@@ -113,9 +113,6 @@ addLayer("p", {
                 cost: new Decimal(1e104),
             },
 
-
-
-        },
         gainMult() {
             let mult = new Decimal(1)
             if (hasUpgrade('p', 19)) mult = mult.times(upgradeEffect('p', 19))
@@ -129,8 +126,11 @@ addLayer("p", {
                                             if (hasUpgrade('a', 36)) mult = mult.times(1e20)
                                                 if (hasUpgrade('a', 37)) mult = mult.times(1e21)
                                                     if (hasUpgrade('a', 39)) mult = mult.times(1e100)
+
+
             return mult
         },
+    },
     })
     addLayer("f", {
         startData() { return {                  // startData is a function that returns default data for a layer. 
@@ -258,6 +258,13 @@ addLayer("p", {
                 description: "Apply L1 25 times meaning a huge x3e7 boost",
                 cost: new Decimal(5710),
             },
+            gainMult() {
+                let mult = new Decimal(1)
+                                                        if (hasUpgrade('a', 41)) mult = mult.times(1e6)
+    
+    
+                return mult
+            },
         },
     })
 
@@ -315,9 +322,15 @@ addLayer("p", {
             39: {
                 title: "Mutation I (T4)",
                 description: "x1e100 Points, x1e100 Leaves",
-                cost: new Decimal(1.22e16),
+                cost: new Decimal(1e18),
+            },
+            41: {
+                title: "Strong 2 (T5)",
+                description: "x1e6 Oxygen?",
+                cost: new Decimal(1.24e31),
             },
 
             },
         })
+
     
