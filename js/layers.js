@@ -74,7 +74,7 @@ addLayer("p", {
                 description: "Points Gets Increased by Leaves but better",
                 cost: new Decimal(255),
                 effect() {
-                    return player[this.layer].points.add(1).pow(0.6)
+                    return player[this.layer].points.add(1).pow(0.5)
                 },
                 effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
             },
@@ -83,7 +83,7 @@ addLayer("p", {
                 description: "Boost your leaves gain in points",
                 cost: new Decimal(775),
                 effect() {
-                    return player.points.add(1).pow(0.105)
+                    return player.points.add(1).pow(0.136)
                 },
             },
             20: {
@@ -197,7 +197,7 @@ addLayer("p", {
                 description: "Fruits boosts points",
                 cost: new Decimal(6),
                 effect() {
-                    return player[this.layer].points.add(1).pow(0.66)
+                    return player[this.layer].points.add(1).pow(1.5)
                 },
                 effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add for
             },
@@ -272,7 +272,7 @@ addLayer("p", {
                 description: "oxigen does (mega boosted) thingy to points",
                 cost: new Decimal(123),
                 effect() {
-                    return player[this.layer].points.add(1).pow(1.25)
+                    return player[this.layer].points.add(1).pow(2.85)
                 },
                 effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add for
             },
@@ -313,7 +313,7 @@ addLayer("p", {
                                                 // Also the amount required to unlock the layer.
     
         type: "normal",                         // Determines the formula used for calculating prestige currency.
-        exponent: 0.0085,                          // "normal" prestige gain is (currency^exponent).
+        exponent: 0.0651,                          // "normal" prestige gain is (currency^exponent).
     
         gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
             return new Decimal(1)  
@@ -340,7 +340,7 @@ addLayer("p", {
                 description: "tree fragments drastically boosts",
                 cost: new Decimal(2.56e9),
                 effect() {
-                    return player[this.layer].points.add(1).pow(1.77)
+                    return player[this.layer].points.add(1).pow(3.77)
                 },
                 effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add for
             },
@@ -357,12 +357,12 @@ addLayer("p", {
             42: {
                 title: "Auto II (T6)",
                 description: "automate fruits upgrades + gain 100% of him gain",
-                cost: new Decimal(1.99e68),
+                cost: new Decimal(1.99e26),
             },
             43: {
                 title: "Auto III (T7)",
                 description: "automate oxygen upgrades + gain 100% of him gain",
-                cost: new Decimal(1.99e167),
+                cost: new Decimal(1.19e27),
             },
 
         },
@@ -388,7 +388,7 @@ addLayer("p", {
                                                     // Also the amount required to unlock the layer.
         
             type: "normal",                         // Determines the formula used for calculating prestige currency.
-            exponent: 0.00000000000005,                          // "normal" prestige gain is (currency^exponent).
+            exponent: 0.008005,                          // "normal" prestige gain is (currency^exponent).
         
             gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
                 return new Decimal(1)  
