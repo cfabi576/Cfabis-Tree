@@ -12,13 +12,16 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.01",
-	name: "First Version",
+	num: "0.02",
+	name: "The tree eternal",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.0</h3><br>
+	<h3>v0.02</h3><br>
 		- Added things.<br>
+- Added Tree Frag
+- 44 Upgrades
+- Added life
 		- Added stuff.`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
@@ -41,7 +44,7 @@ function getPointGen() {
 	if(!canGenPoints())
 		return new Decimal(0)
 
-	let gain = new Decimal(1)
+	let gain = new Decimal(25)
 	if (hasUpgrade('p', 11)) gain = gain.times(2)
 		if (hasUpgrade('p', 12)) gain = gain.times(1.5)
 			if (hasUpgrade('p', 13)) gain = gain.times(4)
@@ -80,7 +83,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("1e6000"))
+	return player.points.gte(new Decimal("1e5555"))
 }
 
 

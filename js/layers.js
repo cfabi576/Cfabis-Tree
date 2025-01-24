@@ -13,8 +13,7 @@ addLayer("p", {
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.55, // Prestige currency exponent
-    softcap: new Decimal(1e1200000),
-    softcapPower: new Decimal(0.015),
+ 
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         return mult
@@ -26,7 +25,7 @@ addLayer("p", {
     hotkeys: [
         {key: "p", description: "P: Reset for leaves!", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    passiveGeneration() {if (hasUpgrade("a", 39)) return 1; else return 0},
+    passiveGeneration() {if (hasUpgrade("a", 39)) return 1; else return 0.01},
     autoUpgrade() {if (hasUpgrade('a', 39)) return true; else return false},
     layerShown(){return true},
     upgrades: {
@@ -168,8 +167,7 @@ addLayer("p", {
     
         type: "normal",                         // Determines the formula used for calculating prestige currency.
         exponent: 0.1,  
-        softcap: new Decimal(1e100000),
-    softcapPower: new Decimal(0.005),                        // "normal" prestige gain is (currency^exponent).
+                        // "normal" prestige gain is (currency^exponent).
     
         gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
             return new Decimal(1)  
@@ -177,7 +175,7 @@ addLayer("p", {
         gainExp() {                             // Returns the exponent to your gain of the prestige resource.
             return new Decimal(1)
         },
-        passiveGeneration() {if (hasUpgrade("a", 42)) return 0.5; else return 0},
+        passiveGeneration() {if (hasUpgrade("a", 42)) return 0.5; else return 0.001},
         autoUpgrade() {if (hasUpgrade('a', 42)) return true; else return false},
         layerShown() { return true },          // Returns a bool for if this layer's node should be visible in the tree.
     
@@ -243,8 +241,7 @@ addLayer("p", {
     
         type: "normal",                         // Determines the formula used for calculating prestige currency.
         exponent: 0.05,       
-        softcap: new Decimal(1e50000),
-    softcapPower: new Decimal(0.000066),                   // "normal" prestige gain is (currency^exponent).
+                   // "normal" prestige gain is (currency^exponent).
     
         gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
             return new Decimal(1)               // Factor in any bonuses multiplying gain here.
@@ -309,11 +306,11 @@ addLayer("p", {
         baseResource: "points",             // The name of the resource your prestige gain is based on.
         baseAmount() { return player.points },  // A function to return the current amount of baseResource.
     
-        requires: new Decimal(1.79e308),              // The amount of the base needed to  gain 1 of the prestige currency.
+        requires: new Decimal(1e125),              // The amount of the base needed to  gain 1 of the prestige currency.
                                                 // Also the amount required to unlock the layer.
     
         type: "normal",                         // Determines the formula used for calculating prestige currency.
-        exponent: 0.0651,                          // "normal" prestige gain is (currency^exponent).
+        exponent: 0.0065,                          // "normal" prestige gain is (currency^exponent).
     
         gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
             return new Decimal(1)  
