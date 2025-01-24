@@ -233,7 +233,8 @@ addLayer("p", {
         gainExp() {                             // Returns the exponent to your gain of the prestige resource.
             return new Decimal(1)
         },
-    
+        passiveGeneration() {if (hasUpgrade("a", 43)) return 1; else return 0},
+        autoUpgrade() {if (hasUpgrade('a', 43)) return true; else return false},
         layerShown() { return true },          // Returns a bool for if this layer's node should be visible in the tree.
     
         upgrades: {
@@ -330,6 +331,11 @@ addLayer("p", {
             42: {
                 title: "Auto II (T6)",
                 description: "automate fruits upgrades + gain 100% of him gain",
+                cost: new Decimal(1.99e118),
+            },
+            43: {
+                title: "Auto III (T7)",
+                description: "automate oxygen upgrades + gain 100% of him gain",
                 cost: new Decimal(1.99e118),
             },
 
