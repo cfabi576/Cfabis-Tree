@@ -131,6 +131,7 @@ addLayer("p", {
             return mult
         },
     },
+    
     })
     addLayer("f", {
         startData() { return {                  // startData is a function that returns default data for a layer. 
@@ -258,13 +259,8 @@ addLayer("p", {
                 description: "Apply L1 25 times meaning a huge x3e7 boost",
                 cost: new Decimal(5710),
             },
-            gainMult() {
-                let mult = new Decimal(1)
-                                                        if (hasUpgrade('a', 41)) mult = mult.times(1e6)
-    
-    
-                return mult
-            },
+
+        
         },
     })
 
@@ -326,7 +322,7 @@ addLayer("p", {
             },
             41: {
                 title: "Strong 2 (T5)",
-                description: "x1e6 Oxygen?",
+                description: "x1e6 Oxygen and x1e1000000",
                 cost: new Decimal(1.24e31),
             },
 
