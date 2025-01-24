@@ -128,7 +128,7 @@ addLayer("p", {
                                         if (hasUpgrade('f', 34)) mult = mult.times(5)
                                             if (hasUpgrade('a', 36)) mult = mult.times(1e20)
                                                 if (hasUpgrade('a', 37)) mult = mult.times(1e21)
-                                                    if (hasUpgrade('a', 38)) mult = mult.times(1e100)
+                                                    if (hasUpgrade('a', 39)) mult = mult.times(1e100)
             return mult
         },
     })
