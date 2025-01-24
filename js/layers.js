@@ -315,7 +315,7 @@ addLayer("p", {
                 description: "tree fragments drastically boosts",
                 cost: new Decimal(2.56e9),
                 effect() {
-                    return player[this.layer].points.add(1).pow(4)
+                    return player[this.layer].points.add(1).pow(8)
                 },
                 effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add for
             },
