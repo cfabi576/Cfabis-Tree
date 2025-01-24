@@ -131,7 +131,7 @@ addLayer("p", {
             return mult
         },
     },
-    
+
     })
     addLayer("f", {
         startData() { return {                  // startData is a function that returns default data for a layer. 
@@ -311,7 +311,7 @@ addLayer("p", {
                 description: "tree fragments drastically boosts",
                 cost: new Decimal(2.56e9),
                 effect() {
-                    return player[this.layer].points.add(1).pow(8)
+                    return player[this.layer].points.add(1).pow(12.5)
                 },
                 effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add for
             },
