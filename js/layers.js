@@ -402,6 +402,11 @@ addLayer("p", {
                     description: "huge boost that affect oxy and points",
                     cost: new Decimal(1),
                 },
+                46: {
+                    title: "exponents! (LI2)",
+                    description: "exponents? more like ^1.4 leaves...",
+                    cost: new Decimal(1e64),
+                },
 
     
             },
