@@ -336,7 +336,7 @@ addLayer("p", {
             43: {
                 title: "Auto III (T7)",
                 description: "automate oxygen upgrades + gain 100% of him gain",
-                cost: new Decimal(1.99e118),
+                cost: new Decimal(1.99e287),
             },
 
             },
