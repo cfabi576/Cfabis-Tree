@@ -126,9 +126,11 @@ addLayer("p", {
                                             if (hasUpgrade('a', 36)) mult = mult.times(1e20)
                                                 if (hasUpgrade('a', 37)) mult = mult.times(1e21)
                                                     if (hasUpgrade('a', 39)) mult = mult.times(1e100)
+                                                        if (hasUpgrade('a', 41)) exponent = 0.85
 
 
             return mult
+
         },
     },
 
@@ -322,7 +324,7 @@ addLayer("p", {
             },
             41: {
                 title: "Strong 2 (T5)",
-                description: "x1e6 Oxygen and x1e1000000",
+                description: "x1e6 Oxygen and increase leaves exponent",
                 cost: new Decimal(1.24e31),
             },
 
