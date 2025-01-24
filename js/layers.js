@@ -166,7 +166,7 @@ addLayer("p", {
         gainExp() {                             // Returns the exponent to your gain of the prestige resource.
             return new Decimal(1)
         },
-        passiveGeneration() {if (hasUpgrade("a", 42)) return 1; else return 0},
+        passiveGeneration() {if (hasUpgrade("a", 42)) return 0.5; else return 0},
         autoUpgrade() {if (hasUpgrade('a', 42)) return true; else return false},
         layerShown() { return true },          // Returns a bool for if this layer's node should be visible in the tree.
     
@@ -239,7 +239,7 @@ addLayer("p", {
         gainExp() {                             // Returns the exponent to your gain of the prestige resource.
             return new Decimal(1)
         },
-        passiveGeneration() {if (hasUpgrade("a", 43)) return 1; else return 0},
+        passiveGeneration() {if (hasUpgrade("a", 43)) return 0.33; else return 0},
         autoUpgrade() {if (hasUpgrade('a', 43)) return true; else return false},
         layerShown() { return true },          // Returns a bool for if this layer's node should be visible in the tree.
     
