@@ -402,7 +402,7 @@ addLayer("p", {
             upgrades: {
                 44: {
                     title: "STARTING!!!!!! (LI1)",
-                    description: "x9e157 points",
+                    description: "huge boost that affect oxy and points",
                     cost: new Decimal(1),
                 },
 
