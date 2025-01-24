@@ -352,7 +352,7 @@ addLayer("p", {
             41: {
                 title: "Strong 2 (T5)",
                 description: "x1e6 Oxygen and increase leaves exponent",
-                cost: new Decimal(1.24e21),
+                cost: new Decimal(1.24e18),
             },
             42: {
                 title: "Auto II (T6)",
