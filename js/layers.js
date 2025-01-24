@@ -300,7 +300,7 @@ addLayer("p", {
             37: {
                 title: "Tier 2: Lithium (T2)",
                 description: "x1e36 Points, x1e21 Leaves",
-                cost: new Decimal(1e5),
+                cost: new Decimal(1e4),
             },
 
             },
