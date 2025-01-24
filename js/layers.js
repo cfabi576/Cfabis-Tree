@@ -121,7 +121,12 @@ addLayer("p", {
                     
                 },
                 
-            }
+            },
+
+
+                
+            
+        
 
         },
         gainMult() {
@@ -138,12 +143,15 @@ addLayer("p", {
                                                 if (hasUpgrade('a', 37)) mult = mult.times(1e21)
                                                     if (hasUpgrade('a', 39)) mult = mult.times(1e100)
                                                         if (hasUpgrade('a', 41)) mult = mult.times(1e250)
+                                                            if (hasUpgrade('l', 45)) mult = mult.times(1e250)
+                                                                if (hasUpgrade('l', 45)) mult = mult.times(1e250)
 
 
             return mult
 
-              
-        },
+        
+        }, 
+            
     
     })
     addLayer("f", {
@@ -176,7 +184,7 @@ addLayer("p", {
             return new Decimal(1)
         },
         passiveGeneration() {if (hasUpgrade("a", 42)) return 0.5; else return 0.001},
-        autoUpgrade() {if (hasUpgrade('a', 42)) return true; else return false},
+        autoUpgrade() {if (hasUpgrade('a', 42))  return true; else return false},
         layerShown() { return true },          // Returns a bool for if this layer's node should be visible in the tree.
     
         upgrades: {
@@ -371,7 +379,7 @@ addLayer("p", {
                 points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
             }},
     
-            symbol: "❤", // This appears on the layer's node. Default is the id with the first letter capitalized
+            symbol: "💗", // This appears on the layer's node. Default is the id with the first letter capitalized
             color: "#ff4d4d",                       // The color for this layer, which affects many elements.
             resource: "Life",        // The name of this layer's main prestige resource.
             row: 2,                                 // The row this layer is on (0 is the first row).
@@ -402,10 +410,15 @@ addLayer("p", {
                     description: "huge boost that affect oxy and points",
                     cost: new Decimal(1),
                 },
-                46: {
+                45: {
                     title: "exponents! (LI2)",
-                    description: "exponents? more like ^1.4 leaves...",
+                    description: "exponents? more like x1e500 leaves...",
                     cost: new Decimal(1e64),
+                },
+                46: {
+                    title: "replication! (LI3)",
+                    description: "coolbox is 5 times repeated......",
+                    cost: new Decimal(1e85),
                 },
 
     
