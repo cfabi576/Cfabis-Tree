@@ -347,7 +347,7 @@ addLayer("p", {
             44: {
                 title: "e1,000,000 POINTS? crazy (T8)",
                 description: "x100! points",
-                cost: new Decimal(1.99e8500),
+                cost: new Decimal(e8500),
             },
         },
         })
