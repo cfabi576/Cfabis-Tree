@@ -24,6 +24,8 @@ addLayer("p", {
     hotkeys: [
         {key: "p", description: "P: Reset for leaves!", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
+    passiveGeneration() {if (hasUpgrade("a", 39)) return 1; else return 0},
+    autoUpgrade() {if (hasUpgrade('a', 39)) return true; else return false},
     layerShown(){return true},
     upgrades: {
         11: {
@@ -316,7 +318,7 @@ addLayer("p", {
             },
             39: {
                 title: "Mutation I (T4)",
-                description: "x1e100 Points, x1e100 Leaves",
+                description: "x1e100 Points, x1e100 Leaves and automate leaves upgrades + gain 100% of him gain",
                 cost: new Decimal(1e18),
             },
             41: {
