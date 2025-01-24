@@ -112,7 +112,7 @@ addLayer("p", {
                 description: "x100 points",
                 cost: new Decimal(1e104),
             },
-
+        },
         gainMult() {
             let mult = new Decimal(1)
             if (hasUpgrade('p', 19)) mult = mult.times(upgradeEffect('p', 19))
@@ -130,7 +130,6 @@ addLayer("p", {
 
 
             return mult
-        },
       },
     })
     addLayer("f", {
