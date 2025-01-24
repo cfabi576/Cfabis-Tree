@@ -127,6 +127,7 @@ addLayer("p", {
                                     if (hasUpgrade('o', 29)) mult = mult.times(1e6)
                                         if (hasUpgrade('f', 34)) mult = mult.times(5)
                                             if (hasUpgrade('a', 36)) mult = mult.times(1e20)
+                                                if (hasUpgrade('a', 37)) mult = mult.times(1e21)
             return mult
         },
     })
@@ -293,8 +294,13 @@ addLayer("p", {
         upgrades: {
             36: {
                 title: "Tier 1: Hydrogen (T1)",
-                description: "x1e33 Points, x1e20 Leaves",
+                description: "x1e30 Points, x1e20 Leaves",
                 cost: new Decimal(1),
+            },
+            37: {
+                title: "Tier 2: Lithium (T2)",
+                description: "x1e36 Points, x1e21 Leaves",
+                cost: new Decimal(1e5),
             },
 
             },
