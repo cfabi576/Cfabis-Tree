@@ -130,10 +130,8 @@ addLayer("p", {
 
 
             return mult
-
         },
-    },
-
+      },
     })
     addLayer("f", {
         startData() { return {                  // startData is a function that returns default data for a layer. 
