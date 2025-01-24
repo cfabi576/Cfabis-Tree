@@ -344,11 +344,7 @@ addLayer("p", {
                 description: "automate oxygen upgrades + gain 100% of him gain",
                 cost: new Decimal(1.99e287),
             },
-            44: {
-                title: "e1,000,000 POINTS? crazy (T8)",
-                description: "x100! points",
-                cost: new Decimal(e8500),
-            },
+
         },
         })
 
