@@ -128,6 +128,7 @@ addLayer("p", {
                                         if (hasUpgrade('f', 34)) mult = mult.times(5)
                                             if (hasUpgrade('a', 36)) mult = mult.times(1e20)
                                                 if (hasUpgrade('a', 37)) mult = mult.times(1e21)
+                                                    if (hasUpgrade('a', 38)) mult = mult.times(1e100)
             return mult
         },
     })
@@ -303,13 +304,18 @@ addLayer("p", {
                 cost: new Decimal(1e4),
             },
             38: {
-                title: "Tier 3: Coolbox II",
+                title: "Coolbox II (T3)",
                 description: "tree fragments drastically boosts",
                 cost: new Decimal(2.56e9),
                 effect() {
                     return player[this.layer].points.add(1).pow(4)
                 },
                 effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add for
+            },
+            39: {
+                title: "Mutation I (T4)",
+                description: "x1e100 Points, x1e100 Leaves",
+                cost: new Decimal(1.22e16),
             },
 
             },
