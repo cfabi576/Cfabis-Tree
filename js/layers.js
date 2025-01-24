@@ -55,7 +55,7 @@ addLayer("p", {
             description: "Points Gets Increased by.. Leaves.",
             cost: new Decimal(19),
             effect() {
-                return player[this.layer].points.add(1).pow(0.5)
+                return player[this.layer].points.add(1).pow(0.33)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
@@ -197,7 +197,7 @@ addLayer("p", {
                 description: "Fruits boosts points",
                 cost: new Decimal(6),
                 effect() {
-                    return player[this.layer].points.add(1).pow(0.8)
+                    return player[this.layer].points.add(1).pow(0.66)
                 },
                 effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add for
             },
@@ -272,7 +272,7 @@ addLayer("p", {
                 description: "oxigen does (mega boosted) thingy to points",
                 cost: new Decimal(123),
                 effect() {
-                    return player[this.layer].points.add(1).pow(3.25)
+                    return player[this.layer].points.add(1).pow(1.25)
                 },
                 effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add for
             },
@@ -333,7 +333,7 @@ addLayer("p", {
                 description: "tree fragments drastically boosts",
                 cost: new Decimal(2.56e9),
                 effect() {
-                    return player[this.layer].points.add(1).pow(12.5)
+                    return player[this.layer].points.add(1).pow(1.77)
                 },
                 effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add for
             },
@@ -377,7 +377,7 @@ addLayer("p", {
             baseResource: "points",             // The name of the resource your prestige gain is based on.
             baseAmount() { return player.points },  // A function to return the current amount of baseResource.
         
-            requires: new Decimal(1e10000000),              // The amount of the base needed to  gain 1 of the prestige currency.
+            requires: new Decimal(1e100),              // The amount of the base needed to  gain 1 of the prestige currency.
                                                     // Also the amount required to unlock the layer.
         
             type: "normal",                         // Determines the formula used for calculating prestige currency.
