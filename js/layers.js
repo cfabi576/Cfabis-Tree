@@ -417,7 +417,7 @@ addLayer("p", {
                 },
                 46: {
                     title: "replication! (LI3)",
-                    description: "coolbox is 5 times repeated......",
+                    description: "coolbox is 3 times repeated......",
                     cost: new Decimal(1e85),
                 },
 
