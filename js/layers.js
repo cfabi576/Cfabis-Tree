@@ -377,7 +377,7 @@ addLayer("p", {
             symbol: "❤", // This appears on the layer's node. Default is the id with the first letter capitalized
             color: "#ff4d4d",                       // The color for this layer, which affects many elements.
             resource: "Life",        // The name of this layer's main prestige resource.
-            row: 3,                                 // The row this layer is on (0 is the first row).
+            row: 2,                                 // The row this layer is on (0 is the first row).
             position: 0,
             branches: ["l"],
         
