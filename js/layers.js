@@ -347,22 +347,22 @@ addLayer("p", {
             39: {
                 title: "Auto I (T4)",
                 description: "x1e100 Points, x1e100 Leaves and automate leaves upgrades + gain 100% of him gain",
-                cost: new Decimal(1e18),
+                cost: new Decimal(1e11),
             },
             41: {
                 title: "Strong 2 (T5)",
                 description: "x1e6 Oxygen and increase leaves exponent",
-                cost: new Decimal(1.24e31),
+                cost: new Decimal(1.24e21),
             },
             42: {
                 title: "Auto II (T6)",
                 description: "automate fruits upgrades + gain 100% of him gain",
-                cost: new Decimal(1.99e118),
+                cost: new Decimal(1.99e68),
             },
             43: {
                 title: "Auto III (T7)",
                 description: "automate oxygen upgrades + gain 100% of him gain",
-                cost: new Decimal(1.99e287),
+                cost: new Decimal(1.99e167),
             },
 
         },
