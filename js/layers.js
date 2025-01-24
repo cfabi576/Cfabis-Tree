@@ -116,6 +116,14 @@ addLayer("p", {
                 description: "x100 points",
                 cost: new Decimal(1e104),
             },
+            achievements: {
+                11: {
+                    name: "U gotta start somewhere",
+                    
+                },
+                
+            }
+
         },
         gainMult() {
             let mult = new Decimal(1)
@@ -134,7 +142,10 @@ addLayer("p", {
 
 
             return mult
-      },
+
+              
+        },
+    
     })
     addLayer("f", {
         startData() { return {                  // startData is a function that returns default data for a layer. 
@@ -205,6 +216,8 @@ addLayer("p", {
                 description: "x50 Leaves",
                 cost: new Decimal(1e12),
             },
+
+            
         },
 })
 
@@ -347,5 +360,47 @@ addLayer("p", {
 
         },
         })
+
+        addLayer("l", {
+            startData() { return {                  // startData is a function that returns default data for a layer. 
+                unlocked: true,                     // You can add more variables here to add them to your layer.
+                points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
+            }},
+    
+            symbol: "❤", // This appears on the layer's node. Default is the id with the first letter capitalized
+            color: "#ff4d4d",                       // The color for this layer, which affects many elements.
+            resource: "Life",        // The name of this layer's main prestige resource.
+            row: 3,                                 // The row this layer is on (0 is the first row).
+            position: 0,
+            branches: ["l"],
+        
+            baseResource: "points",             // The name of the resource your prestige gain is based on.
+            baseAmount() { return player.points },  // A function to return the current amount of baseResource.
+        
+            requires: new Decimal(1e10000000),              // The amount of the base needed to  gain 1 of the prestige currency.
+                                                    // Also the amount required to unlock the layer.
+        
+            type: "normal",                         // Determines the formula used for calculating prestige currency.
+            exponent: 0.00005,                          // "normal" prestige gain is (currency^exponent).
+        
+            gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
+                return new Decimal(1)  
+            },
+            gainExp() {                             // Returns the exponent to your gain of the prestige resource.
+                return new Decimal(1)
+            },
+        
+            layerShown() { return true },          // Returns a bool for if this layer's node should be visible in the tree.
+        
+            upgrades: {
+                44: {
+                    title: "STARTING!!!!!! (LI1)",
+                    description: "x9e157 points",
+                    cost: new Decimal(1),
+                },
+
+    
+            },
+            })
 
     
