@@ -281,9 +281,16 @@ addLayer("p", {
                 description: "Apply L1 25 times meaning a huge x3e7 boost",
                 cost: new Decimal(5710),
             },
+            gainMult() {
+                let mult = new Decimal(1)
 
+                    if (hasUpgrade('l', 44)) mult = mult.times(1e157)
+
+    
+                return mult
         
         },
+    },
     })
 
     addLayer("a", {
