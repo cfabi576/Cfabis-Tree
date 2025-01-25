@@ -442,7 +442,7 @@ addLayer("p", {
         
                 symbol: "🌞", // This appears on the layer's node. Default is the id with the first letter capitalized
                 color: "#ffbf0f",                       // The color for this layer, which affects many elements.
-                resource: "Heat?",        // The name of this layer's main prestige resource.
+                resource: "Heat",        // The name of this layer's main prestige resource.
                 row: 3,                                 // The row this layer is on (0 is the first row).
                 position: 0,
                 branches: ["s"],
