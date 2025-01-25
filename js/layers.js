@@ -396,7 +396,7 @@ addLayer("p", {
             baseResource: "points",             // The name of the resource your prestige gain is based on.
             baseAmount() { return player.points },  // A function to return the current amount of baseResource.
         
-            requires: new Decimal(1e308),              // The amount of the base needed to  gain 1 of the prestige currency.
+            requires: new Decimal(1e208),              // The amount of the base needed to  gain 1 of the prestige currency.
                                                     // Also the amount required to unlock the layer.
         
             type: "normal",                         // Determines the formula used for calculating prestige currency.
@@ -422,12 +422,12 @@ addLayer("p", {
                 45: {
                     title: "exponents! (LI2)",
                     description: "exponents? more like x1e500 leaves...",
-                    cost: new Decimal(1e64),
+                    cost: new Decimal(1e55),
                 },
                 46: {
                     title: "replication! (LI3)",
-                    description: "L15 is 1 times repeated......",
-                    cost: new Decimal(1e85),
+                    description: "Unlock a strong layer",
+                    cost: new Decimal(1e65),
                 },
 
     
@@ -449,14 +449,14 @@ addLayer("p", {
                 
             
                 baseResource: "points",             // The name of the resource your prestige gain is based on.
-                baseAmount() { return player.points },  // A function to return the current amount of baseResource.
+                baseAmount() { return player.points},  // A function to return the current amount of baseResource.
             
                 requires: new Decimal(1e308), 
                            // The amount of the base needed to  gain 1 of the prestige currency.
                                                         // Also the amount required to unlock the layer.
             
                 type: "normal",                         // Determines the formula used for calculating prestige currency.
-                exponent: 0.0000000095,                          // "normal" prestige gain is (currency^exponent).
+                exponent: 0.00000095,                          // "normal" prestige gain is (currency^exponent).
             
                 gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
                     return new Decimal(1)  
@@ -464,6 +464,7 @@ addLayer("p", {
                 gainExp() {                             // Returns the exponent to your gain of the prestige resource.
                     return new Decimal(1)
                 },
+                unlocked() {return hasUpgrade('l', 3)},
             
                 layerShown() { return true },          // Returns a bool for if this layer's node should be visible in the tree.
             
