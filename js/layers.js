@@ -474,8 +474,17 @@ addLayer("p", {
                         description: "Automates everything for good",
                         cost: new Decimal(1),
                     },
+                    48: {
+                        title: "Get Life (H2)",
+                        description: "Increases Points ^2? but its exponentially a reduced rate or its fake? nvm try to test also i love heat^2, my simp, or a bad boost! boost?",
+                        cost: new Decimal(10),
+                    },
+                    49: {
+                        title: "If you can't buy this.. WIPE YOUR DATA NOW! (HE1)",
+                        description: "Get x1e308 leaves fagain",
+                        cost: new Decimal(0.001),
+                    },
 
-    
         
                 },
                 })
