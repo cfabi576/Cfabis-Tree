@@ -64,14 +64,19 @@ function getPointGen() {
 																	if (hasUpgrade('o', 32)) gain = gain.times(upgradeEffect('o', 32))
 																		if (hasUpgrade('o', 33)) gain = gain.times(3e7)
 																			if (hasUpgrade('p', 35)) gain = gain.times(100)
-																				if (hasUpgrade('a', 36)) gain = gain.times(1e30)
-																					if (hasUpgrade('a', 37)) gain = gain.times(1e36)
-																						if (hasUpgrade('a', 38)) gain = gain.times(upgradeEffect('a', 38))
-																						if (hasUpgrade('a', 39)) gain = gain.times(1e100)
+																				if (hasUpgrade('g', 36)) gain = gain.times(1e30)
+																					if (hasUpgrade('g', 37)) gain = gain.times(1e36)
+																						if (hasUpgrade('g', 38)) gain = gain.times(upgradeEffect('g', 38))
+																						if (hasUpgrade('g', 39)) gain = gain.times(1e100)
 																							if (hasUpgrade('l', 44)) gain = gain.times(1e308)
 																								if (hasUpgrade('w', 47)) gain = gain.times(1e50)
 																								if (hasUpgrade('w', 48)) gain = gain.times(0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001)
 																									if (hasUpgrade('w', 49)) gain = gain.times(1e308)
+																										if (hasAchievement("a", 16)) gain = gain.times(5)
+																											if (hasAchievement("a", 17)) gain = gain.times(3)
+																											
+																												if (hasAchievement("a", 21)) gain = gain.times(6)
+																									
 
 																											
 	return gain

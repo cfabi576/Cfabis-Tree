@@ -25,9 +25,9 @@ addLayer("p", {
     hotkeys: [
         {key: "p", description: "P: Reset for leaves!", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    passiveGeneration() {if (hasUpgrade("a", 39)) return 1; else return 0.01},
+    passiveGeneration() {if (hasUpgrade("g", 39)) return 1; else return 0.01},
     passiveGeneration() {if (hasUpgrade("w", 47)) return 10; else return 0.01},
-    autoUpgrade() {if (hasUpgrade('a', 39)) return true; else return false},
+    autoUpgrade() {if (hasUpgrade('g', 39)) return true; else return false},
     autoUpgrade() {if (hasUpgrade('w', 47)) return true; else return false},
     layerShown(){return true},
     upgrades: {
@@ -87,7 +87,7 @@ addLayer("p", {
                     return player.points.add(1).pow(0.136)
                 },
             },
-            20: {
+            51: {
                 title: "2 upgrades to the next layer! (L10)",
                 description: "x4.5 Leaves",
                 cost: new Decimal(2120),
@@ -141,10 +141,10 @@ addLayer("p", {
                                 if (hasUpgrade('f', 27)) mult = mult.times(5)
                                     if (hasUpgrade('o', 29)) mult = mult.times(1e6)
                                         if (hasUpgrade('f', 34)) mult = mult.times(5)
-                                            if (hasUpgrade('a', 36)) mult = mult.times(1e20)
-                                                if (hasUpgrade('a', 37)) mult = mult.times(1e21)
-                                                    if (hasUpgrade('a', 39)) mult = mult.times(1e100)
-                                                        if (hasUpgrade('a', 41)) mult = mult.times(1e250)
+                                            if (hasUpgrade('g', 36)) mult = mult.times(1e20)
+                                                if (hasUpgrade('g', 37)) mult = mult.times(1e21)
+                                                    if (hasUpgrade('g', 39)) mult = mult.times(1e100)
+                                                        if (hasUpgrade('g', 41)) mult = mult.times(1e250)
                                                             if (hasUpgrade('l', 45)) mult = mult.times(1e250)
                                                                 if (hasUpgrade('l', 45)) mult = mult.times(1e250)
 
@@ -185,8 +185,8 @@ addLayer("p", {
         gainExp() {                             // Returns the exponent to your gain of the prestige resource.
             return new Decimal(1)
         },
-        passiveGeneration() {if (hasUpgrade("a", 42)) return 0.5; else return 0.001},
-        autoUpgrade() {if (hasUpgrade('a', 42))  return true; else return false},
+        passiveGeneration() {if (hasUpgrade("g", 42)) return 0.5; else return 0.001},
+        autoUpgrade() {if (hasUpgrade('g', 42))  return true; else return false},
         passiveGeneration() {if (hasUpgrade("w", 47)) return 5; else return 0.001},
         autoUpgrade() {if (hasUpgrade('w', 47))  return true; else return false},
         layerShown() { return true },          // Returns a bool for if this layer's node should be visible in the tree.
@@ -261,8 +261,8 @@ addLayer("p", {
         gainExp() {                             // Returns the exponent to your gain of the prestige resource.
             return new Decimal(1)
         },
-        passiveGeneration() {if (hasUpgrade("a", 43)) return 0.33; else return 0},
-        autoUpgrade() {if (hasUpgrade('a', 43)) return true; else return false},
+        passiveGeneration() {if (hasUpgrade("g", 43)) return 0.33; else return 0},
+        autoUpgrade() {if (hasUpgrade('g', 43)) return true; else return false},
         passiveGeneration() {if (hasUpgrade("w", 47)) return 3; else return 0},
         autoUpgrade() {if (hasUpgrade('w', 47)) return true; else return false},
         layerShown() { return true },          // Returns a bool for if this layer's node should be visible in the tree.
@@ -304,7 +304,7 @@ addLayer("p", {
     },
     })
 
-    addLayer("a", {
+    addLayer("g", {
         startData() { return {                  // startData is a function that returns default data for a layer. 
             unlocked: true,                     // You can add more variables here to add them to your layer.
             points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
@@ -485,7 +485,92 @@ addLayer("p", {
                         cost: new Decimal(0.001),
                     },
 
-        
                 },
                 })
+                
+                addLayer("a", {
+                    startData() { return {
+                        unlocked: true,
+                    }},
+                    color: "yellow",
+                    row: "side",
+                    layerShown() {return true}, 
+                    tooltip() { // Optional, tooltip displays when the layer is locked
+                        return ("Achievements")
+                    },
+                    achievements: {
+                        rows: 2,
+                        cols: 10,
+                        11: {
+                            name: "one",
+                            done() { return player.p.points.gt(1) },
+                            tooltip: "yes.",
+                        },
+                        12: {
+                            name: "uh",
+                            done() { return player.points.gte(200) },
+                            tooltip: "Reach 200 Points.",
+                            
+                        },
+                        13: {
+                            name: "it hurts!",
+                            done() { return player.p.upgrades.length>=4 },
+                            tooltip: "Purchase 4 Leaves Upgrade",
+                            
+                        },
+                        14: {
+                            name: "To Make 10 BUSHES!",
+                            done() { return player.p.points.gte(2000) },
+                            tooltip: "Reach 2000 Points.",
+                            
+                        },
+                        15: {
+                            name: "Seven Upgrades",
+                            done() { return player.p.upgrades.length>=7 },
+                            tooltip: "Purchase 7 Leaves Upgrades",
+                            
+                        },
+                        16: {
+                            name: "Hypeiron",
+                            done() { return player.p.points.gt(2e6) },
+                            tooltip: "2m leaves: Reward x5 Points.",
+                            image: "images/Screenshot_928.png",
+                            
+                        },
+                        17: {
+                            name: "Fruity",
+                            done() { return player.f.points.gt(1) },
+                            tooltip: "Fruitize Now!, x3 points",
+                            image: "images/Screenshot_929.png",
+                            
+                        },
+                        18: {
+                            name: "A Very Cool Box!",
+                            done() { return player.f.upgrades.length>=3 },
+                            tooltip: "get F3 with f2 and f1",
+                            image: "images/Screenshot_927.png",
+                        },
+                        19: {
+                            name: "octillion",
+                            done() { return player.points.gte(1e27) },
+                            tooltip: "the title says all ",
+                            
+                        },
+                        20: {
+                            name: "nothing new",
+                            done() { return player.points.gte(1e30) },
+                            tooltip: "... ",
+                            
+                        },
+                        22: {
+                            name: "Photosynthesis!!",
+                            done() { return player.o.points.gt(1) },
+                            tooltip: "Do a oxigenation reset, x6 or x3! points sis! ",
+                            image: "images/Screenshot_930.png",
+                        },
+
+                    },
+                })
+ 
+        
     

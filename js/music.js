@@ -1,3 +1,3 @@
-let candylands = new Audio('CFABIS-TREE/resources/Candyland.mp3')
+let candylands = images/Candyland.mp3
 
-candylands.play();
+candylands.play()
