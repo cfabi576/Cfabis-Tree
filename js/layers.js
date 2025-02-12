@@ -28,7 +28,8 @@ addLayer("p", {
     ],
     passiveGeneration() {if (hasMilestone("c", 0)) return 20; else return 0},
     autoUpgrade() {if (hasMilestone('c', 0)) return true; else return false},
-    passiveGeneration() {if (hasMilestone("e", 6)) return 200; else return 0},
+
+    passiveGeneration() {if (hasMilestone("e", 6)) return 200; else return 20},
     autoUpgrade() {if (hasMilestone('e', 6)) return true; else return false},
     
     
@@ -121,7 +122,8 @@ addLayer("p", {
         },
         passiveGeneration() {if (hasMilestone("c", 3)) return 10; else return 0},
         autoUpgrade() {if (hasMilestone('c', 3)) return true; else return false},
-        passiveGeneration() {if (hasMilestone("e", 6)) return 20; else return 0},
+
+        passiveGeneration() {if (hasMilestone("e", 6)) return 20; else return 20},
         autoUpgrade() {if (hasMilestone('e', 6)) return true; else return false},
         
     
@@ -346,7 +348,7 @@ addLayer("p", {
                         name: "Complication ",
                         completionLimit: 1,
                         challengeDescription: "Get /100 point gain",
-                        goal() { return new Decimal(player.points.current = 1e20) },
+                        goal() { return new Decimal(player.points.current = 1e13) },
                         currencyDisplayName: "points",
                         currencyInternalName: "points",
                         rewardDescription: "x10 δ",
@@ -355,18 +357,19 @@ addLayer("p", {
                     }, 
                     milestones:{
                         4: {
-                            requirementDescription: "350 δ ",
-                            done() { return player.d.best.gte(350) },
+                            requirementDescription: "300 δ ",
+                            done() { return player.d.best.gte(300) },
                             effectDescription: "^1.5 points",
                         },
-                    },
-                    milestones:{
-                        5: {
-                            requirementDescription: "1000 δ ",
-                            done() { return player.d.best.gte(1000) },
-                            effectDescription: "Unlocks Epsilon",
+                        12: {
+                            requirementDescription: "SOFTCAPPED HAHA^2",
+                            done() { return player.d.best.gte(1.79e308) },
+                            effectDescription: "",
                         },
+        
+
                     },
+                    
     
 
         gainMult() {
@@ -401,12 +404,12 @@ addLayer("p", {
         baseResource: "δ",             // The name of the resource your prestige gain is based on.
         baseAmount() { return player.d.points},  // A function to return the current amount of baseResource.
     
-        requires: new Decimal(800), 
+        requires: new Decimal(500), 
                    // The amount of the base needed to  gain 1 of the prestige currency.
                                                 // Also the amount required to unlock the layer.
     
         type: "normal",                         // Determines the formula used for calculating prestige currency.
-        exponent: 0.00195,                          // "normal" prestige gain is (currency^exponent).001
+        exponent: 0.0095,                          // "normal" prestige gain is (currency^exponent).001
     
         gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
             return new Decimal(1)  

@@ -73,7 +73,7 @@ function getPointGen() {
 																																		if (hasMilestone("e", 10)) gain = gain.pow(1.06)
 																																if (hasMilestone("e", 6)) gain = gain.pow(2)
 																																	if (hasMilestone("c", 7)) gain = gain.pow(0.63)
-
+																																		if (hasMilestone("d", 12)) gain = gain.pow(0.493)
 																																	if (hasMilestone("e", 6)) gain = gain.add(1e15)
 
 
