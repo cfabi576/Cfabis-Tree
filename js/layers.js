@@ -1,18 +1,18 @@
 addLayer("p", {
-    name: "α", // This is optional, only used in a few places, If absent it just uses the layer id.
-    symbol: "α", // This appears on the layer's node. Default is the id with the first letter capitalized
+    name: "Skill", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "S", // This appears on the layer's node. Default is the id with the first letter capitalized
     position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
-        unlocked: true,
+        unlocked: false,
 		points: new Decimal(0),
     }},
-    color: "#a6a6a6",
+    color: "#d1ffb8",
     requires: new Decimal(1), // Can be a function that takes requirement increases into account
-    resource: "α", // Name of prestige currency
+    resource: "Skill", // Name of prestige currency
     baseResource: "points", // Name of resource prestige is based on
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: 0.85, // Prestige currency exponent
+    exponent: 0.725, // Prestige currency exponent
  
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
@@ -24,64 +24,169 @@ addLayer("p", {
 
     row: 0, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
-        {key: "p", description: "RESET FOR A", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {key: "s", description: "Reset for Skill", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    passiveGeneration() {if (hasMilestone("c", 0)) return 20; else return 0},
-    autoUpgrade() {if (hasMilestone('c', 0)) return true; else return false},
-
-    passiveGeneration() {if (hasMilestone("e", 6)) return 200; else return 20},
-    autoUpgrade() {if (hasMilestone('e', 6)) return true; else return false},
-    
-    
+ 
+    passiveGeneration() {if (hasUpgrade("gb", 36)) return 1; else return 0},
+    autoUpgrade() {if (hasUpgrade('gb', 36)) return true; else return false},
 
 
     layerShown(){return true},
     
     upgrades: {
         11: {
-            title: "First Upgrade ",
-            description: "Quadruple your Point Gain.",
+            title: "The First Difficulty 1 ",
+            description: "Double your Point Gain.",
             cost: new Decimal(1),
             
         },
         12: {
-            title: "Synergy ",
-            description: "α boosts points and points boosts α",
-            cost: new Decimal(10),
-            effect(){
-             
-
-                return player[this.layer].points.add(1).pow(0.25)
-                
-            },
-            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add for
+            title: "The First Difficulty 2",
+            description: "Double your Point Gain Again...",
+            cost: new Decimal(2),
+            
         },
         13: {
-            title: "boost 1 ",
-            description: "Triples your Point Gain.",
-            cost: new Decimal(250),
+            title: "The First Difficulty 3",
+            description: "Points are boosted by Skill",
+            cost: new Decimal(10),
+            tooltip: "formula: ^0.5 Skill, Capped at 1e33 ",
+            effect() {
+                return player[this.layer].points.add(2).pow(0.5).min(1e33)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
-
-                
+        14: {
+            title: "The First Difficulty 4",
+            description: "+8 to point gen base",
+            cost: new Decimal(16),
+            
+        },
+        15: {
+            title: "The First Difficulty 5",
+            description: "Points are powered by Skill at a extremely reduced rate..",
+            cost: new Decimal(30),
+            tooltip: "too long ",
+            effect() {
+                return player[this.layer].points.add(1).pow(0.0000000000000085)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"^" }, // Add formatting to the effect
+        },      
+          16: {
+            title: "The First Difficulty 6",
+            description: "+100 to point gen base",
+            cost: new Decimal(1000),
+            
+        },
+        17: {
+            title: "The First Difficulty 7",
+            description: "x3 skill, how original",
+            cost: new Decimal(2000),
+            
+        },
+        18: {
+            title: "Extension Upgrade - The First Difficulty 8",
+            description: "x3.5 Points",
+            cost: new Decimal(1e21),
+            unlocked() {
+                return hasUpgrade("gb", 14)
+            
+            },
+        },
+        21: {
+            title: "The Lower Gap 1",
+            description: "x5 points and skill",
+            cost: new Decimal(1e4),
+        },
+        22: {
+            title: "The Lower Gap 2",
+            description: "Add a additive +0.01 to point exponent, Useless.. Right? cuz not because if you get 1e100 points it will be like a x10 point gain.",
+            cost: new Decimal(5e5),
+        },
+        23: {
+            title: "The Lower Gap 3",
+            description: "Give some of your skill to get some x1.03 point gian",
+            cost: new Decimal(1e6),
+        },
+        24: {
+            title: "The Lower Gap 4",
+            description: "Points are boosted by skill by a reduced rate..",
+            cost: new Decimal(8e7),
+            tooltip: "log10() ",
+            effect() {
+                return player[this.layer].points.add(1).log10()
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },  
+        25: {
+            title: "The Lower Gap 5",
+            description: "Points Synergizes at godly good rate",
+            cost: new Decimal(1e9),
+            tooltip: "log10()",
+            effect() {
+                return player.points.add(1).log10()
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },  
+        26: {
+            title: "The Lower Gap 6",
+            description: "The Final Upgrade of this class.. x4 point gain",
+            cost: new Decimal(1e11),
+            
+        
+        },
+        27: {
+            title: "Extension Upgrade - The Lower Gap 7",
+            description: "+0.01 Skill Exponential",
+            cost: new Decimal(1e40),
+            unlocked() {
+                return hasUpgrade("gb", 21)
+            
+            },
+        },
+        31: {
+            title: "Negativity 1",
+            description: "both x4 point and skill",
+            cost: new Decimal(1e13),
+        },
+        32: {
+            title: "Negativity 2",
+            description: "+1M base gain",
+            cost: new Decimal(1e15),
+        },
+        33: {
+            title: "Negativity 3",
+            description: "Unlocks a new currency called Cash.. Goodluck perfoming your first reset!",
+            cost: new Decimal(1e15),
+        },
+     
+        
             
         
 
         },
         gainMult() {
             let mult = new Decimal(1)
-            if (hasUpgrade('p', 12)) mult = mult.times(upgradeEffect('p', 12))
-                if (hasUpgrade('b', 15)) mult = mult.times(7)
-
-
-
+            if (hasUpgrade('p', 17)) mult = mult.times(3)
+                if (hasUpgrade('p', 21)) mult = mult.times(5)
+                    if (hasUpgrade('gb', 22)) mult = mult.pow(1.01)
+                    if (hasUpgrade('gb', 11)) mult = mult.times(3)
+                    if (hasUpgrade('p', 31)) mult = mult.times(4)
+                        if (hasUpgrade('gb', 12)) mult = mult.add(100)
+                            if (hasUpgrade('gb', 23)) mult = mult.add(7.5e7)
+                            if (inChallenge("gb", 12)) mult = mult.times(0.01)
+                                if (hasChallenge("gb", 12)) mult = mult.times(8)
+                            if (hasUpgrade('gb', 17)) mult = mult.times((upgradeEffect('gb', 17)))
+                                if (hasUpgrade('gb', 24)) mult = mult.times((upgradeEffect('gb', 17)))
             return mult
 
         
         }, 
         gainExp() {
             let exp = new Decimal(1)
-            if (hasMilestone("c", 2)) exp = exp.times(1.1)
-               
+            if (hasUpgrade('p', 27)) exp = exp.add(0.01)
+              
+                if (hasUpgrade('gb', 26)) exp = exp.add(-0.05)
 
             return exp
 
@@ -89,575 +194,411 @@ addLayer("p", {
         }, 
 
     },
-
-    addLayer("b", {
-        startData() { return {                  // startData is a function that returns default data for a layer. 
-            unlocked: false,                     // You can add more variables here to add them to your layer.
-            points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
+    addLayer("gb", {
+        name: "Cash", // This is optional, only used in a few places, If absent it just uses the layer id.
+        symbol: "$", // This appears on the layer's node. Default is the id with the first letter capitalized
+        position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+        startData() { return {
+            unlocked: false,
+            points: new Decimal(0),
         }},
-
-        symbol: "β", // This appears on the layer's node. Default is the id with the first letter capitalized
-        color: "#ada49e",                       // The color for this layer, which affects many elements.
-        resource: "β",        // The name of this layer's main prestige resource.
-        row: 1,                                 // The row this layer is on (0 is the first row).
-        position: 0,
-        branches: ["s"],
-        
+        color: "#42ff55",
+        requires: new Decimal(1e22), // Can be a function that takes requirement increases into account
+        resource: "Cash", // Name of prestige currency
+        baseResource: "points", // Name of resource prestige is based on
+        baseAmount() {return player.points}, // Get the current amount of baseResource
+        type: "static",// normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+        exponent: 4, // Prestige currency exponent
     
-        baseResource: "α",             // The name of the resource your prestige gain is based on.
-        baseAmount() { return player.p.points},  // A function to return the current amount of baseResource.
-    
-        requires: new Decimal(500), 
-                   // The amount of the base needed to  gain 1 of the prestige currency.
-                                                // Also the amount required to unlock the layer.
-    
-        type: "normal",                         // Determines the formula used for calculating prestige currency.
-        exponent: 0.4,                          // "normal" prestige gain is (currency^exponent).
-    
-        gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
-            return new Decimal(1)  
+        gainMult() { // Calculate the multiplier for main currency from bonuses
+            mult = new Decimal(1)
+            return mult
         },
-        gainExp() {                             // Returns the exponent to your gain of the prestige resource.
+        gainExp() { // Calculate the exponent on main currency from bonuses
             return new Decimal(1)
         },
-        passiveGeneration() {if (hasMilestone("c", 3)) return 10; else return 0},
-        autoUpgrade() {if (hasMilestone('c', 3)) return true; else return false},
-
-        passiveGeneration() {if (hasMilestone("e", 6)) return 20; else return 20},
-        autoUpgrade() {if (hasMilestone('e', 6)) return true; else return false},
         
+       
+        row: 1, // Row the layer is in on the tree (0 is the first row)
+       
+        canBuyMax() { return hasUpgrade("gb", 23) },
     
-        layerShown() { return true },          // Returns a bool for if this layer's node should be visible in the tree.
+    
+        layerShown(){return true},
+        
+   
+        
+        milestones: {
+            0: {
+                requirementDescription: "3 Cash",
+                effectDescription: "+0.03 to point mult base",
+                done() { return player.gb.points.gte(3) },
+                unlocked() {
+                    return hasUpgrade("gb", 25)
+                
+                },
+            }
+            
+        },
     
         upgrades: {
-            14: {
-                title: "ePiC ",
-                description: "x7 point gain",
+            11: {
+                title: "Negativity 4 ",
+                description: "Triple your Point Gain and skill.",
                 cost: new Decimal(1),
+            },
+            12: {
+                title: "Negativity 5 ",
+                description: "Double Point Gain and add 100 to skill base gain.",
+                cost: new Decimal(1),
+                unlocked() {
+                    return hasUpgrade("gb", 11)
+                
+            },
+           
+            },
+            13: {
+                title: "Negativity 6 ",
+                description: "x10 Point Gain, Not Joking.",
+                cost: new Decimal(1),
+                unlocked() {
+                    return hasUpgrade("gb", 12)
+                
+            },
+         
+            },
+            14: {
+                title: "Negativity 7 ",
+                description: "Unlock a extension upgrade somewhere..",
+                cost: new Decimal(1),
+                unlocked() {
+                    return hasUpgrade("gb", 13)
+                
+                },
             },
             15: {
-                title: "ePiC (2) ",
-                description: "x7 α gain",
-                cost: new Decimal(1.000000000000000000001),
+                title: "Negativity 8 ",
+                description: "Unlock Challenges",
+                cost: new Decimal(1),
+                unlocked() {
+                    return hasUpgrade("gb", 14)
+                
+                },
             },
+            
             16: {
-                title: "sugoma ",
-                description: "β Gain is doubled",
+                title: "Negativity 9 ",
+                description: "You Have to reset twice to get this upgrade. x6 Point Gain",
                 cost: new Decimal(2),
+                unlocked() {
+                    return hasChallenge("gb", 11)
+                
             },
-            21: {
-                title: "CONFUSION? ",
-                description: "α is dead lol so we want a.... xpi^2 boost? or a ten, TEN! OR IT IS POINTS?",
-                cost: new Decimal(100),
+           
             },
-        },
-        gainMult() {
-            let mult = new Decimal(1)
-            if (hasUpgrade('b', 16)) mult = mult.times((2))
-                if (hasAchievement("a", 14)) mult = mult.times(10)
-                    if (inChallenge("d", 14)) return mult.times(0)
-
-
-            return mult
-
-        
-        }, 
-        gainExp() {
-            let exp = new Decimal(1)
-            if (hasMilestone("c", 2)) exp = exp.times(1.1)
-               
-
-
-            return exp
-
-        
-        }, 
-    },
-
-    addLayer("c", {
-        startData() { return {                  // startData is a function that returns default data for a layer. 
-            unlocked: false,
-                         // You can add more variables here to add them to your layer.
-            points: new Decimal(0),           // "points" is the internal name for the main resource of the layer.
-        }},
-
-        symbol: "γ", // This appears on the layer's node. Default is the id with the first letter capitalized
-        color: "#bfb597",                       // The color for this layer, which affects many elements.
-        resource: "γ",        // The name of this layer's main prestige resource.
-        row: 2,                                 // The row this layer is on (0 is the first row).
-        position: 0,
-        branches: ["s"],
-        
-    
-        baseResource: "β",             // The name of the resource your prestige gain is based on.
-        baseAmount() { return player.b.points},  // A function to return the current amount of baseResource.
-    
-        requires: new Decimal(10), 
-                   // The amount of the base needed to  gain 1 of the prestige currency.
-                                                // Also the amount required to unlock the layer.
-    
-        type: "normal",                         // Determines the formula used for calculating prestige currency.
-        exponent: 0.350,                          // "normal" prestige gain is (currency^exponent).
-    
-        gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
-            return new Decimal(1)  
-        },
-        gainExp() {                             // Returns the exponent to your gain of the prestige resource.
-            return new Decimal(1)
-        },
-        passiveGeneration() {if (hasMilestone("e", 6)) return 200; else return 0},
-        autoUpgrade() {if (hasMilestone('e', 6)) return true; else return false},
-        
-     
-    
-        layerShown() { return true },          // Returns a bool for if this layer's node should be visible in the tree.
-    
-        upgrades: {
             17: {
-                title: "Uh ",
-                description: "x50 and x5 point gain",
+                title: "Negativity 10 ",
+                description: "Cash Boosts all Previous Currencies, also unlocks Skill Issue",
                 cost: new Decimal(1),
+                tooltip: "^3, Caps at 10000 ",
+                effect() {
+                    return player.gb.points.add(1).pow(3).min(10000)
+                },
+                effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+                unlocked() {
+                    return hasUpgrade("gb", 16)
+                
+                },
+               
             },
+           
             18: {
-                title: "No! ",
-                description: "what does",
+                title: "Extension Upgrade - Negativity 11 ",
+                description: "NA",
+                cost: new Decimal(224),
+               
+    
+            },
+           
+            21: {
+                title: "Unimpossible 1",
+                description: "Unlock Another Extension",
                 cost: new Decimal(2),
+                unlocked() {
+                    return hasChallenge("gb", 12)
+                
+                },
             },
-            19: {
-                title: "Points Raiser ",
-                description: "^1.2 Points (real)",
-                cost: new Decimal(4),
-            },            
+           
             22: {
-                title: "lets exchange for the next layer ",
-                description: "x1.5 points",
-                cost: new Decimal(100),
-            },
-        },
-        milestones: {
-			0: {
-				requirementDescription: "3 γ",
-				done() { return player.c.best.gte(3) },
-				effectDescription: "automates the α layer",
-			},
-        
-        1: {
-            requirementDescription: "10 γ",
-            done() { return player.c.best.gte(10) },
-            effectDescription: "^1.05 Points",
-        },
-        2: {
-            requirementDescription: "30 γ",
-            done() { return player.c.best.gte(10) },
-            effectDescription: "^1.1 all previous currencies below gamma",
-        },
-        2: {
-            requirementDescription: "30 γ",
-            done() { return player.c.best.gte(30) },
-            effectDescription: "^1.1 all previous currencies below gamma",
-        },
-        3: {
-            requirementDescription: "3500 γ",
-            done() { return player.c.best.gte(3500) },
-            effectDescription: "automates β layer",
-        },
-        7: {
-            requirementDescription: "SOFTCAPPED HAHA",
-            done() { return player.c.best.gte(1.79e308) },
-            effectDescription: "",
-        },
-    
-    }, 
-
-        gainMult() {
-            let mult = new Decimal(1)
-           
+                title: "Unimpossible 2",
+                description: "Sweet. Power Skill Base Mult By 1.01",
+                cost: new Decimal(2),
+                unlocked() {
+                    return hasUpgrade("gb", 21)
                 
-
-
-
-            return mult
-
-        
-        }, 
-
-    },
-
-    addLayer("d", {
-        startData() { return {                  // startData is a function that returns default data for a layer. 
-            unlocked: false,                     // You can add more variables here to add them to your layer.
-            points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
-        }},
-
-        symbol: "δ", // This appears on the layer's node. Default is the id with the first letter capitalized
-        color: "#a7ba73",                       // The color for this layer, which affects many elements.
-        resource: "δ",        // The name of this layer's main prestige resource.
-        row: 3,                                 // The row this layer is on (0 is the first row).
-        position: 0,
-        branches: ["s"],
-        
-    
-        baseResource: "γ",             // The name of the resource your prestige gain is based on.
-        baseAmount() { return player.c.points},  // A function to return the current amount of baseResource.
-    
-        requires: new Decimal(10000), 
-                   // The amount of the base needed to  gain 1 of the prestige currency.
-                                                // Also the amount required to unlock the layer.
-    
-        type: "normal",                         // Determines the formula used for calculating prestige currency.
-        exponent: 0.340,                          // "normal" prestige gain is (currency^exponent).
-    
-        gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
-            return new Decimal(1)  
-        },
-        gainExp() {                             // Returns the exponent to your gain of the prestige resource.
-            return new Decimal(1)
-        },
-     
-    
-        layerShown() { return true },          // Returns a bool for if this layer's node should be visible in the tree.
-    
-        upgrades: {
+                },
+            },
+           
             23: {
-                title: "DELTA! ",
-                description: "x50 points",
-                cost: new Decimal(1),
-        
+                title: "Unimpossible 3",
+                description: "+75M Skill Base. And you can Buy Max Cash RN.",
+                cost: new Decimal(2),
+                unlocked() {
+                    return hasUpgrade("gb", 22)
+                
+                },
             },
+            
             24: {
-                title: "Root fake",
-                description: "Root point gain by 0.96, it could be bad?",
-                cost: new Decimal(1),
-        
-            },
-        },
-  
-        challenges: {
-			rows: 3,
-			cols: 6,
-			11: {
-				name: "Toy Store",
-				completionLimit: 1,
-				challengeDescription: "point gain is 2.5th rooted!",
-				goal() { return new Decimal(player.points.current = 1e3) },
-				currencyDisplayName: "points",
-				currencyInternalName: "points",
-				rewardDescription: "Points is raised to the power of 1.15!",
-				}, 
-                    13: {
-                        name: "Complication ",
-                        completionLimit: 1,
-                        challengeDescription: "Get /100 point gain",
-                        goal() { return new Decimal(player.points.current = 1e13) },
-                        currencyDisplayName: "points",
-                        currencyInternalName: "points",
-                        rewardDescription: "x10 δ",
-                        }, 
-
-                    }, 
-                    milestones:{
-                        4: {
-                            requirementDescription: "300 δ ",
-                            done() { return player.d.best.gte(300) },
-                            effectDescription: "^1.5 points",
-                        },
-                        12: {
-                            requirementDescription: "SOFTCAPPED HAHA^2",
-                            done() { return player.d.best.gte(1.79e308) },
-                            effectDescription: "",
-                        },
-        
-
-                    },
-                    
-    
-
-        gainMult() {
-            let mult = new Decimal(1)
-            if (hasChallenge('d', 13)) mult = mult.times(10)
+                title: "Unimpossible 4",
+                description: "Unlcoks a new Challenge",
+                cost: new Decimal(4),
+                unlocked() {
+                    return hasUpgrade("gb", 23)
                 
-
-
-
-            return mult
-
-        
-        }, 
-
-    },
-
-    addLayer("e", {
-        startData() { return {                  // startData is a function that returns default data for a layer. 
-            unlocked: false,     
-                 // You can add more variables here to add them to your layer.
-            points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
-        }},
-
-        symbol: "ε", // This appears on the layer's node. Default is the id with the first letter capitalized
-        color: "#3bdb2a",                       // The color for this layer, which affects many elements.
-        resource: "ε",        // The name of this layer's main prestige resource.
-        row: 4,                                 // The row this layer is on (0 is the first row).
-        position: 0,
-        branches: ["s"],
-        
-    
-        baseResource: "δ",             // The name of the resource your prestige gain is based on.
-        baseAmount() { return player.d.points},  // A function to return the current amount of baseResource.
-    
-        requires: new Decimal(500), 
-                   // The amount of the base needed to  gain 1 of the prestige currency.
-                                                // Also the amount required to unlock the layer.
-    
-        type: "normal",                         // Determines the formula used for calculating prestige currency.
-        exponent: 0.0095,                          // "normal" prestige gain is (currency^exponent).001
-    
-        gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
-            return new Decimal(1)  
-        },
-        gainExp() {                             // Returns the exponent to your gain of the prestige resource.
-            return new Decimal(1)
-        },
-     
-    
-        layerShown() { return true },    
-        unlocked() {return hasMilestone('d',5)},      // Returns a bool for if this layer's node should be visible in the tree.
-    
-        milestones: {
-            6: {
-                requirementDescription: "1 ε ",
-                done() { return player.e.best.gte(1) },
-                effectDescription: "^2 points, Instantly Automates Alpha,Beta. and Gamma also add 1e15 to the point base",
+                },
             },
-            8: {
-                requirementDescription: "2 ε ",
-                done() { return player.e.best.gte(2) },
-                effectDescription: "x1e100 points",
-            },
-            9: {
-                requirementDescription: "3 ε ",
-                done() { return player.e.best.gte(3) },
-                effectDescription: "x1e308 points",
-            },
-            10: {
-                requirementDescription: "4 ε ",
-                done() { return player.e.best.gte(4) },
-                effectDescription: "^1.06 points",
-            },
-            11: {
-                requirementDescription: "5 ε ",
-                done() { return player.e.best.gte(5) },
-                effectDescription: "You can do your meta",
-            },
-        },
-        
-
-    
-
-        gainMult() {
-            let mult = new Decimal(1)
-          
-                
-
-
-
-            return mult
-
-        
-        }, 
-
-    },
-    addLayer("me", {
-        startData() { return {                  // startData is a function that returns default data for a layer. 
-            unlocked: false,                     // You can add more variables here to add them to your layer.
-            points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
-        }},
-
-        symbol: "📂", // This appears on the layer's node. Default is the id with the first letter capitalized
-        color: "pink",                       // The color for this layer, which affects many elements.
-        resource: "Meta",        // The name of this layer's main prestige resource.
-        row: 4,                                 // The row this layer is on (0 is the first row).
-        position: 0,
-        branches: ["s"],
-        
-    
-        baseResource: "Epsilon, DOES NOT RESET ANYTHING BEFORE DELTA!",             // The name of the resource your prestige gain is based on.
-        baseAmount() { return player.e.points},  // A function to return the current amount of baseResource.
-    
-        requires: new Decimal(5), 
-                   // The amount of the base needed to  gain 1 of the prestige currency.
-                                                // Also the amount required to unlock the layer.
-    
-        type: "normal",                         // Determines the formula used for calculating prestige currency.
-        exponent: 0.01,                          // "normal" prestige gain is (currency^exponent).
-    
-        gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
-            return new Decimal(1)  
-        },
-        gainExp() {                             // Returns the exponent to your gain of the prestige resource.
-            return new Decimal(1)
-        },
-     
-    
-        layerShown() { return true },          // Returns a bool for if this layer's node should be visible in the tree.
-    
-        upgrades: {
+           
             25: {
-                title: "Multiplier ",
-                description: "^1.5 to point gain fr",
+                title: "Unimpossible 5",
+                description: "What we are wantin? Im Getting Bored. Unlock Cash Milestones",
+                cost: new Decimal(4),
+                unlocked() {
+                    return hasUpgrade("gb", 24)
+                
+                },
+            },
+            
+            26: {
+                title: "Unimpossible 6",
+                description: "/1e5 cash scaling but add 10 to cash base But decrease skill exponent by 0.05",
                 cost: new Decimal(1),
+                unlocked() {
+                    return hasUpgrade("gb", 25)
+                
+                },
+            },
+            27: {
+                title: "Unimpossible 7",
+                description: "Inflation!, x10 points",
+                cost: new Decimal(64),
+                unlocked() {
+                    return hasUpgrade("gb", 26)
+                
+                },
+            },
+           
+            31: {
+                title: "Friendliness 1",
+                description: "Cash Boosts points exponentially",
+                cost: new Decimal(67),
+                tooltip: "formula: log10 pow(0.1), Capped at 1.33 ",
+                effect() {
+                    return player[this.layer].points.add(2).log10().pow(0.1).min(1.33)
+                },
+                effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"^" }, // Add formatting to the effect
+                unlocked() {
+                    return hasUpgrade("gb", 27)
+                
+                },
+
+            },
+            32: {
+                title: "Friendliness 2",
+                description: "this upgrade is made on 3/15/2025, so 3.15x point boost",
+                cost: new Decimal(68),
+                unlocked() {
+                    return hasUpgrade("gb", 31)
+                
+                },
+            },
+           
+            33: {
+                title: "Friendliness 3",
+                description: "x1.69 point gain",
+                cost: new Decimal(69),
+                unlocked() {
+                    return hasUpgrade("gb", 32)
+                
+                },
+            },
+           
+            34: {
+                title: "Friendliness 4",
+                description: "Unlock Challenge 4",
+                cost: new Decimal(69),
+                unlocked() {
+                    return hasUpgrade("gb", 33)
+                
+                },
+            },
+           
+            35: {
+                title: "Friendliness 5",
+                description: "Sort of /100 cash exp",
+                cost: new Decimal(71),
+                unlocked() {
+                    return hasUpgrade("gb", 34)
+                
+                },
+            },
+          
+            36: {
+                title: "Friendliness 6",
+                description: "Unlocks Negativity Extension Upgrade. Also Skill is automated",
+                cost: new Decimal(222),
+                unlocked() {
+                    return hasUpgrade("gb", 35)
+                
+                },
+            },
+            41: {
+                title: "True Ease 1",
+                description: "x7 Points, boy",
+                cost: new Decimal(226),
+                unlocked() {
+                    return hasUpgrade("gb", 36)
+                
+                },
             },
           
         },
-        gainMult() {
-            let mult = new Decimal(1)
-        
+        challenges: {
+            11: {
+                name: "Pointless",
+                challengeDescription: "Logarithm Base 10 your point gain",
+                goalDescription: "25 Points",
+                rewardDescription: "x15 Points, And Unlock Negativity 9",
+                canComplete: function() {return player.points.gte("25")},
+                unlocked() { return (hasUpgrade("gb", 15)) },
+            },
+            12: {
+                name: "Skill Issue",
+                challengeDescription: "Skill gain will be divided by 100",
+                goalDescription: "1e21 Points",
+                rewardDescription: "x8 Skill and unlock Unimpossible 1",
+                canComplete: function() {return player.points.gte("1e21")},
+                unlocked() { return (hasUpgrade("gb", 17)) },
+            },
+            13: {
+                name: "Risky Challenge",
+                challengeDescription: "Point gain will be like /1e6",
+                goalDescription: "1e40 Points",
+                rewardDescription: "Cash Boosts Skill again at the same rate of Negativity 10",
+                canComplete: function() {return player.points.gte("1e40")},
+                unlocked() { return (hasUpgrade("gb", 24)) },
                 
+            },
+            14: {
+                name: "Mercury",
+                challengeDescription: "Point gain ^0.85",
+                goalDescription: "1e40 Points",
+                rewardDescription: "Point gain ^1.08",
+                canComplete: function() {return player.points.gte("1e40")},
+                unlocked() { return (hasUpgrade("gb", 34)) },
+                
+            },
+            15: {
+                name: "sUPERBOOST",
+                challengeDescription: "Point gain ^4",
+                goalDescription: "1e400 Points",
+                rewardDescription: "Point gain ^1.08",
+                canComplete: function() {return player.points.gte(new Decimal ("1e400"))},
+                unlocked() { return (hasUpgrade("gb", 34)) },
+                
+            },
+         
+        },
+            
+            gainMult() {
+                let mult = new Decimal(1)
+            
+    
+    
+                return mult
+    
+            
+            }, 
+            gainExp() {
+                let exp = new Decimal(1)
+                if (hasUpgrade('gb', 26)) exp = exp.times(1e5)
+                    if (hasUpgrade('gb', 26)) exp = exp.times(100)
+                   
+    
+                return exp
+    
+            
+            }, 
+    
+        },
+    
 
-            return mult
 
+
+
+  
+    
+                    
+                
+            
+    
         
-        }, 
-        gainExp() {
-            let exp = new Decimal(1)
-           
-               
 
 
-            return exp
-
-        
-        }, 
-    },
-
-    addLayer("f", {
-        startData() { return {                  // startData is a function that returns default data for a layer. 
-            unlocked: false,                     // You can add more variables here to add them to your layer.
-            points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
+    addLayer("a", {
+        startData() { return {
+            unlocked: true,
         }},
-
-        symbol: "ζ", // This appears on the layer's node. Default is the id with the first letter capitalized
-        color: "#0aff9d",                       // The color for this layer, which affects many elements.
-        resource: "ζ",        // The name of this layer's main prestige resource.
-        row: 5,                                 // The row this layer is on (0 is the first row).
-        position: 0,
-        branches: ["s"],
-        
-    
-        baseResource: "Meta",             // The name of the resource your prestige gain is based on.
-        baseAmount() { return player.me.points},  // A function to return the current amount of baseResource.
-    
-        requires: new Decimal(1e12), 
-                   // The amount of the base needed to  gain 1 of the prestige currency.
-                                                // Also the amount required to unlock the layer.
-    
-        type: "normal",                         // Determines the formula used for calculating prestige currency.
-        exponent: 0.01,                          // "normal" prestige gain is (currency^exponent).
-    
-        gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
-            return new Decimal(1)  
+        color: "yellow",
+        row: "side",
+        layerShown() {return true}, 
+        tooltip() { // Optional, tooltip displays when the layer is locked
+            return ("Achievements")
         },
-        gainExp() {                             // Returns the exponent to your gain of the prestige resource.
-            return new Decimal(1)
+        achievements: {
+            rows: 2,
+            cols: 10,
+            11: {
+                name: "Welcome!",
+                done() { return player.p.points.gt(0) },
+                tooltip: "Skill for first time, Reward: x2.5 points",
+            },
+            12: {
+                name: "Bag of points",
+                done() { return player.points.gt(1000) },
+                tooltip: "1000 Points, Reward: NOTHING",
+            },
+            13: {
+                name: "Millonaire",
+                done() { return player.points.gt(1e6) },
+                tooltip: "1M Points, Reward: x3 points",
+            },
+
+
+
         },
-     
-    
-        layerShown() { return true },          // Returns a bool for if this layer's node should be visible in the tree.
-    
-        upgrades: {
-           
-          
-        },
-        gainMult() {
-            let mult = new Decimal(1)
-        
-                
-
-            return mult
-
-        
-        }, 
-        gainExp() {
-            let exp = new Decimal(1)
-           
-               
-
-
-            return exp
-
-        
-        }, 
     },
-			
-    
 
-
-
- 
+        addLayer("sa", {
+            startData() { return {
+                unlocked: true,
+            }},
+            color: "#14004a",
+            row: "side",
+            layerShown() {return true}, 
+            tooltip() { // Optional, tooltip displays when the layer is locked
+                return ("Secret Achievements")
+            },
+            achievements: {
+                rows: 2,
+                cols: 10,
+                11: {
+                    name: "Abrupt...",
+                    done() { return player.p.points.gt(10) },
+                    tooltip: "Get 11 Bytes Reward: Points are getting stronger!!! gets again",
+                },
     
+            },
     
-    
-
-                
-                addLayer("a", {
-                    startData() { return {
-                        unlocked: true,
-                    }},
-                    color: "yellow",
-                    row: "side",
-                    layerShown() {return true}, 
-                    tooltip() { // Optional, tooltip displays when the layer is locked
-                        return ("Achievements")
-                    },
-                    achievements: {
-                        rows: 2,
-                        cols: 10,
-                        11: {
-                            name: "Do A A reset",
-                            done() { return player.p.points.gt(0) },
-                            tooltip: "X3 Points",
-                        },
-                        12: {
-                            name: "Point Hog",
-                            done() { return player.points.gte(25) },
-                            tooltip: "Reach 25 Points.",
-                            
-                        },
-                        13: {
-                            name: "it hurts!",
-                            done() { return player.p.upgrades.length>=3 },
-                            tooltip: "Purchase 3 A Upgrades and now get x1.5 point gain",
-                            
-                        },
-                        14: {
-                            name: "Beta Game",
-                            done() { return player.b.points.gt(0) },
-                            tooltip: "beta now - x5 points",
-                        },
-                        15: {
-                            name: "GAMMA RAYS!",
-                            done() { return player.c.points.gt(0) },
-                            tooltip: "gamma now - x20 points and x10 alpha",
-                        },       
-                        16: {
-                            name: "iT LoOkS lIkE A pYrAmId 🤣🤣😂",
-                            done() { return player.d.points.gt(0) },
-                            tooltip: "delta now - x100 points",
-                        },  
-                        17: {
-                            name: "Endgame...",
-                            done() { return player.f.points.gt(0) },
-                            tooltip: "You breaked it for now...",
-                        },    
-                        18: {
-                            name: "Infinity Points",
-                            done() { return player.points.gt(1.79e308) },
-                            tooltip: "No desc",
-                        },         
-                 
-
-                    },
-                
-                })
- 
-    )))))))
-    
+    }))))
