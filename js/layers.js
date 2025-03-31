@@ -159,7 +159,31 @@ addLayer("p", {
             description: "Unlocks a new currency called Cash.. Goodluck perfoming your first reset!",
             cost: new Decimal(1e15),
         },
-     
+        41: {
+            title: "Felix the ДА 1",
+            description: "^1.1 Point gain",
+            cost: new Decimal("1e315"),
+        },
+        42: {
+            title: "Felix the ДА 2",
+            description: "x1e10 Point gain",
+            cost: new Decimal("1e350"),
+        },
+        43: {
+            title: "Felix the ДА 3",
+            description: "x1e10 Skill",
+            cost: new Decimal("1e393"),
+        },
+        44: {
+            title: "Felix the ДА 4",
+            description: "Tetrate your point gain by 1.1 (NOT JOKING) resulting on a big boost of x1e300",
+            cost: new Decimal("1e407"),
+        },
+        45: {
+            title: "Felix the ДА 5",
+            description: "Pass to the next class",
+            cost: new Decimal("1e790"),
+        },
         
             
         
@@ -170,11 +194,18 @@ addLayer("p", {
             if (hasUpgrade('p', 17)) mult = mult.times(3)
                 if (hasUpgrade('p', 21)) mult = mult.times(5)
                     if (hasUpgrade('gb', 22)) mult = mult.pow(1.01)
-                    if (hasUpgrade('gb', 11)) mult = mult.times(3)
+                       
+                        if (hasUpgrade('gb', 11)) mult = mult.times(3)
+                        if (hasUpgrade('gb', 43)) mult = mult.times(5)
+                            if (hasUpgrade('p', 43)) mult = mult.times(1e10)
+                            if (hasUpgrade('gb', 44)) mult = mult.times(2)
+                                if (hasUpgrade('gb', 48)) mult = mult.times(4900)
                     if (hasUpgrade('p', 31)) mult = mult.times(4)
                         if (hasUpgrade('gb', 12)) mult = mult.add(100)
                             if (hasUpgrade('gb', 23)) mult = mult.add(7.5e7)
                             if (inChallenge("gb", 12)) mult = mult.times(0.01)
+                                if (hasUpgrade('mul', 11)) mult = mult.times(256)
+                                    if (hasUpgrade('mul', 11)) mult = mult.add(1e12)
                                 if (hasChallenge("gb", 12)) mult = mult.times(8)
                             if (hasUpgrade('gb', 17)) mult = mult.times((upgradeEffect('gb', 17)))
                                 if (hasUpgrade('gb', 24)) mult = mult.times((upgradeEffect('gb', 17)))
@@ -187,7 +218,9 @@ addLayer("p", {
             if (hasUpgrade('p', 27)) exp = exp.add(0.01)
               
                 if (hasUpgrade('gb', 26)) exp = exp.add(-0.05)
-
+                    if (hasUpgrade('gb', 57)) exp = exp.add(0.4)
+                        if (hasUpgrade('gb', 66)) exp = exp.times(2)
+                            if (hasUpgrade('mul', 11)) exp = exp.times(1.1)
             return exp
 
         
@@ -208,7 +241,7 @@ addLayer("p", {
         baseResource: "points", // Name of resource prestige is based on
         baseAmount() {return player.points}, // Get the current amount of baseResource
         type: "static",// normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-        exponent: 4, // Prestige currency exponent
+        exponent: 3.98, // Prestige currency exponent
     
         gainMult() { // Calculate the multiplier for main currency from bonuses
             mult = new Decimal(1)
@@ -222,10 +255,13 @@ addLayer("p", {
         row: 1, // Row the layer is in on the tree (0 is the first row)
        
         canBuyMax() { return hasUpgrade("gb", 23) },
-    
-    
-        layerShown(){return true},
+        canBuyMax() { return hasUpgrade("mul", 11) },
+        resetsNothing() {return hasUpgrade("gb", 57)},
         
+        layerShown(){return true},
+        autoPrestige() {
+            return hasUpgrade("gb", 57)
+        },
    
         
         milestones: {
@@ -462,7 +498,212 @@ addLayer("p", {
                 
                 },
             },
-          
+            42: {
+                title: "True Ease 2",
+                description: "You may have seen a small drought here. x6 Points for you, man",
+                cost: new Decimal(227),
+                unlocked() {
+                    return hasUpgrade("gb", 41)
+                
+                },
+            },
+            43: {
+                title: "True Ease 3",
+                description: "Simon says that you will gived with a x5 skill boost!",
+                cost: new Decimal(227),
+                unlocked() {
+                    return hasUpgrade("gb", 42)
+                
+                },
+            },
+            44: {
+                title: "(RISKGRADE) True Ease 4",
+                description: "Do Not Buy these upgrades atleast you want it... x0.5 points but x2 skill",
+                cost: new Decimal(227),
+                unlocked() {
+                    return hasUpgrade("gb", 43)
+                
+                },
+            },
+            45: {
+                title: "True Ease 5",
+                description: "x12 Points HAHAHA TRUE EASE 4 NOW ARE NOT A RISKGRADE LOL",
+                cost: new Decimal(227),
+                unlocked() {
+                    return hasUpgrade("gb", 43)
+                
+                },
+            },
+            46: {
+                title: "True Ease 6",
+                description: "Increase your Point ON A BLASTING AMOUNT OF x481 Point Gain",
+                cost: new Decimal(227),
+                unlocked() {
+                    return hasUpgrade("gb", 45)
+                
+                },
+            },
+            47: {
+                title: "True Ease 7",
+                description: "AWESOME BIG DEAL x183 Point gain",
+                cost: new Decimal(229),
+                unlocked() {
+                    return hasUpgrade("gb", 46)
+                
+                },
+            },
+            48: {
+                title: "True Ease 8",
+                description: "ANOTHER AWESOME BIG DEAL x4,900 Skill Gain",
+                cost: new Decimal(232),
+                unlocked() {
+                    return hasUpgrade("gb", 47)
+                
+                },
+            },
+            51: {
+                title: "A 1",
+                description: "BIG DEAL /100 Cash Cost Scaling",
+                cost: new Decimal(232),
+                unlocked() {
+                    return hasUpgrade("gb", 48)
+                
+                },
+            },
+            52: {
+                title: "A 2 ",
+                description: "LAST BIG DEAL Cash Divides Cash Cost Scaling",
+                cost: new Decimal(734),
+                tooltip: "log10()^4 + 3 Caps at 1e9/ Cash Cost Scaling",
+                effect() {
+                    return player.gb.points.log10().pow(4).add(3).min(1e9)
+                },
+                effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"/ Cash Cost Scaling" }, // Add formatting to the effect
+                unlocked() {
+                    return hasUpgrade("gb", 51)
+                
+                },
+               
+            },
+            53: {
+                title: "A 3",
+                description: "x6 Points Again",
+                cost: new Decimal(2500),
+                unlocked() {
+                    return hasUpgrade("gb", 52)
+                
+                },
+            },
+            54: {
+                title: "A 4 ",
+                description: "SUPER MEGA AFFORED Cash adds Skill add base",
+                cost: new Decimal(2520),
+                tooltip: "log10()^57 + 3 Caps at 1e303x",
+                effect() {
+                    return player.gb.points.log10().pow(57).add(3).min(1e303)
+                },
+                effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"+" }, // Add formatting to the effect
+                unlocked() {
+                    return hasUpgrade("gb", 53)
+                
+                },
+               
+            },
+            55: {
+                title: "A 5",
+                description: "This Upgrade Sucks, better ill pass a another ",
+                cost: new Decimal(2650),
+                unlocked() {
+                    return hasUpgrade("gb", 54)
+                
+                },
+            },
+            56: {
+                title: "A 6",
+                description: "Unlock Challenge 5",
+                cost: new Decimal(2790),
+                unlocked() {
+                    return hasUpgrade("gb", 55)
+                
+                },
+            },
+            57: {
+                title: "A 7",
+                description:  "Cash Now does Not Reset NOTHING, and generate passive cash and some of x1e20 Point Boost, and +^0.4 Skill Gain ",
+                cost: new Decimal(3200),
+                unlocked() {
+                    return hasChallenge("gb", 12)
+                
+                },
+            },
+            61: {
+                title: "Exist 1",
+                description:  "Congratulations!!! You were born, x9 points",
+                cost: new Decimal(4000),
+                unlocked() {
+                    return hasUpgrade("p", 45)
+                
+                },
+            },
+            62: {
+                title: "Exist 2",
+                description:  "/1e40 cash scaling",
+                cost: new Decimal(4500),
+                unlocked() {
+                    return hasUpgrade("gb", 61)
+                
+                },
+            },
+            63: {
+                title: "Exist 3",
+                description:  "/1e6 cash scaling, INFLATION!!!!!!!",
+                cost: new Decimal(1e14),
+                unlocked() {
+                    return hasUpgrade("gb", 62)
+                
+                },
+            },
+            64: {
+                title: "Exist 4",
+                description:  "^1.2 points",
+                cost: new Decimal(7e15),
+                unlocked() {
+                    return hasUpgrade("gb", 63)
+                
+                },
+            },
+            65: {
+                title: "Exist 5",
+                description:  "Skill Divides Cash Cost Scaling",
+                cost: new Decimal(8.37e15),
+                tooltip: "log10()^1.11 + 1 Caps at 1e10/",
+                effect() {
+                    return player.p.points.log10().pow(1.11).add(1).min(1e10)
+                },
+                effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"/ Cash Cost Scaling" }, // Add formatting to the effect
+                unlocked() {
+                    return hasUpgrade("gb", 64)
+                
+                },
+            },
+            66: {
+                title: "Exist 6",
+                description:  "^2 skill, i think that it...",
+                cost: new Decimal(6e16),
+                unlocked() {
+                    return hasUpgrade("gb", 63)
+                
+                },
+            },
+            71: {
+                title: "Reversed Pheripherality 1",
+                description:  "This is the first and final upgrade for this class.. HAVE FUN MULTIPLING RESET!",
+                cost: new Decimal(6e16),
+                unlocked() {
+                    return hasUpgrade("gb", 63)
+                
+                },
+            },
         },
         challenges: {
             11: {
@@ -500,20 +741,21 @@ addLayer("p", {
                 
             },
             15: {
-                name: "sUPERBOOST",
-                challengeDescription: "Point gain ^4",
-                goalDescription: "1e400 Points",
-                rewardDescription: "Point gain ^1.08",
-                canComplete: function() {return player.points.gte(new Decimal ("1e400"))},
-                unlocked() { return (hasUpgrade("gb", 34)) },
+                name: "HARD",
+                challengeDescription: "Point gain ^0.55",
+                goalDescription: "1e84 Points",
+                rewardDescription: "Point gain ^2",
+                canComplete: function() {return player.points.gte("1e84")},
+                unlocked() { return (hasUpgrade("gb", 51)) },
                 
             },
+            
          
         },
             
             gainMult() {
                 let mult = new Decimal(1)
-            
+          
     
     
                 return mult
@@ -524,7 +766,14 @@ addLayer("p", {
                 let exp = new Decimal(1)
                 if (hasUpgrade('gb', 26)) exp = exp.times(1e5)
                     if (hasUpgrade('gb', 26)) exp = exp.times(100)
-                   
+                        if (hasUpgrade('gb', 51)) exp = exp.times(100)
+                            if (hasUpgrade('gb', 62)) exp = exp.times(1e40)
+                                if (hasUpgrade('gb', 63)) exp = exp.times(1e6)
+                                    if (hasUpgrade('mul', 11)) exp = exp.times(1e12)
+                                        if (hasUpgrade('mul', 12)) exp = exp.times(1e8)
+                        
+                            if (hasUpgrade('gb', 52)) exp = exp.times((upgradeEffect('gb', 52)))
+                                if (hasUpgrade('gb', 65)) exp = exp.times((upgradeEffect('gb', 65)))
     
                 return exp
     
@@ -533,11 +782,82 @@ addLayer("p", {
     
         },
     
+       
+      
+    
 
 
-
-
-  
+        addLayer("mul", {
+            name: "Multiplier", // This is optional, only used in a few places, If absent it just uses the layer id.
+            symbol: "X", // This appears on the layer's node. Default is the id with the first letter capitalized
+            position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+            startData() { return {
+                unlocked: false,
+                points: new Decimal(0),
+            }},
+            color: "red",
+            requires: new Decimal(7.75e16), // Can be a function that takes requirement increases into account
+            resource: "x", // Name of prestige currency
+            baseResource: "$", // Name of resource prestige is based on
+            baseAmount() {return player.gb.points}, // Get the current amount of baseResource
+            type: "normal",// normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+            exponent: 0.04, // Prestige currency exponent
+        
+            gainMult() { // Calculate the multiplier for main currency from bonuses
+                mult = new Decimal(1)
+                return mult
+            },
+            gainExp() { // Calculate the exponent on main currency from bonuses
+                return new Decimal(1)
+            },
+            
+           
+            row: 2, // Row the layer is in on the tree (0 is the first row)
+           
+       
+            
+            layerShown(){return true},
+           
+       
+            
+            upgrades: {
+                11: {
+                    title: "Relax 1 ",
+                    description: "Welcome to Multiplier Reign!!, Starting with a x256 boosts in both skill and ^1.05 boost, and +1T to her base, also /1e12 Cash Cost Scaling!, also can now you buy max cash Have Fun!",
+                    cost: new Decimal(1),
+                },
+                12: {
+                    title: "Relax 2 ",
+                    description: "x1e10 Points, ^1.15 Points and /100,000,000 Cash Cost Scaling",
+                    cost: new Decimal(1),
+                    unlocked() {
+                        return hasUpgrade("mul", 11)
+                    
+                    },
+                },
+            },
+             
+            
+                
+                gainMult() {
+                    let mult = new Decimal(1)
+              
+        
+        
+                    return mult
+        
+                
+                }, 
+                gainExp() {
+                    let exp = new Decimal(1)
+                 
+                    return exp
+        
+                
+                }, 
+        
+            },
+        
     
                     
                 
@@ -574,8 +894,26 @@ addLayer("p", {
                 done() { return player.points.gt(1e6) },
                 tooltip: "1M Points, Reward: x3 points",
             },
-
-
+            14: {
+                name: "Casher",
+                done() { return player.gb.points.gt(0) },
+                tooltip: "Cashify Once",
+            },
+            15: {
+                name: "Multiplied Fun!",
+                done() { return player.mul.points.gt(0) },
+                tooltip: "Multi Reset Once",
+            },
+            16: {
+                name: "Infinity Points",
+                done() { return player.points.gt(1.79e308) },
+                tooltip: "",
+            },
+            16: {
+                name: "Inflated",
+                done() { return player.points.gt("1e1000") },
+                tooltip: "",
+            },
 
         },
     },
@@ -601,4 +939,4 @@ addLayer("p", {
     
             },
     
-    }))))
+    })))))

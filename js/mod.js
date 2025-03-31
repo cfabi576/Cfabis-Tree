@@ -4,9 +4,9 @@ let modInfo = {
 	pointsName: "points",
 	modFiles: ["layers.js", "tree.js"],
 
-	discordName: "",
-	discordLink: "",
-	initialStartPoints: new Decimal (0), // Used for hard resets and new players
+	discordName: "Servidor de RainSky Developers",
+	discordLink: "https://discord.gg/ASeRsJ4JNz",
+	initialStartPoints: new Decimal (1), // Used for hard resets and new players
 	offlineLimit: 10000000,  // In hours
 }
 
@@ -41,11 +41,15 @@ function getPointGen() {
 	if(!canGenPoints())
 		return new Decimal(0)
 
-	let gain = new Decimal(0.1)
+	let gain = new Decimal(1)
 	if (hasUpgrade('p', 11)) gain = gain.times(2)
 		if (hasUpgrade('p', 18)) gain = gain.times(3.5)
 		if (hasUpgrade('p', 12)) gain = gain.times(2)
 			if (hasUpgrade('p', 22)) gain = gain.pow(1.01)
+				if (hasUpgrade('p', 41)) gain = gain.pow(1.1)
+					if (hasUpgrade('p', 42)) gain = gain.times(1e10)
+						if (hasUpgrade('p', 44)) gain = gain.tetrate(1.1)
+							
 				if (hasUpgrade('p', 22)) gain = gain.times(1.03)
 					if (hasUpgrade('p', 26)) gain = gain.times(4)
 						if (hasUpgrade('p', 31)) gain = gain.times(4)
@@ -60,11 +64,26 @@ function getPointGen() {
 						if (hasUpgrade('p', 32)) gain = gain.add(1e6)
 						if (hasUpgrade('p', 18)) gain = gain.times(5)
 					if (hasUpgrade('p', 15)) gain = gain.pow(upgradeEffect('p', 15))
+						if (hasUpgrade('gb', 54)) gain = gain.times(upgradeEffect('gb', 54))
 						if (hasAchievement("sa", 11)) gain = gain.times(upgradeEffect('p', 13))
 							if (hasMilestone("gb", 0)) gain = gain.times(6)		
 								if (hasMilestone("gb", 1)) gain = gain.times(12)		
 								if (hasUpgrade('gb', 11)) gain = gain.times(3)
 								if	(hasUpgrade('gb', 41)) gain = gain.times(7)
+									if	(hasUpgrade('gb', 42)) gain = gain.times(6)
+										if	(hasUpgrade('gb', 44)) gain = gain.times(0.5)
+											if	(hasUpgrade('gb', 45)) gain = gain.times(12)
+												if	(hasUpgrade('gb', 46)) gain = gain.times(481)
+													if	(hasUpgrade('gb', 47)) gain = gain.times(183)
+														if	(hasUpgrade('gb', 53)) gain = gain.times(6)
+															if	(hasUpgrade('gb', 57)) gain = gain.times(1e20)
+																if	(hasUpgrade('gb', 61)) gain = gain.times(9)
+																	if	(hasUpgrade('mul', 11)) gain = gain.times(256)
+																		if	(hasUpgrade('mul', 11)) gain = gain.add(1e12)
+																			if	(hasUpgrade('mul', 11)) gain = gain.pow(1.1)
+																				if	(hasUpgrade('mul', 12)) gain = gain.pow(1.15)
+																				if	(hasUpgrade('mul', 12)) gain = gain.times(500000000)
+																	if	(hasUpgrade('gb', 64)) gain = gain.pow(1.2)
 									if (hasUpgrade('gb', 12)) gain = gain.times(2)
 										if (hasUpgrade('gb', 13)) gain = gain.times(10)
 											if (hasUpgrade('gb', 27)) gain = gain.times(10)
@@ -74,10 +93,12 @@ function getPointGen() {
 											if (inChallenge("gb", 11)) gain = gain.log10()
 
 												if (inChallenge("gb", 14)) gain = gain.pow(0.85)
+													if (inChallenge("gb", 15)) gain = gain.pow(0.55)
 												
 												if (inChallenge("gb", 13)) gain = gain.div(1e6)
 												if (hasChallenge("gb", 11)) gain = gain.times(1.5e1)	
 													if (hasChallenge("gb", 14)) gain = gain.pow(1.08)
+														if (hasChallenge("gb", 15)) gain = gain.pow(2)
 													if (hasUpgrade('gb', 17)) gain = gain.times(upgradeEffect('gb', 17))	
 														if (hasUpgrade('gb', 31)) gain = gain.pow(upgradeEffect('gb', 31))	
 															
