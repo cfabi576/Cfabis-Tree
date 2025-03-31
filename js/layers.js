@@ -255,7 +255,7 @@ addLayer("p", {
         row: 1, // Row the layer is in on the tree (0 is the first row)
        
         canBuyMax() { return hasUpgrade("gb", 23) },
-        canBuyMax() { return hasUpgrade("mul", 11) },
+      
         resetsNothing() {return hasUpgrade("gb", 57)},
         
         layerShown(){return true},
