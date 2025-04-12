@@ -26,7 +26,11 @@ addLayer("p", {
     hotkeys: [
         {key: "s", description: "Reset for Skill", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
- 
+    doReset(resettingLayer) {
+        let keep = [];
+        if (hasUpgrade('mul', 2) && resettingLayer=="gb") keep.push("upgrades")
+   
+    },
     passiveGeneration() {if (hasUpgrade("gb", 36)) return 1; else return 0},
     autoUpgrade() {if (hasUpgrade('gb', 36)) return true; else return false},
 
@@ -35,19 +39,19 @@ addLayer("p", {
     
     upgrades: {
         11: {
-            title: "The First Difficulty 1 ",
+            title: "#1: The First Difficulty 1 ",
             description: "Double your Point Gain.",
             cost: new Decimal(1),
             
         },
         12: {
-            title: "The First Difficulty 2",
+            title: "#2: The First Difficulty 2",
             description: "Double your Point Gain Again...",
             cost: new Decimal(2),
             
         },
         13: {
-            title: "The First Difficulty 3",
+            title: "#3: The First Difficulty 3",
             description: "Points are boosted by Skill",
             cost: new Decimal(10),
             tooltip: "formula: ^0.5 Skill, Capped at 1e33 ",
@@ -57,13 +61,13 @@ addLayer("p", {
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
         14: {
-            title: "The First Difficulty 4",
+            title: "#4: The First Difficulty 4",
             description: "+8 to point gen base",
             cost: new Decimal(16),
             
         },
         15: {
-            title: "The First Difficulty 5",
+            title: "#5: The First Difficulty 5",
             description: "Points are powered by Skill at a extremely reduced rate..",
             cost: new Decimal(30),
             tooltip: "too long ",
@@ -73,19 +77,19 @@ addLayer("p", {
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"^" }, // Add formatting to the effect
         },      
           16: {
-            title: "The First Difficulty 6",
+            title: "#6: The First Difficulty 6",
             description: "+100 to point gen base",
             cost: new Decimal(1000),
             
         },
         17: {
-            title: "The First Difficulty 7",
+            title: "#7: The First Difficulty 7",
             description: "x3 skill, how original",
             cost: new Decimal(2000),
             
         },
         18: {
-            title: "Extension Upgrade - The First Difficulty 8",
+            title: "#7-1: Extension Upgrade - The First Difficulty 8",
             description: "x3.5 Points",
             cost: new Decimal(1e21),
             unlocked() {
@@ -94,22 +98,22 @@ addLayer("p", {
             },
         },
         21: {
-            title: "The Lower Gap 1",
+            title: "#8: The Lower Gap 1",
             description: "x5 points and skill",
             cost: new Decimal(1e4),
         },
         22: {
-            title: "The Lower Gap 2",
+            title: "#9 :The Lower Gap 2",
             description: "Add a additive +0.01 to point exponent, Useless.. Right? cuz not because if you get 1e100 points it will be like a x10 point gain.",
             cost: new Decimal(5e5),
         },
         23: {
-            title: "The Lower Gap 3",
+            title: "#10: The Lower Gap 3",
             description: "Give some of your skill to get some x1.03 point gian",
             cost: new Decimal(1e6),
         },
         24: {
-            title: "The Lower Gap 4",
+            title: "#11: The Lower Gap 4",
             description: "Points are boosted by skill by a reduced rate..",
             cost: new Decimal(8e7),
             tooltip: "log10() ",
@@ -119,7 +123,7 @@ addLayer("p", {
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },  
         25: {
-            title: "The Lower Gap 5",
+            title: "#12: The Lower Gap 5",
             description: "Points Synergizes at godly good rate",
             cost: new Decimal(1e9),
             tooltip: "log10()",
@@ -129,14 +133,14 @@ addLayer("p", {
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },  
         26: {
-            title: "The Lower Gap 6",
+            title: "#13: The Lower Gap 6",
             description: "The Final Upgrade of this class.. x4 point gain",
             cost: new Decimal(1e11),
             
         
         },
         27: {
-            title: "Extension Upgrade - The Lower Gap 7",
+            title: "#13-1: Extension Upgrade - The Lower Gap 7",
             description: "+0.01 Skill Exponential",
             cost: new Decimal(1e40),
             unlocked() {
@@ -145,42 +149,42 @@ addLayer("p", {
             },
         },
         31: {
-            title: "Negativity 1",
+            title: "#14: Negativity 1",
             description: "both x4 point and skill",
             cost: new Decimal(1e13),
         },
         32: {
-            title: "Negativity 2",
+            title: "#15: Negativity 2",
             description: "+1M base gain",
             cost: new Decimal(1e15),
         },
         33: {
-            title: "Negativity 3",
+            title: "#16: Negativity 3",
             description: "Unlocks a new currency called Cash.. Goodluck perfoming your first reset!",
             cost: new Decimal(1e15),
         },
         41: {
-            title: "Felix the ДА 1",
+            title: "#52: Felix the ДА 1",
             description: "^1.1 Point gain",
             cost: new Decimal("1e315"),
         },
         42: {
-            title: "Felix the ДА 2",
+            title: "#53: Felix the ДА 2",
             description: "x1e10 Point gain",
             cost: new Decimal("1e350"),
         },
         43: {
-            title: "Felix the ДА 3",
+            title: "#54: Felix the ДА 3",
             description: "x1e10 Skill",
             cost: new Decimal("1e393"),
         },
         44: {
-            title: "Felix the ДА 4",
+            title: "#55: Felix the ДА 4",
             description: "Tetrate your point gain by 1.1 (NOT JOKING) resulting on a big boost of x1e300",
             cost: new Decimal("1e407"),
         },
         45: {
-            title: "Felix the ДА 5",
+            title: "#56: Felix the ДА 5",
             description: "Pass to the next class",
             cost: new Decimal("1e790"),
         },
@@ -261,7 +265,11 @@ addLayer("p", {
         autoPrestige() {
             return hasUpgrade("gb", 57)
         },
-   
+        doReset(resettingLayer) {
+            let keep = [];
+            if (hasUpgrade('mul', 21) && resettingLayer=="mul") keep.push("challenges")
+       
+        },
         
         milestones: {
             0: {
@@ -278,12 +286,12 @@ addLayer("p", {
     
         upgrades: {
             11: {
-                title: "Negativity 4 ",
+                title: "#17: Negativity 4 ",
                 description: "Triple your Point Gain and skill.",
                 cost: new Decimal(1),
             },
             12: {
-                title: "Negativity 5 ",
+                title: "#18: Negativity 5 ",
                 description: "Double Point Gain and add 100 to skill base gain.",
                 cost: new Decimal(1),
                 unlocked() {
@@ -293,7 +301,7 @@ addLayer("p", {
            
             },
             13: {
-                title: "Negativity 6 ",
+                title: "#19: Negativity 6 ",
                 description: "x10 Point Gain, Not Joking.",
                 cost: new Decimal(1),
                 unlocked() {
@@ -303,7 +311,7 @@ addLayer("p", {
          
             },
             14: {
-                title: "Negativity 7 ",
+                title: "#20: Negativity 7 ",
                 description: "Unlock a extension upgrade somewhere..",
                 cost: new Decimal(1),
                 unlocked() {
@@ -312,7 +320,7 @@ addLayer("p", {
                 },
             },
             15: {
-                title: "Negativity 8 ",
+                title: "#21: Negativity 8 ",
                 description: "Unlock Challenges",
                 cost: new Decimal(1),
                 unlocked() {
@@ -322,7 +330,7 @@ addLayer("p", {
             },
             
             16: {
-                title: "Negativity 9 ",
+                title: "#22: Negativity 9 ",
                 description: "You Have to reset twice to get this upgrade. x6 Point Gain",
                 cost: new Decimal(2),
                 unlocked() {
@@ -332,7 +340,7 @@ addLayer("p", {
            
             },
             17: {
-                title: "Negativity 10 ",
+                title: "#23: Negativity 10 ",
                 description: "Cash Boosts all Previous Currencies, also unlocks Skill Issue",
                 cost: new Decimal(1),
                 tooltip: "^3, Caps at 10000 ",
@@ -347,16 +355,10 @@ addLayer("p", {
                
             },
            
-            18: {
-                title: "Extension Upgrade - Negativity 11 ",
-                description: "NA",
-                cost: new Decimal(224),
-               
-    
-            },
+         
            
             21: {
-                title: "Unimpossible 1",
+                title: "#24: Unimpossible 1",
                 description: "Unlock Another Extension",
                 cost: new Decimal(2),
                 unlocked() {
@@ -366,7 +368,7 @@ addLayer("p", {
             },
            
             22: {
-                title: "Unimpossible 2",
+                title: "#25: Unimpossible 2",
                 description: "Sweet. Power Skill Base Mult By 1.01",
                 cost: new Decimal(2),
                 unlocked() {
@@ -376,7 +378,7 @@ addLayer("p", {
             },
            
             23: {
-                title: "Unimpossible 3",
+                title: "#26: Unimpossible 3",
                 description: "+75M Skill Base. And you can Buy Max Cash RN.",
                 cost: new Decimal(2),
                 unlocked() {
@@ -386,7 +388,7 @@ addLayer("p", {
             },
             
             24: {
-                title: "Unimpossible 4",
+                title: "#27: Unimpossible 4",
                 description: "Unlcoks a new Challenge",
                 cost: new Decimal(4),
                 unlocked() {
@@ -396,7 +398,7 @@ addLayer("p", {
             },
            
             25: {
-                title: "Unimpossible 5",
+                title: "#28: Unimpossible 5",
                 description: "What we are wantin? Im Getting Bored. Unlock Cash Milestones",
                 cost: new Decimal(4),
                 unlocked() {
@@ -406,7 +408,7 @@ addLayer("p", {
             },
             
             26: {
-                title: "Unimpossible 6",
+                title: "#29: Unimpossible 6",
                 description: "/1e5 cash scaling but add 10 to cash base But decrease skill exponent by 0.05",
                 cost: new Decimal(1),
                 unlocked() {
@@ -415,7 +417,7 @@ addLayer("p", {
                 },
             },
             27: {
-                title: "Unimpossible 7",
+                title: "#30: Unimpossible 7",
                 description: "Inflation!, x10 points",
                 cost: new Decimal(64),
                 unlocked() {
@@ -425,7 +427,7 @@ addLayer("p", {
             },
            
             31: {
-                title: "Friendliness 1",
+                title: "#31: Friendliness 1",
                 description: "Cash Boosts points exponentially",
                 cost: new Decimal(67),
                 tooltip: "formula: log10 pow(0.1), Capped at 1.33 ",
@@ -440,7 +442,7 @@ addLayer("p", {
 
             },
             32: {
-                title: "Friendliness 2",
+                title: "#32: Friendliness 2",
                 description: "this upgrade is made on 3/15/2025, so 3.15x point boost",
                 cost: new Decimal(68),
                 unlocked() {
@@ -450,7 +452,7 @@ addLayer("p", {
             },
            
             33: {
-                title: "Friendliness 3",
+                title: "#33: Friendliness 3",
                 description: "x1.69 point gain",
                 cost: new Decimal(69),
                 unlocked() {
@@ -460,7 +462,7 @@ addLayer("p", {
             },
            
             34: {
-                title: "Friendliness 4",
+                title: "#34: Friendliness 4",
                 description: "Unlock Challenge 4",
                 cost: new Decimal(69),
                 unlocked() {
@@ -470,7 +472,7 @@ addLayer("p", {
             },
            
             35: {
-                title: "Friendliness 5",
+                title: "#35: Friendliness 5",
                 description: "Sort of /100 cash exp",
                 cost: new Decimal(71),
                 unlocked() {
@@ -480,7 +482,7 @@ addLayer("p", {
             },
           
             36: {
-                title: "Friendliness 6",
+                title: "#36: Friendliness 6",
                 description: "Unlocks Negativity Extension Upgrade. Also Skill is automated",
                 cost: new Decimal(222),
                 unlocked() {
@@ -489,7 +491,7 @@ addLayer("p", {
                 },
             },
             41: {
-                title: "True Ease 1",
+                title: "#37: True Ease 1",
                 description: "x7 Points, boy",
                 cost: new Decimal(226),
                 unlocked() {
@@ -498,7 +500,7 @@ addLayer("p", {
                 },
             },
             42: {
-                title: "True Ease 2",
+                title: "#38: True Ease 2",
                 description: "You may have seen a small drought here. x6 Points for you, man",
                 cost: new Decimal(227),
                 unlocked() {
@@ -507,7 +509,7 @@ addLayer("p", {
                 },
             },
             43: {
-                title: "True Ease 3",
+                title: "#39: True Ease 3",
                 description: "Simon says that you will gived with a x5 skill boost!",
                 cost: new Decimal(227),
                 unlocked() {
@@ -516,7 +518,7 @@ addLayer("p", {
                 },
             },
             44: {
-                title: "(RISKGRADE) True Ease 4",
+                title: "#40: True Ease 4",
                 description: "Do Not Buy these upgrades atleast you want it... x0.5 points but x2 skill",
                 cost: new Decimal(227),
                 unlocked() {
@@ -525,7 +527,7 @@ addLayer("p", {
                 },
             },
             45: {
-                title: "True Ease 5",
+                title: "#41: True Ease 5",
                 description: "x12 Points HAHAHA TRUE EASE 4 NOW ARE NOT A RISKGRADE LOL",
                 cost: new Decimal(227),
                 unlocked() {
@@ -534,7 +536,7 @@ addLayer("p", {
                 },
             },
             46: {
-                title: "True Ease 6",
+                title: "#42: True Ease 6",
                 description: "Increase your Point ON A BLASTING AMOUNT OF x481 Point Gain",
                 cost: new Decimal(227),
                 unlocked() {
@@ -543,7 +545,7 @@ addLayer("p", {
                 },
             },
             47: {
-                title: "True Ease 7",
+                title: "#43: True Ease 7",
                 description: "AWESOME BIG DEAL x183 Point gain",
                 cost: new Decimal(229),
                 unlocked() {
@@ -552,7 +554,7 @@ addLayer("p", {
                 },
             },
             48: {
-                title: "True Ease 8",
+                title: "#44: True Ease 8",
                 description: "ANOTHER AWESOME BIG DEAL x4,900 Skill Gain",
                 cost: new Decimal(232),
                 unlocked() {
@@ -561,7 +563,7 @@ addLayer("p", {
                 },
             },
             51: {
-                title: "A 1",
+                title: "#45: A 1",
                 description: "BIG DEAL /100 Cash Cost Scaling",
                 cost: new Decimal(232),
                 unlocked() {
@@ -570,7 +572,7 @@ addLayer("p", {
                 },
             },
             52: {
-                title: "A 2 ",
+                title: "#46: A 2 ",
                 description: "LAST BIG DEAL Cash Divides Cash Cost Scaling",
                 cost: new Decimal(734),
                 tooltip: "log10()^4 + 3 Caps at 1e9/ Cash Cost Scaling",
@@ -585,7 +587,7 @@ addLayer("p", {
                
             },
             53: {
-                title: "A 3",
+                title: "#47: A 3",
                 description: "x6 Points Again",
                 cost: new Decimal(2500),
                 unlocked() {
@@ -594,7 +596,7 @@ addLayer("p", {
                 },
             },
             54: {
-                title: "A 4 ",
+                title: "#48: A 4 ",
                 description: "SUPER MEGA AFFORED Cash adds Skill add base",
                 cost: new Decimal(2520),
                 tooltip: "log10()^57 + 3 Caps at 1e303x",
@@ -609,7 +611,7 @@ addLayer("p", {
                
             },
             55: {
-                title: "A 5",
+                title: "#49: A 5",
                 description: "This Upgrade Sucks, better ill pass a another ",
                 cost: new Decimal(2650),
                 unlocked() {
@@ -618,7 +620,7 @@ addLayer("p", {
                 },
             },
             56: {
-                title: "A 6",
+                title: "#50: A 6",
                 description: "Unlock Challenge 5",
                 cost: new Decimal(2790),
                 unlocked() {
@@ -627,7 +629,7 @@ addLayer("p", {
                 },
             },
             57: {
-                title: "A 7",
+                title: "#51: A 7",
                 description:  "Cash Now does Not Reset NOTHING, and generate passive cash and some of x1e20 Point Boost, and +^0.4 Skill Gain ",
                 cost: new Decimal(3200),
                 unlocked() {
@@ -636,7 +638,7 @@ addLayer("p", {
                 },
             },
             61: {
-                title: "Exist 1",
+                title: "#57: Exist 1",
                 description:  "Congratulations!!! You were born, x9 points",
                 cost: new Decimal(4000),
                 unlocked() {
@@ -645,7 +647,7 @@ addLayer("p", {
                 },
             },
             62: {
-                title: "Exist 2",
+                title: "#58: Exist 2",
                 description:  "/1e40 cash scaling",
                 cost: new Decimal(4500),
                 unlocked() {
@@ -654,7 +656,7 @@ addLayer("p", {
                 },
             },
             63: {
-                title: "Exist 3",
+                title: "#59: Exist 3",
                 description:  "/1e6 cash scaling, INFLATION!!!!!!!",
                 cost: new Decimal(1e14),
                 unlocked() {
@@ -663,7 +665,7 @@ addLayer("p", {
                 },
             },
             64: {
-                title: "Exist 4",
+                title: "#60: Exist 4",
                 description:  "^1.2 points",
                 cost: new Decimal(7e15),
                 unlocked() {
@@ -672,7 +674,7 @@ addLayer("p", {
                 },
             },
             65: {
-                title: "Exist 5",
+                title: "#61: Exist 5",
                 description:  "Skill Divides Cash Cost Scaling",
                 cost: new Decimal(8.37e15),
                 tooltip: "log10()^1.11 + 1 Caps at 1e10/",
@@ -686,7 +688,7 @@ addLayer("p", {
                 },
             },
             66: {
-                title: "Exist 6",
+                title: "#62: Exist 6",
                 description:  "^2 skill, i think that it...",
                 cost: new Decimal(6e16),
                 unlocked() {
@@ -695,11 +697,20 @@ addLayer("p", {
                 },
             },
             71: {
-                title: "Reversed Pheripherality 1",
-                description:  "This is the first and final upgrade for this class.. HAVE FUN MULTIPLING RESET!",
+                title: "#63: Reversed Pheripherality 1",
+                description:  "This is the first and final upgrade for this difficulty.. HAVE FUN MULTIPLING RESET!",
                 cost: new Decimal(6e16),
                 unlocked() {
                     return hasUpgrade("gb", 63)
+                
+                },
+            },
+            81: {
+                title: "#76: Restful 1",
+                description:  "endgame",
+                cost: new Decimal(2.1e22),
+                unlocked() {
+                    return hasUpgrade("mul", 27)
                 
                 },
             },
@@ -770,6 +781,7 @@ addLayer("p", {
                                 if (hasUpgrade('gb', 63)) exp = exp.times(1e6)
                                     if (hasUpgrade('mul', 11)) exp = exp.times(1e12)
                                         if (hasUpgrade('mul', 12)) exp = exp.times(1e8)
+                                            if (hasUpgrade('mul', 13)) exp = exp.times(5)
                         
                             if (hasUpgrade('gb', 52)) exp = exp.times((upgradeEffect('gb', 52)))
                                 if (hasUpgrade('gb', 65)) exp = exp.times((upgradeEffect('gb', 65)))
@@ -814,26 +826,123 @@ addLayer("p", {
             row: 2, // Row the layer is in on the tree (0 is the first row)
            
        
-            
+
+   
             layerShown(){return true},
            
        
             
             upgrades: {
                 11: {
-                    title: "Relax 1 ",
-                    description: "Welcome to Multiplier Reign!!, Starting with a x256 boosts in both skill and ^1.05 boost, and +1T to her base, also /1e12 Cash Cost Scaling!, also can now you buy max cash Have Fun!",
+                    title: "[SUPER UPGRADE] #64: Relax 1 ",
+                    description: "Welcome to Multiplier Reign!!, Starting with a x256 boosts in both skill and ^1.05 boost, and +1T to her base, also /1e12 Cash Cost Scaling!",
                     cost: new Decimal(1),
                 },
                 12: {
-                    title: "Relax 2 ",
-                    description: "x1e10 Points, ^1.15 Points and /100,000,000 Cash Cost Scaling",
+                    title: "#65: Relax 2 ",
+                    description: "x1e10 Points, ^1.15 Points and /100,000,000 Cash Cost Scaling, and now skill upgrades will keep on cashify and multi resets!",
                     cost: new Decimal(1),
                     unlocked() {
                         return hasUpgrade("mul", 11)
                     
                     },
                 },
+                13: {
+                    title: "#66: Relax 3 ",
+                    description: "x25 points and /5 cash cost scaling.. isn't that cool?",
+                    cost: new Decimal(1),
+                    unlocked() {
+                        return hasUpgrade("mul", 12)
+                    
+                    },
+                },
+                14: {
+                    title: "#67: Relax 4 ",
+                    description: "Make points boosts itself starting of 1e1500, caps at 1e100x",
+                    cost: new Decimal(1),
+                    tooltip: "(points + 1)/1e1500 + square root 3 times",
+                    effect() {
+                        return player.points.add(1).div("1e1500").sqrt().sqrt().sqrt().max(1).min(1e100)
+                    },
+                    effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+                    unlocked() {
+                        return hasUpgrade("mul", 13)
+                    
+                    },
+                },
+                15: {
+                    title: "#68: Relax 5 ",
+                    description: "your relax session has ended, x100,000 points",
+                    cost: new Decimal(1),
+                    unlocked() {
+                        return hasUpgrade("mul", 14)
+                    
+                    },
+                },
+                21: {
+                    title: "#69: Skip 1 ",
+                    description: "SKIP! x1000 points, you will keep cash!",
+                    cost: new Decimal(1),
+                    unlocked() {
+                        return hasUpgrade("mul", 15)
+                    
+                    },
+                },
+                22: {
+                    title: "#70: Skip 2 ",
+                    description: "SKIP! x10000 points",
+                    cost: new Decimal(1),
+                    unlocked() {
+                        return hasUpgrade("mul", 21)
+                    
+                    },
+                },
+                23: {
+                    title: "#71: Skip 3 ",
+                    description: "SKIP! x100000 points",
+                    cost: new Decimal(1),
+                    unlocked() {
+                        return hasUpgrade("mul", 22)
+                    
+                    },
+                },
+                24: {
+                    title: "#72: Skip 4 ",
+                    description: "SKIP! x1000000 points",
+                    cost: new Decimal(1),
+                    unlocked() {
+                        return hasUpgrade("mul", 23)
+                    
+                    },
+                },
+                25: {
+                    title: "#73: Skip 5 ",
+                    description: "SKIP! x10000000 points",
+                    cost: new Decimal(1),
+                    unlocked() {
+                        return hasUpgrade("mul", 24)
+                    
+                    },
+                },
+                26: {
+                    title: "#74: Skip 6 ",
+                    description: "SKIP! x100000000 points",
+                    cost: new Decimal(1),
+                    unlocked() {
+                        return hasUpgrade("mul", 25)
+                    
+                    },
+                },
+                27: {
+                    title: "#75: Skip 7 ",
+                    description: "SKIP! x1000000000 points",
+                    cost: new Decimal(1),
+                    unlocked() {
+                        return hasUpgrade("mul", 26)
+                    
+                    },
+                },
+               
             },
              
             
@@ -908,7 +1017,7 @@ addLayer("p", {
                 done() { return player.points.gt(1.79e308) },
                 tooltip: "",
             },
-            16: {
+            17: {
                 name: "Inflated",
                 done() { return player.points.gt("1e1000") },
                 tooltip: "",

@@ -83,6 +83,16 @@ function getPointGen() {
 																			if	(hasUpgrade('mul', 11)) gain = gain.pow(1.1)
 																				if	(hasUpgrade('mul', 12)) gain = gain.pow(1.15)
 																				if	(hasUpgrade('mul', 12)) gain = gain.times(500000000)
+																					if	(hasUpgrade('mul', 13)) gain = gain.times(25)
+																						if	(hasUpgrade('mul', 15)) gain = gain.times(100000)
+																							if	(hasUpgrade('mul', 21)) gain = gain.times(1000)
+																								if	(hasUpgrade('mul', 22)) gain = gain.times(10000)
+																									if	(hasUpgrade('mul', 23)) gain = gain.times(100000)
+																										if	(hasUpgrade('mul', 24)) gain = gain.times(100000)
+																											if	(hasUpgrade('mul', 25)) gain = gain.times(1000000)
+																												if	(hasUpgrade('mul', 26)) gain = gain.times(10000000)
+																													if	(hasUpgrade('mul', 27)) gain = gain.times(100000000)
+																						if	(hasUpgrade('mul', 14)) gain = gain.times(upgradeEffect('mul', 14))
 																	if	(hasUpgrade('gb', 64)) gain = gain.pow(1.2)
 									if (hasUpgrade('gb', 12)) gain = gain.times(2)
 										if (hasUpgrade('gb', 13)) gain = gain.times(10)
@@ -116,7 +126,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.gb.points.gte(new Decimal("227"))
+	return (hasUpgrade('gb', 81))
 }
 
 
