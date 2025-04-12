@@ -186,7 +186,7 @@ addLayer("p", {
         45: {
             title: "#56: Felix the ДА 5",
             description: "Pass to the next class",
-            cost: new Decimal("1e790"),
+            cost: new Decimal("1e750"),
         },
         
             
