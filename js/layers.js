@@ -26,16 +26,21 @@ addLayer("p", {
     hotkeys: [
         {key: "s", description: "Reset for Skill", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    doReset(resettingLayer) {
-        let keep = [];
-        if (hasUpgrade('mul', 2) && resettingLayer=="gb") keep.push("upgrades")
    
-    },
     passiveGeneration() {if (hasUpgrade("gb", 36)) return 1; else return 0},
     autoUpgrade() {if (hasUpgrade('gb', 36)) return true; else return false},
-
+   
+   
+   
 
     layerShown(){return true},
+    doReset(resettingLayer) {
+        let keep = [];
+        if (hasUpgrade("mul", 12) && resettingLayer=="gb") keep.push("upgrades")
+            if (hasUpgrade("mul", 12) && resettingLayer=="mul") keep.push("upgrades")
+
+        if (layers[resettingLayer].row > this.row) layerDataReset("p", keep)
+    },
     
     upgrades: {
         11: {
@@ -262,14 +267,17 @@ addLayer("p", {
         resetsNothing() {return hasUpgrade("gb", 57)},
         
         layerShown(){return true},
+        doReset(resettingLayer) {
+            let keep = [];
+            if (hasUpgrade("mul", 21) && resettingLayer=="mul") keep.push("upgrades")
+                if (hasUpgrade("mul", 21) && resettingLayer=="mul") keep.push("challenges")
+    
+            if (layers[resettingLayer].row > this.row) layerDataReset("p", keep)
+        },
         autoPrestige() {
             return hasUpgrade("gb", 57)
         },
-        doReset(resettingLayer) {
-            let keep = [];
-            if (hasUpgrade('mul', 21) && resettingLayer=="mul") keep.push("challenges")
-       
-        },
+    
         
         milestones: {
             0: {
@@ -707,10 +715,64 @@ addLayer("p", {
             },
             81: {
                 title: "#76: Restful 1",
-                description:  "endgame",
+                description:  "Rest a while.. /1.5 cash scaling",
                 cost: new Decimal(2.1e22),
                 unlocked() {
                     return hasUpgrade("mul", 27)
+                
+                },
+            },
+            82: {
+                title: "#77: Restful 2",
+                description:  "Rest a while.. /3 cash scaling",
+                cost: new Decimal(2.35e22),
+                unlocked() {
+                    return hasUpgrade("gb", 81)
+                
+                },
+            },
+            83: {
+                title: "#78: Restful 3",
+                description:  "Rest a while.. /6 cash scaling",
+                cost: new Decimal(3.1e22),
+                unlocked() {
+                    return hasUpgrade("gb", 82)
+                
+                },
+            },
+            84: {
+                title: "#79: Restful 4",
+                description:  "Rest a while.. /15 cash scaling",
+                cost: new Decimal(4.9e22),
+                unlocked() {
+                    return hasUpgrade("gb", 83)
+                
+                },
+            },
+            85: {
+                title: "#80: Restful 5",
+                description:  "Rest a while.. /45 cash scaling",
+                cost: new Decimal(9.8e22),
+                unlocked() {
+                    return hasUpgrade("gb", 84)
+                
+                },
+            },
+            86: {
+                title: "#81: Restful 6",
+                description:  "Rest a while.. /120 cash scaling",
+                cost: new Decimal(2.6e23),
+                unlocked() {
+                    return hasUpgrade("gb", 85)
+                
+                },
+            },
+            87: {
+                title: "#82: Restful 7",
+                description:  "Rest a while.. /360 cash scaling",
+                cost: new Decimal(8.7e23),
+                unlocked() {
+                    return hasUpgrade("gb", 86)
                 
                 },
             },
@@ -779,6 +841,13 @@ addLayer("p", {
                         if (hasUpgrade('gb', 51)) exp = exp.times(100)
                             if (hasUpgrade('gb', 62)) exp = exp.times(1e40)
                                 if (hasUpgrade('gb', 63)) exp = exp.times(1e6)
+                                    if (hasUpgrade('gb', 81)) exp = exp.times(1.5)
+                                        if (hasUpgrade('gb', 82)) exp = exp.times(3)
+                                            if (hasUpgrade('gb', 83)) exp = exp.times(6)
+                                                if (hasUpgrade('gb', 84)) exp = exp.times(15)
+                                                    if (hasUpgrade('gb', 85)) exp = exp.times(45)
+                                                        if (hasUpgrade('gb', 86)) exp = exp.times(120)
+                                                            if (hasUpgrade('gb', 87)) exp = exp.times(300)
                                     if (hasUpgrade('mul', 11)) exp = exp.times(1e12)
                                         if (hasUpgrade('mul', 12)) exp = exp.times(1e8)
                                             if (hasUpgrade('mul', 13)) exp = exp.times(5)
@@ -811,8 +880,8 @@ addLayer("p", {
             resource: "x", // Name of prestige currency
             baseResource: "$", // Name of resource prestige is based on
             baseAmount() {return player.gb.points}, // Get the current amount of baseResource
-            type: "normal",// normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-            exponent: 0.04, // Prestige currency exponent
+            type: "static",// normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+            exponent: 3, // Prestige currency exponent
         
             gainMult() { // Calculate the multiplier for main currency from bonuses
                 mult = new Decimal(1)
