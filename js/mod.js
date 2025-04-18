@@ -65,6 +65,8 @@ function getPointGen() {
 						if (hasUpgrade('p', 18)) gain = gain.times(5)
 					if (hasUpgrade('p', 15)) gain = gain.pow(upgradeEffect('p', 15))
 						if (hasUpgrade('gb', 54)) gain = gain.times(upgradeEffect('gb', 54))
+							if (hasUpgrade('mul', 32)) gain = gain.times(upgradeEffect('mul', 32))
+								if (hasUpgrade('mul', 51)) gain = gain.times(upgradeEffect('mul', 51))
 						if (hasAchievement("sa", 11)) gain = gain.times(upgradeEffect('p', 13))
 							if (hasMilestone("gb", 0)) gain = gain.times(6)		
 								if (hasMilestone("gb", 1)) gain = gain.times(12)		
@@ -78,6 +80,8 @@ function getPointGen() {
 														if	(hasUpgrade('gb', 53)) gain = gain.times(6)
 															if	(hasUpgrade('gb', 57)) gain = gain.times(1e20)
 																if	(hasUpgrade('gb', 61)) gain = gain.times(9)
+																	if	(hasUpgrade('gb', 18)) gain = gain.pow(1.01)
+																		if	(hasUpgrade('gb', 28)) gain = gain.pow(1.01)
 																	if	(hasUpgrade('mul', 11)) gain = gain.times(256)
 																		if	(hasUpgrade('mul', 11)) gain = gain.add(1e12)
 																			if	(hasUpgrade('mul', 11)) gain = gain.pow(1.1)
@@ -92,6 +96,13 @@ function getPointGen() {
 																											if	(hasUpgrade('mul', 25)) gain = gain.times(1000000)
 																												if	(hasUpgrade('mul', 26)) gain = gain.times(10000000)
 																													if	(hasUpgrade('mul', 27)) gain = gain.times(100000000)
+																														if	(hasUpgrade('mul', 31)) gain = gain.times(8)
+																															if	(hasUpgrade('mul', 37)) gain = gain.times(6.25)
+																																if	(hasUpgrade('mul', 42)) gain = gain.times(90)
+																																	if	(hasUpgrade('mul', 45)) gain = gain.times(5)
+																																		if	(hasUpgrade('mul', 46)) gain = gain.times(50)
+																																			if	(hasUpgrade('mul', 53)) gain = gain.times(1e21)
+																																				if	(hasUpgrade('uf', 11)) gain = gain.pow(1.25)
 																						if	(hasUpgrade('mul', 14)) gain = gain.times(upgradeEffect('mul', 14))
 																	if	(hasUpgrade('gb', 64)) gain = gain.pow(1.2)
 									if (hasUpgrade('gb', 12)) gain = gain.times(2)
@@ -103,6 +114,8 @@ function getPointGen() {
 											if (inChallenge("gb", 11)) gain = gain.log10()
 
 												if (inChallenge("gb", 14)) gain = gain.pow(0.85)
+													if (inChallenge("gb", 21)) gain = gain.times(1.5)
+														if (inChallenge("gb", 22)) gain = gain.times(3)
 													if (inChallenge("gb", 15)) gain = gain.pow(0.55)
 												
 												if (inChallenge("gb", 13)) gain = gain.div(1e6)
@@ -126,7 +139,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return (hasUpgrade('gb', 81))
+	return (hasUpgrade('uf', 11))
 }
 
 

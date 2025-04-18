@@ -215,6 +215,9 @@ addLayer("p", {
                             if (inChallenge("gb", 12)) mult = mult.times(0.01)
                                 if (hasUpgrade('mul', 11)) mult = mult.times(256)
                                     if (hasUpgrade('mul', 11)) mult = mult.add(1e12)
+                                        if (hasUpgrade('uf', 11)) mult = mult.pow(1.25)
+                                        if (hasUpgrade('mul', 47)) mult = mult.times((upgradeEffect('mul', 47)))
+                                        if (inChallenge("gb", 22)) mult = mult.div(5)
                                 if (hasChallenge("gb", 12)) mult = mult.times(8)
                             if (hasUpgrade('gb', 17)) mult = mult.times((upgradeEffect('gb', 17)))
                                 if (hasUpgrade('gb', 24)) mult = mult.times((upgradeEffect('gb', 17)))
@@ -267,13 +270,7 @@ addLayer("p", {
         resetsNothing() {return hasUpgrade("gb", 57)},
         
         layerShown(){return true},
-        doReset(resettingLayer) {
-            let keep = [];
-            if (hasUpgrade("mul", 21) && resettingLayer=="mul") keep.push("upgrades")
-                if (hasUpgrade("mul", 21) && resettingLayer=="mul") keep.push("challenges")
-    
-            if (layers[resettingLayer].row > this.row) layerDataReset("p", keep)
-        },
+       
         autoPrestige() {
             return hasUpgrade("gb", 57)
         },
@@ -362,7 +359,16 @@ addLayer("p", {
                 },
                
             },
-           
+
+            18: {
+                title: "#23-2: Extension Upgrade Negativity 11 ",
+                description: "^1.01 point gain",
+                cost: new Decimal(2.685e25),
+                unlocked() {
+                    return hasUpgrade("mul", 41)
+                
+            },
+        },
          
            
             21: {
@@ -433,6 +439,15 @@ addLayer("p", {
                 
                 },
             },
+            28: {
+                title: "#30-2: Extension Upgrade - Unimpossible 8",
+                description: "^1.01 point gain",
+                cost: new Decimal(2.706e25),
+                unlocked() {
+                    return hasUpgrade("mul", 41)
+                
+            },
+        },
            
             31: {
                 title: "#31: Friendliness 1",
@@ -498,6 +513,9 @@ addLayer("p", {
                 
                 },
             },
+     
+      
+        
             41: {
                 title: "#37: True Ease 1",
                 description: "x7 Points, boy",
@@ -821,6 +839,27 @@ addLayer("p", {
                 unlocked() { return (hasUpgrade("gb", 51)) },
                 
             },
+            21: {
+                name: "Basic Generator",
+                challengeDescription: "x1.5 point gain",
+                canComplete: function() {return player.points.gte(1e300000000000000008)},
+                unlocked() { return (hasUpgrade("mul", 38)) },
+                
+            },
+            22: {
+                name: "Risk Generator",
+                challengeDescription: "x3 point gain but /5 skill gain",
+                canComplete: function() {return player.points.gte(1e300000000000000008)},
+                unlocked() { return (hasUpgrade("mul", 38)) },
+                
+            },
+            23: {
+                name: "Cash Printer",
+                challengeDescription: "/4 cash cost scaling",
+                canComplete: function() {return player.points.gte(1e300000000000000008)},
+                unlocked() { return (hasUpgrade("mul", 43)) },
+                
+            },
             
          
         },
@@ -851,10 +890,16 @@ addLayer("p", {
                                     if (hasUpgrade('mul', 11)) exp = exp.times(1e12)
                                         if (hasUpgrade('mul', 12)) exp = exp.times(1e8)
                                             if (hasUpgrade('mul', 13)) exp = exp.times(5)
-                        
+                                                if (hasUpgrade('mul', 31)) exp = exp.times(8)
+                                                    if (hasUpgrade('mul', 33)) exp = exp.times(9)
+                                                        if (hasUpgrade('mul', 35)) exp = exp.times(1.02)
+                                                            if (hasUpgrade('uf', 11)) exp = exp.pow(1.25)
                             if (hasUpgrade('gb', 52)) exp = exp.times((upgradeEffect('gb', 52)))
+                                if (hasUpgrade('mul', 36)) exp = exp.times((upgradeEffect('mul', 36)))
+                                    if (hasUpgrade('mul', 44)) exp = exp.times((upgradeEffect('mul', 44)))
+                                        if (hasUpgrade('mul', 52)) exp = exp.times((upgradeEffect('mul', 52)))
                                 if (hasUpgrade('gb', 65)) exp = exp.times((upgradeEffect('gb', 65)))
-    
+                                    if (inChallenge("gb", 23)) exp = exp.times(4)
                 return exp
     
             
@@ -881,7 +926,7 @@ addLayer("p", {
             baseResource: "$", // Name of resource prestige is based on
             baseAmount() {return player.gb.points}, // Get the current amount of baseResource
             type: "static",// normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-            exponent: 3, // Prestige currency exponent
+            exponent: 2.7, // Prestige currency exponent
         
             gainMult() { // Calculate the multiplier for main currency from bonuses
                 mult = new Decimal(1)
@@ -1011,9 +1056,199 @@ addLayer("p", {
                     
                     },
                 },
-               
+                31: {
+                    title: "#83: Ifinity 1 ",
+                    description: "Easy Peasy! x8 both points and /7 cash scaling",
+                    cost: new Decimal(4),
+                    unlocked() {
+                        return hasUpgrade("gb", 87)
+                    
+                    },
+                },
+                32: {
+                    title: "#84 : Ifinity 2 ",
+                    description: "points boost itself again",
+                    cost: new Decimal(4),
+                    tooltip: "log10",
+                    effect() {
+                        return player.points.add(1).log10().min(1e33)
+                    },
+                    effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+                    unlocked() {
+                        return hasUpgrade("mul", 31)
+                    
+                    },
+                },
+                33: {
+                    title: "#85: Ifinity 3 ",
+                    description: "/9 Cash Cost Scaling?",
+                    cost: new Decimal(4),
+                    unlocked() {
+                        return hasUpgrade("mul", 32)
+                    
+                    },
+                },
+                34: {
+                    title: "#86: Ifinity 4 ",
+                    description: "nothing...",
+                    cost: new Decimal(4),
+                    unlocked() {
+                        return hasUpgrade("mul", 33)
+                    
+                    },
+                },
+                35: {
+                    title: "#87: Ifinity 5 ",
+                    description: "Multiply your Current Cash by 50x... Dont get trolled... Because it dont works! neither 2x skill gain.. so like /1.02 cash scaling? ",
+                    cost: new Decimal(4),
+                    unlocked() {
+                        return hasUpgrade("mul", 34)
+                    
+                    },
+                  
+                },
+                36: {
+                    title: "#88: Ifinity 6 ",
+                    description: "Cash cost scaling reduces itself again?",
+                    cost: new Decimal(4),
+                    tooltip: "No Tooltip",
+                    effect() {
+                        return player.gb.points.add(1).log10()
+                    },
+                    effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"/" }, // Add formatting to the effect
+                    unlocked() {
+                        return hasUpgrade("mul", 35)
+                    
+                    },
+                  
+                },
+                37: {
+                    title: "#89: Ifinity 7 ",
+                    description: "We are close to the 10 final upgrades! x2.5 points gain!!.. well what about a ^2 to base meaning x6.25!",
+                    cost: new Decimal(4),
+                    unlocked() {
+                        return hasUpgrade("mul", 36)
+                    
+                    },
+                },
+                38: {
+                    title: "#90: [FEATURE] Ifinity 8 ",
+                    description: "Unlock Generators in the cash page AND THESE ARENT CHALLENGES",
+                    cost: new Decimal(4),
+                    unlocked() {
+                        return hasUpgrade("mul", 37)
+                    
+                    },
+                },
+                41: {
+                    title: "#91: Instant Win 1",
+                    description: "Unlock Extension Upgrades from Negativity to Unimpossible!",
+                    cost: new Decimal(4),
+                    unlocked() {
+                        return hasUpgrade("mul", 38)
+                    
+                    },
+                },
+                42: {
+                    title: "#92: Instant Win 2",
+                    description: "x90 point gain!",
+                    cost: new Decimal(4),
+                    unlocked() {
+                        return hasUpgrade("gb", 28)
+                    
+                    },
+                },
+                43: {
+                    title: "#93: Instant Win 3",
+                    description: "unlock a new type of generator!",
+                    cost: new Decimal(4),
+                    unlocked() {
+                        return hasUpgrade("mul", 42)
+                    
+                    },
+                },
+                44: {
+                    title: "#94: Instant Win 4",
+                    description: "Cash reduces his own scaling (Caps at 1e10/)",
+                    cost: new Decimal(4),
+                    effect() {
+                        return player.gb.points.add(1).log10().min(1e10)
+                    },
+                    effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"/" }, // Add formatting to the effect
+                    unlocked() {
+                        return hasUpgrade("mul", 43)
+                    
+                    },
+                },
+                45: {
+                    title: "#95: Instant Win 5",
+                    description: "can you enjoy your 5x point gain?",
+                    cost: new Decimal(4),
+                    unlocked() {
+                        return hasUpgrade("mul", 44)
+                    
+                    },
+                },
+                46: {
+                    title: "#96: Instant Win 6",
+                    description: "50x Faster Point Generation!",
+                    cost: new Decimal(4),
+                    unlocked() {
+                        return hasUpgrade("mul", 45)
+                    
+                    },
+                },
+                47: {
+                    title: "#97: Instant Win 7",
+                    description: "1.5x skill gain per every multiplier gained",
+                    cost: new Decimal(4),
+                    effect() {
+                        return player.mul.points.times(1.5).add(1)
+                    },
+                    effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+                    unlocked() {
+                        return hasUpgrade("mul", 46)
+                    
+                    },
+                },
+                51: {
+                    title: "#98: Instant Win 8",
+                    description: "10x point gain per every multiplier gained",
+                    cost: new Decimal(4),
+                    effect() {
+                        return player.mul.points.times(10).add(1)
+                    },
+                    effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+                    unlocked() {
+                        return hasUpgrade("mul", 47)
+                    
+                    },
+                },
+                52: {
+                    title: "#99: Instant Win 9",
+                    description: "/2 cash cost reducing per every multiplier gained",
+                    cost: new Decimal(4),
+                    effect() {
+                        return player.mul.points.times(2).add(1)
+                    },
+                    effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"/" }, // Add formatting to the effect
+                    unlocked() {
+                        return hasUpgrade("mul", 51)
+                    
+                    },
+                },
+                53: {
+                    title: "#100: Instant Win 10",
+                    description: "THE FINAL UPGRADE OF CLN.. x1 Sextillion Point gain",
+                    cost: new Decimal(4),
+                    unlocked() {
+                        return hasUpgrade("mul", 52)
+                    
+                    },
+                },
             },
-             
+            
+          
             
                 
                 gainMult() {
@@ -1035,8 +1270,55 @@ addLayer("p", {
         
             },
         
+        
+               
+              
+            addLayer("uf", {
+                name: "Unfailability", // This is optional, only used in a few places, If absent it just uses the layer id.
+                symbol: "UF", // This appears on the layer's node. Default is the id with the first letter capitalized
+                position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+                startData() { return {
+                    unlocked: false,
+                    points: new Decimal(0),
+                }},
+                color: "violet",
+                requires: new Decimal(1.1e26), // Can be a function that takes requirement increases into account
+                resource: "UF", // Name of prestige currency
+                baseResource: "$", // Name of resource prestige is based on
+                baseAmount() {return player.gb.points}, // Get the current amount of baseResource
+                type: "normal",// normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+                exponent: 0.25, // Prestige currency exponent
+            
+                gainMult() { // Calculate the multiplier for main currency from bonuses
+                    mult = new Decimal(1)
+                    return mult
+                },
+                gainExp() { // Calculate the exponent on main currency from bonuses
+                    return new Decimal(1)
+                },
+                
+               
+                row: 3, // Row the layer is in on the tree (0 is the first row)
+               
+           
     
-                    
+       
+                layerShown(){return true},
+               
+           
+                
+                upgrades: {
+                    11: {
+                        title: "[SUPER UPGRADE] #101: Millisecondless 1 ",
+                        description: "^1.25 to all! sadly cash and skill will keep",
+                        cost: new Decimal(1),
+                    },
+            
+                    // Look in the upgrades docs to see what goes here!
+                },
+            }),
+        
+        
                 
             
     
