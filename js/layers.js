@@ -27,7 +27,8 @@ addLayer("p", {
         {key: "s", description: "Reset for Skill", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
    
-    passiveGeneration() {if (hasUpgrade("gb", 36)) return 1; else return 0},
+    passiveGeneration() {if (hasUpgrade("gb", 36)) return 1; else if (hasUpgrade("uf", 12)) return 1; else return 0},
+
     autoUpgrade() {if (hasUpgrade('gb', 36)) return true; else return false},
    
    
@@ -270,7 +271,7 @@ addLayer("p", {
         resetsNothing() {return hasUpgrade("gb", 57)},
         
         layerShown(){return true},
-       
+        passiveGeneration() {if (hasUpgrade("uf", 13)) return 1000; else return 0},
         autoPrestige() {
             return hasUpgrade("gb", 57)
         },
@@ -839,6 +840,15 @@ addLayer("p", {
                 unlocked() { return (hasUpgrade("gb", 51)) },
                 
             },
+            16: {
+                name: "Tricky Challenge",
+                challengeDescription: "Point gain is rooted 2 times",
+                goalDescription: "1e350 Points",
+                rewardDescription: "x400 points",
+                canComplete: function() {return player.points.gte("1e350")},
+                unlocked() { return (hasUpgrade("uf", 23)) },
+                
+            },
             21: {
                 name: "Basic Generator",
                 challengeDescription: "x1.5 point gain",
@@ -893,7 +903,8 @@ addLayer("p", {
                                                 if (hasUpgrade('mul', 31)) exp = exp.times(8)
                                                     if (hasUpgrade('mul', 33)) exp = exp.times(9)
                                                         if (hasUpgrade('mul', 35)) exp = exp.times(1.02)
-                                                            if (hasUpgrade('uf', 11)) exp = exp.pow(1.25)
+                                                            if (hasUpgrade('uf', 11)) exp = exp.times(1.25)
+                                                                if (hasUpgrade('uf', 11)) exp = exp.times(10)
                             if (hasUpgrade('gb', 52)) exp = exp.times((upgradeEffect('gb', 52)))
                                 if (hasUpgrade('mul', 36)) exp = exp.times((upgradeEffect('mul', 36)))
                                     if (hasUpgrade('mul', 44)) exp = exp.times((upgradeEffect('mul', 44)))
@@ -939,8 +950,8 @@ addLayer("p", {
            
             row: 2, // Row the layer is in on the tree (0 is the first row)
            
-       
-
+           
+            resetsNothing() {return hasUpgrade("mul", 21)},
    
             layerShown(){return true},
            
@@ -1306,21 +1317,131 @@ addLayer("p", {
                 layerShown(){return true},
                
            
-                
+                clickables: {
+                    11: {
+                        title: "Hold to reset",
+                        display: "Hold to Reset (totally not stolen from Yaboi)",
+                        unlocked() {
+                            return hasUpgrade("uf", 21)
+                        
+                        },
+                        canClick() {
+                            return tmp[this.layer].canReset
+                        },
+                        onHold() {
+                            doReset(this.layer)
+                        },
+                        style() {return {"border-radius":"0px 33% 33% 0px","border":"4px solid","border-color":"rgba(0, 0, 0, .125)"}}
+                      
+
+                    }
+                },
+
                 upgrades: {
                     11: {
                         title: "[SUPER UPGRADE] #101: Millisecondless 1 ",
-                        description: "^1.25 to all! sadly cash and skill will keep",
+                        description: "^1.25 to all!, /1.25 CASH SCALING and no multiplier and uf and next stats",
                         cost: new Decimal(1),
                     },
-            
+                    12: {
+                        title: "#102: Millisecondless 2 ",
+                        description: "you will probably celebrating! so HAVE MORE FUN!, generate 100% OF YOUR SKILL, also -1000% meaning /10 Cash Cost Scaling? then factorize point gain by 5",
+                        cost: new Decimal(1),
+                        unlocked() {
+                            return hasUpgrade("uf", 11)
+                        
+                        },
+                    },
+                    13: {
+                        title: "#103: Millisecondless 3 ",
+                        description: "Generate Passive Cash (SLOW)",
+                        cost: new Decimal(1),
+                        unlocked() {
+                            return hasUpgrade("uf", 12)
+                        
+                        },
+                    },
+                    14: {
+                        title: "#104: Millisecondless 4 ",
+                        description: "Points are boosted by cash upgrades (upgrades^2)",
+                        cost: new Decimal(1),
+                        effect() {
+                            return player.gb.upgrades.length*player.gb.upgrades.length
+                        },
+                        effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+                        unlocked() {
+                            return hasUpgrade("uf", 13)
+                        
+                        },
+                    },
+                    15: {
+                        title: "#105: Millisecondless 5 ",
+                        description: "^1.1 point gain",
+                        cost: new Decimal(1),
+                        unlocked() {
+                            return hasUpgrade("uf", 14)
+                        
+                        },
+                    },
+                    16: {
+                        title: "#106: Millisecondless 6",
+                        description: "We are on Peak Millisecondless! Don't reset if you dumb because UP107-112 Will Probably Cost Other Stats! 5x point gain",
+                        cost: new Decimal(1),
+                        unlocked() {
+                            return hasUpgrade("uf", 15)
+                        
+                        },
+                    },
+                    21: {
+                        title: "[FEATURE] #107: Astronomical 1",
+                        description: "Unlock the Reset Button! (Kinda Useless)",
+                        cost: new Decimal(6.5e26),
+                        unlocked() {
+                            return hasUpgrade("uf", 16)
+                        
+                        },
+                        currencyInternalName: "points",
+			currencyDisplayName: "$",
+			currencyLayer: "gb",
+                    },
+                                                                                 
+                    23:{
+                        title: "#109: Astronomical 3",
+                        description: "I Tricked you!. Unlock the LAST challenge of cash..",
+                        cost: new Decimal(1),
+                        unlocked() {
+                            return hasUpgrade("uf", 22)
+                        
+                        },
+                    },
+                    24: {
+                        title: "#110: Astronomical 4",
+                        description: "I Think YOU SUFFERED a timewall. dont worry x10 point gian but if givme more then becomes x30 (not really)",
+                        cost: new Decimal("1e2961"),
+                        unlocked() {
+                            return hasUpgrade("uf", 23)
+                        
+                        },
+                        currencyInternalName: "points",
+			currencyDisplayName: "points",
+			
+                    },
+                    25:{
+                        title: "#111: Astronomical 5",
+                        description: "Cash Resets NOTHING after this ... wait. WHAT HAPPENED well.. well.. because the nan incident only it will reward 4x point gain. Thanks for your patiente",
+                        cost: new Decimal(1),
+                        unlocked() {
+                            return hasUpgrade("uf", 24)
+                        
+                        },
+                    },
                     // Look in the upgrades docs to see what goes here!
                 },
             }),
         
         
                 
-            
+          
     
         
 
