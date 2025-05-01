@@ -12,7 +12,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.01 Beta Testing",
+	num: "anish TM The Class Upper Negative Update Private Servers",
 	name: "Release",
 }
 
@@ -116,14 +116,21 @@ function getPointGen() {
 													if	(hasUpgrade('uf', 22)) gain = gain.pow(1.01)
 														if	(hasUpgrade('uf', 24)) gain = gain.times(10)
 															if	(hasUpgrade('uf', 25)) gain = gain.times(4)
+																if	(hasUpgrade('uf', 31)) gain = gain.times(2)
+																	if	(hasUpgrade('uf', 35)) gain = gain.times(2)
+																	if	(hasUpgrade('uf', 36)) gain = gain.times(1.5)
+																		if	(hasUpgrade('uf', 41)) gain = gain.times(3)
+																			if	(hasUpgrade('uf', 42)) gain = gain.pow(1.001)
+																				if	(hasUpgrade('uf', 44)) gain = gain.times(1.75)
 												if	(hasUpgrade('uf', 12)) gain = gain.times(120)
 													if	(hasUpgrade('uf', 16)) gain = gain.times(5)
+														if	(hasUpgrade('uf', 33)) gain = gain.times(6)
 													if	(hasUpgrade('uf', 14)) gain = gain.times(upgradeEffect('uf', 14))	
 												if (inChallenge("gb", 14)) gain = gain.pow(0.85)
 													if (inChallenge("gb", 21)) gain = gain.times(1.5)
 														if (inChallenge("gb", 22)) gain = gain.times(3)
 													if (inChallenge("gb", 15)) gain = gain.pow(0.55)
-												
+														gain = gain.times(buyableEffect('gb', 11))
 												if (inChallenge("gb", 13)) gain = gain.div(1e6)
 													if (inChallenge("gb", 16)) gain = gain.sqrt().sqrt()
 												if (hasChallenge("gb", 11)) gain = gain.times(1.5e1)	
@@ -132,6 +139,7 @@ function getPointGen() {
 														if (hasChallenge("gb", 15)) gain = gain.pow(2)
 													if (hasUpgrade('gb', 17)) gain = gain.times(upgradeEffect('gb', 17))	
 														if (hasUpgrade('gb', 31)) gain = gain.pow(upgradeEffect('gb', 31))	
+															gain = gain.times(buyableEffect('uf', 11))
 															
 	return gain
 }
