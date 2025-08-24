@@ -48,11 +48,15 @@ function getPointGen() {
 			if (hasUpgrade('pr', 11)) gain = gain.times(3)
 				if (hasUpgrade('pr', 11)) gain = gain.times(16)
 					if (hasUpgrade('p', 14)) gain = gain.times(5)
+						if (hasUpgrade('p', 14)) gain = gain.times(5)
+							if (hasUpgrade('p', 24)) gain = gain.times(100)
+								if (hasUpgrade('p', 25)) gain = gain.times(1000)
 							if (hasUpgrade('p', 15)) gain = gain.times(upgradeEffect('p', 15))
 										if (hasUpgrade('p', 16)) gain = gain.times(3)
 		gain = gain.times(buyableEffect('pr', 11))
-															
-	return gain
+									 if	(hasMilestone('r', 1)) gain = gain.times(player.r.points.pow(0.5))
+ if	(hasMilestone('r', 3)) gain = gain.times(player.r.points.pow(0.3))			
+	return gain			
 }
 
 
