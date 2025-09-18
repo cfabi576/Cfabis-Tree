@@ -51,11 +51,33 @@ function getPointGen() {
 						if (hasUpgrade('p', 14)) gain = gain.times(5)
 							if (hasUpgrade('p', 24)) gain = gain.times(100)
 								if (hasUpgrade('p', 25)) gain = gain.times(1000)
+									if (hasUpgrade('a', 11)) gain = gain.times(1000)
+										if (hasUpgrade('a', 13)) gain = gain.times(1500)
+											if (hasUpgrade('a', 14)) gain = gain.times(5000)
+												if (hasUpgrade('a', 15)) gain = gain.times(20000)
 							if (hasUpgrade('p', 15)) gain = gain.times(upgradeEffect('p', 15))
 										if (hasUpgrade('p', 16)) gain = gain.times(3)
 		gain = gain.times(buyableEffect('pr', 11))
+	if (hasUpgrade('a', 16)) gain = gain.times(1e6) // Cosmic Amplification
+    if (hasUpgrade('a', 17)) gain = gain.times(1e9)
+    if (hasUpgrade('a', 18)) gain = gain.times(1e12)
+    if (hasUpgrade('a', 19)) gain = gain.times(1e16)
 									 if	(hasMilestone('r', 1)) gain = gain.times(player.r.points.pow(0.5))
  if	(hasMilestone('r', 3)) gain = gain.times(player.r.points.pow(0.3))			
+gain = gain.pow(new Decimal(tmp.tr.effect.points))
+	 if (hasUpgrade("pe", 11)) mult = mult.times(100)
+			 if (hasUpgrade("dc", 11)) mult = mult.times(10)
+					 if (hasUpgrade("dc", 12)) mult = mult.times(100)
+							 if (hasUpgrade("dc", 13)) mult = mult.times(5)
+								
+    if (hasMilestone("mh", 0)) gain = gain.mul(1000000)
+    if (hasMilestone("mh", 4)) gain = gain.mul(1000000)
+    if (hasMilestone("mh", 9)) gain = gain.mul(1000000)
+    if (hasMilestone("mh", 14)) gain = gain.mul(40)
+    if (hasMilestone("mh", 19)) gain = gain.mul(80)
+    if (hasMilestone("mh", 24)) gain = gain.mul(160)
+    if (hasMilestone("mh", 29)) gain = gain.mul(320)
+		  
 	return gain			
 }
 

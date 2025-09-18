@@ -16,6 +16,7 @@ addLayer("p", {
  
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+   
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -29,11 +30,11 @@ addLayer("p", {
    
  
 
-    
-    passiveGeneration() {if (hasUpgrade("p", 11)) return 1},
+     passiveGeneration() {if (hasMilestone("mh", 0)) return 1; else if (hasMilestone("p", 11)) return 1; else return 0},
+ 
+ 
 
-
-   
+       autoUpgrade() {if (hasMilestone("mh", 0)) return true; else return false},
 
     layerShown(){return true},
    
@@ -157,10 +158,16 @@ addLayer("p", {
  if (hasUpgrade('p', 23)) mult = mult.times(50)         // Economic Boom
     if (hasUpgrade('p', 25)) mult = mult.times(500)        // Mega Factories
     if (hasUpgrade('p', 27)) mult = mult.times(10000)
+         if (hasUpgrade('a', 11)) mult = mult.times(10000)
          if	(hasUpgrade('p', 12)) mult = mult.times(2)
              if	(hasUpgrade('pr', 11)) mult = mult.times(5)
                 if	(hasUpgrade('g', 12)) mult = mult.times(4)
                    if	(hasUpgrade('pr', 13)) mult = mult.pow(1.1)
+                     if	(hasUpgrade('a', 11)) mult = mult.pow(1.1)
+                               if	(hasUpgrade('a', 12)) mult = mult.pow(1.25)
+                                 if	(hasUpgrade('a', 12)) mult = mult.pow(1.5)
+                                     if	(hasUpgrade('a', 12)) mult = mult.pow(2)
+                                         if	(hasUpgrade('a', 12)) mult = mult.pow(3)
             if	(hasUpgrade('p', 13)) mult = mult.times(1.414)
   if	(hasUpgrade('p', 17)) mult = mult.times(4)
     if	(hasUpgrade('p', 21)) mult = mult.times(10)
@@ -168,6 +175,30 @@ addLayer("p", {
                 
 	mult = mult.times(buyableEffect('pr', 12))
 	if	(hasUpgrade('g', 11)) mult = mult.times(upgradeEffect('g', 11))
+         if (hasUpgrade('a', 16)) mult = mult.pow(5) // ^5 aplicado como mult aquí
+    if (hasUpgrade('a', 17)) mult = mult.pow(8)
+    if (hasUpgrade('a', 18)) mult = mult.pow(12)
+    if (hasUpgrade('a', 19)) mult = mult.pow(20)
+    if (hasUpgrade('a', 20)) gain = gain.pow(upgradeEffect('a', 20))
+        if (player.p.points.gte("1e2000")) mult = mult.pow(0.5).mul("1e1000")
+if (player.p.points.gte("1e10000")) mult = mult.pow(0.33).mul("1e3000")
+    if (player.p.points.gte("1e100000")) mult = mult.pow(0.25).mul("1e10000")
+         mult = mult.pow(new Decimal(tmp.tr.effect.money))
+        
+    if (hasUpgrade("pe", 14)) mult = mult.times(250)
+        if (hasUpgrade("dc", 21)) mult = mult.pow(1.2)
+              if (hasUpgrade("dc", 22)) mult = mult.pow(1.3)
+                  if (hasUpgrade("dc", 23)) mult = mult.pow(1.5)
+    if (hasUpgrade("pe", 21)) mult = mult.times(1000)
+    if (hasUpgrade("pe", 26)) mult = mult.times(50000)
+          if (hasMilestone("mh", 0)) mult = mult.pow(500)
+    if (hasMilestone("mh", 1)) mult = mult.pow(600)
+    if (hasMilestone("mh", 6)) mult = mult.pow(700)
+    if (hasMilestone("mh", 11)) mult = mult.pow(800)
+    if (hasMilestone("mh", 16)) mult = mult.pow(1000)
+    if (hasMilestone("mh", 21)) mult = mult.pow(1500)
+    if (hasMilestone("mh", 26)) mult = mult.pow(2000)
+
            return mult
 
         
@@ -200,6 +231,17 @@ addLayer("p", {
  layerShown(){return (hasUpgrade("pr", 12))},
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        // Trial 11 reward: ^1.1 Money gain
+if (hasChallenge("t", 11) && layer == "p") gain = gain.pow(1.1)
+
+// Trial 12 reward: ×2 Research
+if (hasChallenge("t", 12) && layer == "r") mult = mult.times(2)
+
+// Trial 13 reward: ×1.5 Gems
+if (hasChallenge("t", 13) && layer == "g") mult = mult.times(1.5)
+
+// Trial 14 reward: ×10 Ascension
+if (hasChallenge("t", 14) && layer == "a") mult = mult.times(10)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -213,8 +255,8 @@ addLayer("p", {
     resetsNothing() {return true},
  
 
-         passiveGeneration() {if (hasMilestone('r', 2)) return 0.01},
-    
+       passiveGeneration() {if (hasMilestone("mh", 0)) return 1; else if (hasMilestone("r", 2)) return 0.01; else return 0},
+    autoUpgrade() {if (hasMilestone("mh", 0)) return true; else return false},
    
 
 
@@ -313,39 +355,24 @@ addLayer("p", {
     unlocked() { return hasUpgrade("g", 22) },
 },
 
-24: {
-    title: "Gem-Money Feedback",
-    description: "Money boosts Gems",
-    cost: new Decimal(1e20),
-    unlocked() { return hasUpgrade("g", 23) },
-    effect() {
-        return player.p.points.add(1).log10().pow(0.2).add(1)
-    },
-    effectDisplay() { return format(upgradeEffect("g", 24))+"x" },
-},
-
-25: {
-    title: "Research Discounts",
-    description: "Research requirements are divided by log10(Gems)",
-    cost: new Decimal(1e22),
-    unlocked() { return hasUpgrade("g", 24) },
-    effect() {
-        return player.g.points.add(10).log10().add(1)
-    },
-    effectDisplay() { return "/"+format(upgradeEffect("g", 25)) },
-},
-
-26: {
-    title: "Ultimate Gem Synergy",
-    description: "Double all previous Gem effects",
-    cost: new Decimal(1e24),
-    unlocked() { return hasUpgrade("g", 25) },
-},
-
 
         },
         gainMult() {
             let mult = new Decimal(1)
+if (hasUpgrade('a', 11)) mult = mult.times(50)
+    if (hasUpgrade('a', 12)) mult = mult.times(60)
+        if (hasUpgrade('a', 13)) mult = mult.times(90)
+if (hasUpgrade('a', 14)) mult = mult.times(150)
+    if (hasUpgrade('a', 15)) mult = mult.times(500)
+  if (hasUpgrade('a', 16)) mult = mult.times(1e4)
+    if (hasUpgrade('a', 17)) mult = mult.times(1e5)
+    if (hasUpgrade('a', 18)) mult = mult.times(1e7)
+    if (hasUpgrade('a', 19)) mult = mult.times(1e10)
+if (inChallenge("t", 13)) mult = mult.times(0.1)
+
+    if (hasUpgrade("pe", 15)) mult = mult.times(5)
+    if (hasUpgrade("pe", 24)) mult = mult.times(20)
+    if (hasUpgrade("pe", 27)) mult = mult.times(100)
 
 
            return mult
@@ -389,14 +416,23 @@ addLayer("p", {
         
        
         row: 1, // Row the layer is in on the tree (0 is the first row)
-       
+       passiveGeneration() {if (hasMilestone("mh", 0)) return 1; else if (hasMilestone("r", 0)) return 0.01; else return 0},
        
         layerShown(){return true},
-       
-         passiveGeneration() {if (hasMilestone('r', 0)) return 0.01},
-
+        
+         
+autoUpgrade() {if (hasMilestone("mh", 0)) return true; else return false},
    automate() {
     if (hasMilestone("r", 4)) {
+        for (let id in layers.pr.buyables) {
+            setBuyableAmount("pr", id, tmp.pr.buyables[id].canAfford ? 
+                player.pr.buyables[id].plus(tmp.pr.buyables[id].bulk) : player.pr.buyables[id])
+        }
+    }
+},
+
+automate() {
+    if (hasMilestone("mh", 0)) {
         for (let id in layers.pr.buyables) {
             setBuyableAmount("pr", id, tmp.pr.buyables[id].canAfford ? 
                 player.pr.buyables[id].plus(tmp.pr.buyables[id].bulk) : player.pr.buyables[id])
@@ -406,6 +442,19 @@ addLayer("p", {
       gainMult() {
             let mult = new Decimal(1)
 if (hasUpgrade('g', 14)) mult = mult.times(upgradeEffect('g', 14))
+    if (hasUpgrade('a', 11)) mult = mult.times(20)
+if (inChallenge("t", 11)) mult = new Decimal(1)
+mult = mult.pow(new Decimal(tmp.tr.effect.prestige))
+ if (hasUpgrade("pe", 13)) mult = mult.times(10)
+    if (hasUpgrade("pe", 22)) mult = mult.times(15)
+    if (hasUpgrade("pe", 26)) mult = mult.times(25)
+         if (hasMilestone("mh", 0)) mult = mult.pow(6)
+    if (hasMilestone("mh", 2)) mult = mult.mul(2)
+    if (hasMilestone("mh", 7)) mult = mult.mul(3)
+    if (hasMilestone("mh", 12)) mult = mult.mul(4)
+    if (hasMilestone("mh", 17)) mult = mult.mul(5)
+    if (hasMilestone("mh", 22)) mult = mult.mul(6)
+    if (hasMilestone("mh", 27)) mult = mult.mul(7)
 
            return mult
 
@@ -480,6 +529,7 @@ if (hasUpgrade('g', 14)) mult = mult.times(upgradeEffect('g', 14))
                         let cost = new Decimal (1)
                         player.pr.points = player.pr.points.sub(this.cost().mul(cost))
                         setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+                         if (inChallenge("t", 14)) cost = cost.pow(2) // Trial of Infinity: heavy cost scaling
                     },
                     effect(x) {
                         let base1 = new Decimal(1.8)
@@ -488,6 +538,7 @@ if (hasUpgrade('g', 14)) mult = mult.times(upgradeEffect('g', 14))
                         let eff = base1.pow(Decimal.pow(base2, expo))
                           if (hasMilestone("r", 5)) eff = eff.times(10)
                                          if (hasUpgrade("g", 15)) eff = eff.times(upgradeEffect("g", 15))
+                                            if (hasUpgrade("a", 11)) eff = eff.times(5)
                         return eff
                     },
                 },
@@ -518,6 +569,7 @@ if (hasUpgrade('g', 14)) mult = mult.times(upgradeEffect('g', 14))
                         let cost = new Decimal (1)
                         player.pr.points = player.pr.points.sub(this.cost().mul(cost))
                         setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+                            if (inChallenge("t", 14)) cost = cost.pow(2) // Trial of Infinity: heavy cost scaling
                     },
                     effect(x) {
                         let base1 = new Decimal(1.5)
@@ -553,6 +605,8 @@ addLayer("r", {
  layerShown(){return (hasUpgrade("pr", 14))},
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if (inChallenge("t", 12)) mult = new Decimal(0)
+
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -570,7 +624,8 @@ addLayer("r", {
         
         return eff;
     },
-
+  passiveGeneration() {if (hasUpgrade("a", 16)) return new Decimal(1000)
+},
 
    
 milestones: {
@@ -672,10 +727,13 @@ addLayer("a", {
         baseResource: "points", // Name of resource prestige is based on
         baseAmount() {return player.p.points}, // Get the current amount of baseResource
         type: "normal",// normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-        exponent: 0.5, // Prestige currency exponent
+        exponent: 0.0005, // Prestige currency exponent
      row: 2,
         gainMult() { // Calculate the multiplier for main currency from bonuses
             mult = new Decimal(1)
+            
+    if (hasUpgrade("pe", 17)) mult = mult.times(2)
+    if (hasUpgrade("pe", 25)) mult = mult.times(3)
             return mult
         },
         gainExp() { // Calculate the exponent on main currency from bonuses
@@ -695,38 +753,587 @@ addLayer("a", {
         upgrades: {
            11: {
     title: "Ascension Surge",
-    description: "^1.1 Money, x100 Points, x20 Prestige, x50 Gems, /10 Research cost, x5 Prestige Buyables",
+    description: "^1.1 Money, x100 Points, x20 Prestige, x50 Gems, x5 Prestige Buyables",
     cost: new Decimal(1) // ajusta según quieras
-}
+},
+  12: {
+    title: "The Golden Era",
+    description: "^1.25 Money, x500 Points, x60 Gems",
+    cost: new Decimal(1),
+    unlocked() { return hasUpgrade("a", 11) },
+},
+13: {
+    title: "Power Unleashed",
+    description: "^1.5 Money, x1500 Points, x90 Gems",
+    cost: new Decimal(1),
+    unlocked() { return hasUpgrade("a", 12) },
+},
+14: {
+    title: "Beyond Limits",
+    description: "^2 Money, x5000 Points, x150 Gems",
+    cost: new Decimal(1),
+    unlocked() { return hasUpgrade("a", 13) },
+},
+15: {
+    title: "Infinity Wealth",
+    description: "^3 Money, x20000 Points, x500 Gems",
+    cost: new Decimal(1),
+    unlocked() { return hasUpgrade("a", 14) },
+},
+16: {
+    title: "Cosmic Amplification",
+    description: "^5 Money, x1e6 Points, x1e4 Gems",
+    cost: new Decimal(1),
+    unlocked() { return hasUpgrade("a", 15) },
+},
+17: {
+    title: "Universal Overflow",
+    description: "^8 Money, x1e9 Points, x1e5 Gems",
+    cost: new Decimal(1),
+    unlocked() { return hasUpgrade("a", 16) },
+},
+18: {
+    title: "Singularity Edge",
+    description: "^12 Money, x1e12 Points, x1e7 Gems",
+    cost: new Decimal(1),
+    unlocked() { return hasUpgrade("a", 17) },
+},
+19: {
+    title: "Reality Fracture",
+    description: "^20 Money, x1e16 Points, x1e10 Gems",
+    cost: new Decimal(1),
+    unlocked() { return hasUpgrade("a", 18) },
+},
+21: {
+    title: "Final Ascension",
+    description: "Massive exponent: Money ^(log10(Money)/10 + 1) (end-of-layer reward)",
+    cost: new Decimal(1),
+    unlocked() { return hasUpgrade("a", 19) },
+},
            },  
            },  
            
+addLayer("t", {
+    name: "Trials",
+    symbol: "⚔️",
+    row: 2,
+    position: 1,
+    branches: ["a"],
 
-    addLayer("a", {
-        startData() { return {
-            unlocked: true,
-        }},
-        color: "yellow",
-        row: "side",
-        layerShown() {return true}, 
-        tooltip() { // Optional, tooltip displays when the layer is locked
-            return ("Achievements")
+    layerShown() { return hasUpgrade("a", 21) }, // unlocks after Ascension Upgrade 20
+
+    startData() { return {
+        unlocked: true,
+        points: new Decimal(0),
+    }},
+
+    color: "#aa3333",
+
+    challenges: {
+        11: {
+            name: "Trial of Poverty",
+            challengeDescription: "All Money gain multipliers are disabled.",
+            goal: new Decimal(1e50),
+            rewardDescription: "Money gain is raised by ^1.1",
+            canComplete() { return player.points.gte(this.goal) },
         },
-        
-        achievements: {
-            rows: 2,
-            cols: 10,
-            11: {
-                name: "Welcome!",
-                done() { return player.p.points.gt(0) },
-                tooltip: "WELCOME BUDDY!",
-            },
-        
-
+        12: {
+            name: "Trial of Silence",
+            challengeDescription: "Research gain is disabled.",
+            goal: new Decimal(1e60),
+            rewardDescription: "Research gain is permanently multiplied by ×2.",
+            canComplete() { return player.points.gte(this.goal) },
+        },
+        13: {
+            name: "Trial of Weakness",
+            challengeDescription: "Gems give 90% less.",
+            goal: new Decimal(1e75),
+            rewardDescription: "Gem upgrades are 50% stronger.",
+            canComplete() { return player.points.gte(this.goal) },
+        },
+        14: {
+            name: "Trial of Infinity",
+            challengeDescription: "Buyables cost scaling is heavily increased.",
+            goal: new Decimal(1e87),
+            rewardDescription: "Ascension gain is multiplied by ×10.",
+            canComplete() { return player.points.gte(this.goal) },
         },
     },
 
-      
+}),
+
+    addLayer("tr", {
+    name: "Transcension",
+    symbol: "T",
+    position: 0,
+    startData() { return {
+        unlocked: false,
+        points: new Decimal(0),
+    }},
+    color: "#ff00ff",
+    requires: new Decimal("1e150"), // cost to reset
+    resource: "Transcensions",
+    baseResource: "points",
+    baseAmount() { return player.a.points },
+    type: "normal",
+    exponent: 0.005,
+    row: 3,
+
+
+
+
+    gainMult() {
+        let mult = new Decimal(1)
+          
+        return mult
+    },
+
+    gainExp() {
+        return new Decimal(1)
+    },
+
+      layerShown() { return player.a.points.gte(10) || player.tr.points.gte(1) },
+
+    effect() {
+        let eff = {}
+   let amt = player.tr.points.add(1).sqrt()
+        // Boosts scale with Transcension points
+
+  // Softcap 1: solo después de 1e50
+    let sc1 = new Decimal("1e50")
+    if (amt.gt(sc1)) {
+        amt = sc1.mul(amt.div(sc1).pow(0.2))   // 1/5 = 0.2
+    }
+
+    // Softcap 2: solo después de 1e500
+    let sc2 = new Decimal("1e500")
+    if (amt.gt(sc2)) {
+        amt = sc2.mul(amt.div(sc2).pow(1/7))
+    }
+    if (amt.gte("1e100000")) amt = new Decimal("1e100000")
+
+      eff.points   = amt.pow(0)   // ^ to Points gain
+    eff.money    = amt.pow(0.8)    // ^ to Money gain
+    eff.prestige = amt.pow(0.33)   // ^ to Prestige gain
+
+ 
+
+
+        return eff
+    },
+
+    effectDescription() {
+        let eff = tmp.tr.effect
+        return `boosting Points by ^${format(eff.points)},
+                Money by ^${format(eff.money)},
+                and Prestige by ^${format(eff.prestige)}`
+    },
+}),
+
+addLayer("pe", {
+    name: "Periodic Table",
+    symbol: "∨",
+    color: "#40E0D0", // turquoise
+    position: 0,
+    row: 3, 
+    startData() { return {
+        unlocked: true,
+        points: new Decimal(0),
+    }},
+    resource: "elements",
+    type: "none", // passive layer
+    baseResource: "points",
+    baseAmount() { return player.points },
+
+     update(diff) {
+        let gain = new Decimal(1) // base 1/s
+ for (let id = 31; id <= 57; id++) {
+        if (hasUpgrade("pe", id)) {
+            let upg = tmp.pe.upgrades[id]
+            if (upg.description.includes("Money")) gain = gain.pow(upg.boost)
+            if (upg.description.includes("Points")) gain = gain.mul(upg.boost)
+        }
+    }
+
+        // --- Multiplicadores de upgrades ---
+        if (hasUpgrade("pe", 12)) gain = gain.times(2)    // Helium
+        if (hasUpgrade("pe", 16)) gain = gain.times(5)    // Carbon
+        if (hasUpgrade("pe", 23)) gain = gain.times(10)   // Neon
+        if (hasUpgrade("pe", 27)) gain = gain.times(50)
+             if (hasMilestone("mh", 0))gain = gain.mul(30)
+    if (hasMilestone("mh", 3)) gain = gain.mul(50)
+    if (hasMilestone("mh", 8)) gain = gain.mul(100)
+    if (hasMilestone("mh", 13)) gain = gain.mul(200)
+    if (hasMilestone("mh", 18)) gain = gain.mul(500)
+    if (hasMilestone("mh", 23)) gain = gain.mul(1000)
+    if (hasMilestone("mh", 28)) gain = gain.mul(2000)   // Silicon
+
+        // Sumar elementos cada segundo
+        player.pe.points = player.pe.points.add(gain.times(diff))
+    },
+
+    upgrades: {
+        // --- Row 1 (always unlocked) ---
+        11: { title: "Hydrogen", description: "x100 money.", cost: new Decimal(1) },
+        12: { title: "Helium", description: "x2 elements.", cost: new Decimal(2) },
+        13: { title: "Lithium", description: "x10 prestige.", cost: new Decimal(5) },
+        14: { title: "Beryllium", description: "x250 money.", cost: new Decimal(10) },
+        15: { title: "Boron", description: "x5 gems.", cost: new Decimal(25) },
+        16: { title: "Carbon", description: "x5 elements.", cost: new Decimal(50) },
+        17: { title: "Nitrogen", description: "x2 ascension.", cost: new Decimal(100) },
+
+        // --- Row 2 (requires row 1 finished) ---
+        21: { 
+            title: "Oxygen", 
+            description: "x1,000 money.", 
+            cost: new Decimal(250),
+            unlocked() { return hasUpgrade("pe", 17) } 
+        },
+        22: { title: "Fluorine", description: "x15 prestige.", cost: new Decimal(500), unlocked() { return hasUpgrade("pe", 17) } },
+        23: { title: "Neon", description: "x10 elements.", cost: new Decimal(1e3), unlocked() { return hasUpgrade("pe", 17) } },
+        24: { title: "Sodium", description: "x20 gems.", cost: new Decimal(5e3), unlocked() { return hasUpgrade("pe", 17) } },
+        25: { title: "Magnesium", description: "x3 ascension.", cost: new Decimal(1e4), unlocked() { return hasUpgrade("pe", 17) } },
+        26: { title: "Aluminum", description: "x50,000 money and x25 prestige.", cost: new Decimal(5e4), unlocked() { return hasUpgrade("pe", 17) } },
+        27: { title: "Silicon", description: "x50 elements and x100 gems.", cost: new Decimal(1e5), unlocked() { return hasUpgrade("pe", 17) } },
+    31: { title: "Phosphorus", description: "Money ^800", cost: new Decimal(5e5), unlocked() { return hasMilestone("mh", 9) }, boost: new Decimal(800) },
+    32: { title: "Sulfur",     description: "Points ×50000", cost: new Decimal(1e6), unlocked() { return hasMilestone("mh", 9) }, boost: new Decimal(50000) },
+    33: { title: "Chlorine",   description: "Money ^850", cost: new Decimal(2e6), unlocked() { return hasMilestone("mh", 9) }, boost: new Decimal(850) },
+    34: { title: "Argon",      description: "Points ×60000", cost: new Decimal(4e6), unlocked() { return hasMilestone("mh", 9) }, boost: new Decimal(60000) },
+    35: { title: "Potassium",  description: "Money ^900", cost: new Decimal(8e6), unlocked() { return hasMilestone("mh", 9) }, boost: new Decimal(900) },
+    36: { title: "Calcium",    description: "Points ×70000", cost: new Decimal(1.6e7), unlocked() { return hasMilestone("mh", 9) }, boost: new Decimal(70000) },
+    37: { title: "Scandium",   description: "Money ^950", cost: new Decimal(3.2e7), unlocked() { return hasMilestone("mh", 9) }, boost: new Decimal(950) },
+
+    // --- Fila 2 (41–47), desbloqueadas al terminar fila 1 ---
+    41: { title: "Titanium",   description: "Points ×75000", cost: new Decimal(6.4e7), unlocked() { return hasUpgrade("pe", 37) }, boost: new Decimal(75000) },
+    42: { title: "Vanadium",   description: "Money ^1000", cost: new Decimal(1.28e8), unlocked() { return hasUpgrade("pe", 37) }, boost: new Decimal(1000) },
+    43: { title: "Chromium",   description: "Points ×80000", cost: new Decimal(2.56e8), unlocked() { return hasUpgrade("pe", 37) }, boost: new Decimal(80000) },
+    44: { title: "Manganese",  description: "Money ^1050", cost: new Decimal(5.12e8), unlocked() { return hasUpgrade("pe", 37) }, boost: new Decimal(1050) },
+    45: { title: "Iron",       description: "Points ×85000", cost: new Decimal(1.024e9), unlocked() { return hasUpgrade("pe", 37) }, boost: new Decimal(85000) },
+    46: { title: "Cobalt",     description: "Money ^1100", cost: new Decimal(2.048e9), unlocked() { return hasUpgrade("pe", 37) }, boost: new Decimal(1100) },
+    47: { title: "Nickel",     description: "Points ×90000", cost: new Decimal(4.096e9), unlocked() { return hasUpgrade("pe", 37) }, boost: new Decimal(90000) },
+
+    // --- Fila 3 (51–57), desbloqueadas al terminar fila 2 ---
+    51: { title: "Copper",     description: "Money ^1150", cost: new Decimal(8.192e9), unlocked() { return hasUpgrade("pe", 47) }, boost: new Decimal(1150) },
+    52: { title: "Zinc",       description: "Points ×95000", cost: new Decimal(1.6384e10), unlocked() { return hasUpgrade("pe", 47) }, boost: new Decimal(95000) },
+    53: { title: "Gallium",    description: "Money ^1200", cost: new Decimal(3.2768e10), unlocked() { return hasUpgrade("pe", 47) }, boost: new Decimal(1200) },
+    54: { title: "Germanium",  description: "Points ×100000", cost: new Decimal(6.5536e10), unlocked() { return hasUpgrade("pe", 47) }, boost: new Decimal(100000) },
+    55: { title: "Arsenic",    description: "Money ^1250", cost: new Decimal(1.31072e11), unlocked() { return hasUpgrade("pe", 47) }, boost: new Decimal(1250) },
+    56: { title: "Selenium",   description: "Points ×105000", cost: new Decimal(2.62144e11), unlocked() { return hasUpgrade("pe", 47) }, boost: new Decimal(105000) },
+    57: { title: "Bromine",    description: "Money ^1300", cost: new Decimal(5.24288e11), unlocked() { return hasUpgrade("pe", 47) }, boost: new Decimal(1300) },
+
+
+        
+    },
+    gainMult() {
+    let mult = new Decimal(1)
+
+    
+
+    return mult
+}
+}),
+addLayer("rn", {
+    name: "Runes",
+    symbol: "ᚱ",
+    color: "#FFD700", // dorado
+    row: 3,
+    position: 0,
+    startData() { return {
+        unlocked: true,
+        points: new Decimal(0),
+    }},
+    resource: "runes",
+    type: "none", // pasivo, no reset
+    baseResource: "points", // depende de transcension
+    baseAmount() { return player.tr.points },
+    
+    
+  update(diff) {
+    // Condición de desbloqueo
+    if (!player.rn.unlocked && player.tr.points.gte(50)) {
+        player.rn.unlocked = true
+    }
+
+    let gain = new Decimal(0.5)
+    
+    if (hasUpgrade("rn", 11)) gain = gain.times(2)
+         
+    if (hasMilestone("mh", 0)) gain = gain.mul(6)
+    if (hasMilestone("mh", 4)) gain = gain.mul(10)
+    if (hasMilestone("mh", 9)) gain = gain.mul(20)
+    if (hasMilestone("mh", 14)) gain = gain.mul(40)
+    if (hasMilestone("mh", 19)) gain = gain.mul(80)
+    if (hasMilestone("mh", 24)) gain = gain.mul(160)
+    if (hasMilestone("mh", 29)) gain = gain.mul(320)
+ 
+    player.rn.points = player.rn.points.add(gain.times(diff))
+},
+gainMult() {
+    let mult = new Decimal(1)
+ 
+    return mult
+},
+
+    upgrades: {
+        11: { title: "Rune of Power", description: "x2 rune gain.", cost: new Decimal(5) },
+        12: { title: "Rune of Knowledge", description: "Rune gain boosted by your Elements.", cost: new Decimal(25) },
+        13: { title: "Rune of Wealth", description: "x10 money multiplier.", cost: new Decimal(100) },
+        14: { title: "Rune of Time", description: "x5 prestige multiplier.", cost: new Decimal(250) },
+        15: { title: "Rune of Eternity", description: "x3 gems multiplier.", cost: new Decimal(500) },
+        16: { title: "Rune of Divinity", description: "x2 ascension multiplier.", cost: new Decimal(1e3) },
+        17: { title: "Rune of Transcendence", description: "x2 transcension multiplier.", cost: new Decimal(5e3) },
+    },
+}),
+addLayer("dc", {
+    name: "Difficulty Chart",
+    symbol: "Δ",
+    color: "#FFFFFF",
+    row: 3,
+    position: 2,
+    startData() { return {
+        unlocked: false,
+        difficulty: 0,
+        points: new Decimal(0), // 🔥 Difficulty Points
+    }},
+    type: "none",
+
+   update(diff) {
+    if (!player.dc.unlocked && player.points.gte(new Decimal("1e350"))) {
+        player.dc.unlocked = true
+    }
+
+    // Buscar la dificultad más alta alcanzada según tus Points
+    let highest = 0
+    for (let i = 0; i < layers.dc.difficulties.length; i++) {
+        if (Decimal.gte(player.points, layers.dc.difficulties[i].req)) {
+            highest = i
+        } else break
+    }
+
+    // Guardar dificultad actual
+    player.dc.difficulty = highest
+
+    // 🔥 Los Difficulty Points son "dificultad + 1"
+    // (Easy = 0 → 1 DP, Intense = 5 → 6 DP, etc)
+    player.dc.points = new Decimal(highest + 1)
+},
+
+    // 📊 Lista de dificultades
+    difficulties: [
+        { req: new Decimal("1e350"), name: "Easy",        color: "#00ff00",  boost: new Decimal("1") },
+        { req: new Decimal("1e360"), name: "Medium",      color: "#ffff00",  boost: new Decimal("1e2") },
+        { req: new Decimal("1e370"), name: "Hard",        color: "#ff9900",  boost: new Decimal("1e3") },
+        { req: new Decimal("1e380"), name: "Difficult",   color: "#ff0000",  boost: new Decimal("1e4") },
+        { req: new Decimal("1e390"), name: "Challenging", color: "#830000ff",  boost: new Decimal("1e5") },
+        { req: new Decimal("1e400"), name: "Intense",     color: "#000000",  boost: new Decimal("1e6") },
+        { req: new Decimal("1e410"), name: "Remorseless", color: "#f700ff",  boost: new Decimal("1e7") },
+        { req: new Decimal("1e420"), name: "Relentless",  color: "#9900ff",  boost: new Decimal("1e8") },
+        { req: new Decimal("1e430"), name: "Insane",      color: "#0000ff",  boost: new Decimal("1e9") },
+        { req: new Decimal("1e440"), name: "Extreme",     color: "#0077ff",  boost: new Decimal("1e10") },
+        { req: new Decimal("1e450"), name: "Terrifying",  color: "#00ffff",  boost: new Decimal("1e11") },
+        { req: new Decimal("1e460"), name: "Catastrophic",color: "#ffffff",  boost: new Decimal("1e12") },
+        { req: new Decimal("1e470"), name: "Horrific",    color: "#cc66ff",  boost: new Decimal("1e13") },
+        { req: new Decimal("1e480"), name: "Unreal",      color: "#111111",  boost: new Decimal("1e14") },
+        { req: new Decimal("1e490"), name: "Nil",         color: "#777777",  boost: new Decimal("1e15") },
+        { req: new Decimal("1e500"), name: "Literal",      color: "#003366",  boost: new Decimal("1e16") },
+        { req: new Decimal("1e510"), name: "Toohard",      color: "#000000",  boost: new Decimal("1e17") },
+        { req: new Decimal("1e520"), name: "Why",          color: "#aaaaaa",  boost: new Decimal("1e18") },
+        { req: new Decimal("1e530"), name: "Nullifying",   color: "#00aaff",  boost: new Decimal("1e19") },
+        { req: new Decimal("1e540"), name: "Hell",         color: "#00ffff",  boost: new Decimal("1e20") },
+        { req: new Decimal("1e550"), name: "Tartarus",     color: "#ccffff",  boost: new Decimal("1e21") },
+        { req: new Decimal("1e560"), name: "Unimaginable", color: "#ff0000",  boost: new Decimal("1e22") },
+        { req: new Decimal("1e570"), name: "Omega",        color: "rainbow",  boost: new Decimal("1e23") },
+        { req: new Decimal("1e580"), name: "Aleph Null",   color: "#999999",  boost: new Decimal("1e24") },
+        { req: new Decimal("1e600"), name: "Malicious",    color: "linear-gradient(gray, black)",   boost: new Decimal("1e30") },
+        { req: new Decimal("1e620"), name: "Building",     color: "#ff0000",                        boost: new Decimal("1e40") },
+        { req: new Decimal("1e640"), name: "Invigorating", color: "linear-gradient(red, black)",    boost: new Decimal("1e50") },
+        { req: new Decimal("1e660"), name: "Destructive",  color: "linear-gradient(red, orange)",   boost: new Decimal("1e60") },
+        { req: new Decimal("1e680"), name: "Monstrous ζ",  color: "linear-gradient(red, black)",    boost: new Decimal("1e70") },
+        { req: new Decimal("1e700"), name: "Ultimate ψ",   color: "linear-gradient(red, black)",    boost: new Decimal("1e80") },
+        { req: new Decimal("1e720"), name: "System Error", color: "linear-gradient(red, black)",    boost: new Decimal("1e90") },
+        { req: new Decimal("1e740"), name: "Supreme",      color: "linear-gradient(blue, hotpink)", boost: new Decimal("1e100") },
+    ],
+
+    effect() {
+        let current = tmp.dc.difficulties[player.dc.difficulty]
+        if (!current) return new Decimal(1)
+        return current.boost
+    },
+
+    tabFormat: [
+        ["display-text", () => {
+            let current = layers.dc.difficulties[player.dc.difficulty]
+
+            return "Current difficulty: <b style='color:" + current.color + "'>" + current.name + "</b><br>" +
+                   "Boost: ×" + format(current.boost) + " Points"
+        }],
+        ["display-text", () => "Difficulty Points: <b>" + format(player.dc.points) + "</b>"],
+        ["display-text", () => {
+            let next = tmp.dc.difficulties[player.dc.difficulty + 1]
+            if (!next) return "You reached the end of the chart!"
+            return "Next: <b style='color:" + next.color + "'>" + next.name + "</b> at " + format(next.req) + " Points."
+        }],
+        ["bar", ["nextDiffProgress"]],
+        "upgrades",
+    ],
+
+    bars: {
+        nextDiffProgress: {
+            direction: RIGHT,
+            width: 400,
+            height: 30,
+            progress() {
+                let current = layers.dc.difficulties[player.dc.difficulty]
+                let next = layers.dc.difficulties[player.dc.difficulty + 1]
+                if (!next) return 1
+
+                let logPoints = player.points.log10()
+                let logCur = current.req.log10()
+                let logNext = next.req.log10()
+
+                let prog = logPoints.sub(logCur).div(logNext.sub(logCur))
+                return prog.clamp(0, 1).toNumber()
+            },
+            display() {
+                let current = layers.dc.difficulties[player.dc.difficulty]
+                let next = layers.dc.difficulties[player.dc.difficulty + 1]
+                if (!next) return "Max difficulty reached!"
+
+                let logPoints = player.points.log10()
+                let logCur = current.req.log10()
+                let logNext = next.req.log10()
+
+                let prog = logPoints.sub(logCur).div(logNext.sub(logCur)).clamp(0, 1).mul(100)
+                return "Progress to " + next.name + ": " + prog.toFixed(2) + "%"
+            },
+            fillStyle: {"background-color": "#00FFFF"},
+        },
+    },
+    upgrades: {
+    // ---- Points Upgrades ----
+    11: {
+        title: "Point Surge",
+        description: "Multiply Point gain by ×10.",
+        cost: new Decimal(1),
+        currencyDisplayName: "Difficulty Points",
+        currencyInternalName: "points",
+        currencyLayer: "dc",
+    },
+    12: {
+        title: "Point Flood",
+        description: "Multiply Point gain by ×100.",
+        cost: new Decimal(3),
+        currencyDisplayName: "Difficulty Points",
+        currencyInternalName: "points",
+        currencyLayer: "dc",
+    },
+    13: {
+        title: "Point Overload",
+        description: "Multiply Point gain by ×500.",
+        cost: new Decimal(6),
+        currencyDisplayName: "Difficulty Points",
+        currencyInternalName: "points",
+        currencyLayer: "dc",
+    },
+
+    // ---- Money Upgrades ----
+    21: {
+        title: "Wealth Expansion",
+        description: "Money gain is raised to the power of 1.2.",
+        cost: new Decimal(1),
+        currencyDisplayName: "Difficulty Points",
+        currencyInternalName: "points",
+        currencyLayer: "dc",
+    },
+    22: {
+        title: "Wealth Amplifier",
+        description: "Money gain is raised to the power of 1.3.",
+        cost: new Decimal(3),
+        currencyDisplayName: "Difficulty Points",
+        currencyInternalName: "points",
+        currencyLayer: "dc",
+    },
+    23: {
+        title: "Wealth Ascension",
+        description: "Money gain is raised to the power of 1.5.",
+        cost: new Decimal(6),
+        currencyDisplayName: "Difficulty Points",
+        currencyInternalName: "points",
+        currencyLayer: "dc",
+    },
+},
+
+}),
+addLayer("mh", {
+    name: "Money-Hop",
+    symbol: "MH",
+    position: 0,
+    startData() { return {
+        unlocked: false,
+        points: new Decimal(0),
+    }},
+    color: "#00ffff",
+    requires: new Decimal("e5e80004"), // requisito en money
+    resource: "Money-Hops",
+    baseResource: "points",
+    baseAmount() { return player.p.points }, 
+    type: "static", 
+    exponent: 2.5, // escala rápido
+    branches: ["mo"], 
+    row: 4, 
+    hotkeys: [
+        {key: "h", description: "H: Reset for Money-Hops", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+
+    milestones: {
+        0: { requirementDescription: "1 Money-Hop", effectDescription: "^500 Money, autobuy Money & Prestige, ×30 Elements, ×6 Runes, ^6 Prestige", done() { 
+
+            // activar autobuyer de Prestige
+            return player.mh.points.gte(1) } },
+        1: { requirementDescription: "2 Money-Hops", effectDescription: "^600 Money, ×40 Elements", done() { return player.mh.points.gte(2) } },
+        2: { requirementDescription: "3 Money-Hops", effectDescription: "^700 Money, ×8 Runes", done() { return player.mh.points.gte(3) } },
+        3: { requirementDescription: "4 Money-Hops", effectDescription: "^800 Money, ^8 Prestige", done() { return player.mh.points.gte(4) } },
+        4: { requirementDescription: "5 Money-Hops", effectDescription: "^1000 Money, ×50 Elements, ×1,000,000 Points", done() { return player.mh.points.gte(5) } },
+        5: { requirementDescription: "6 Money-Hops", effectDescription: "^1200 Money, ×12 Runes", done() { return player.mh.points.gte(6) } },
+        6: { requirementDescription: "7 Money-Hops", effectDescription: "^1500 Money, ^12 Prestige", done() { return player.mh.points.gte(7) } },
+        7: { requirementDescription: "8 Money-Hops", effectDescription: "^1800 Money, ×100 Elements", done() { return player.mh.points.gte(8) } },
+        8: { requirementDescription: "9 Money-Hops", effectDescription: "^2200 Money, ×20 Runes", done() { return player.mh.points.gte(9) } },
+        9: { requirementDescription: "10 Money-Hops", effectDescription: "^2600 Money, Unlock Mine, ×1,000,000 Points", done() { return player.mh.points.gte(10) } },
+        10: { requirementDescription: "11 Money-Hops", effectDescription: "^3000 Money, ^15 Prestige", done() { return player.mh.points.gte(11) } },
+        11: { requirementDescription: "12 Money-Hops", effectDescription: "^3500 Money, ×200 Elements", done() { return player.mh.points.gte(12) } },
+        12: { requirementDescription: "13 Money-Hops", effectDescription: "^4000 Money, ×30 Runes", done() { return player.mh.points.gte(13) } },
+        13: { requirementDescription: "14 Money-Hops", effectDescription: "^4500 Money, ^20 Prestige", done() { return player.mh.points.gte(14) } },
+        14: { requirementDescription: "15 Money-Hops", effectDescription: "^5000 Money, ×500 Elements, ×1,000,000 Points", done() { return player.mh.points.gte(15) } },
+        15: { requirementDescription: "16 Money-Hops", effectDescription: "^6000 Money, ×50 Runes", done() { return player.mh.points.gte(16) } },
+        16: { requirementDescription: "17 Money-Hops", effectDescription: "^7000 Money, ^25 Prestige", done() { return player.mh.points.gte(17) } },
+        17: { requirementDescription: "18 Money-Hops", effectDescription: "^8000 Money, ×1000 Elements", done() { return player.mh.points.gte(18) } },
+        18: { requirementDescription: "19 Money-Hops", effectDescription: "^9000 Money, ×80 Runes", done() { return player.mh.points.gte(19) } },
+        19: { requirementDescription: "20 Money-Hops", effectDescription: "^10000 Money, ^30 Prestige, ×1,000,000 Points", done() { return player.mh.points.gte(20) } },
+        20: { requirementDescription: "21 Money-Hops", effectDescription: "^12000 Money, ×2000 Elements", done() { return player.mh.points.gte(21) } },
+        21: { requirementDescription: "22 Money-Hops", effectDescription: "^14000 Money, ×120 Runes", done() { return player.mh.points.gte(22) } },
+        22: { requirementDescription: "23 Money-Hops", effectDescription: "^16000 Money, ^40 Prestige", done() { return player.mh.points.gte(23) } },
+        23: { requirementDescription: "24 Money-Hops", effectDescription: "^18000 Money, ×5000 Elements", done() { return player.mh.points.gte(24) } },
+        24: { requirementDescription: "25 Money-Hops", effectDescription: "^20000 Money, ×150 Runes, ×1,000,000 Points", done() { return player.mh.points.gte(25) } },
+        25: { requirementDescription: "26 Money-Hops", effectDescription: "^25000 Money, ^50 Prestige", done() { return player.mh.points.gte(26) } },
+        26: { requirementDescription: "27 Money-Hops", effectDescription: "^30000 Money, ×10000 Elements", done() { return player.mh.points.gte(27) } },
+        27: { requirementDescription: "28 Money-Hops", effectDescription: "^35000 Money, ×200 Runes", done() { return player.mh.points.gte(28) } },
+        28: { requirementDescription: "29 Money-Hops", effectDescription: "^40000 Money, ^60 Prestige", done() { return player.mh.points.gte(29) } },
+        29: { requirementDescription: "30 Money-Hops", effectDescription: "^50000 Money, ×20000 Elements, ×1,000,000 Points", done() { return player.mh.points.gte(30) } },
+        30: { requirementDescription: "31 Money-Hops", effectDescription: "^60000 Money, ×300 Runes", done() { return player.mh.points.gte(31) } },
+        31: { requirementDescription: "32 Money-Hops", effectDescription: "^80000 Money, Final reward: ×10,000,000 Points", done() { return player.mh.points.gte(32) } },
+    },
+
+    // === APLICAR LOS EFECTOS ===
+    
+
+ 
+}),
+
+
+
+
+
+)))))
         
         
-    ))))))
+    
