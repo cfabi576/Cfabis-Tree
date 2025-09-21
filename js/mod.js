@@ -42,6 +42,8 @@ function getPointGen() {
 		return new Decimal(1)
 
 	let gain = new Decimal(0)
+	
+
 	if (hasUpgrade('pr', 11)) gain = gain.add(1)
 	if (hasUpgrade('p', 11)) gain = gain.add(1)
 		if (hasUpgrade('p', 12)) gain = gain.times(2)
@@ -65,11 +67,14 @@ function getPointGen() {
 									 if	(hasMilestone('r', 1)) gain = gain.times(player.r.points.pow(0.5))
  if	(hasMilestone('r', 3)) gain = gain.times(player.r.points.pow(0.3))			
 gain = gain.pow(new Decimal(tmp.tr.effect.points))
-	 if (hasUpgrade("pe", 11)) mult = mult.times(100)
-			 if (hasUpgrade("dc", 11)) mult = mult.times(10)
-					 if (hasUpgrade("dc", 12)) mult = mult.times(100)
-							 if (hasUpgrade("dc", 13)) mult = mult.times(5)
-								
+	 if (hasUpgrade("pe", 11)) gain = gain.times(100)
+			 if (hasUpgrade("dc", 11)) gain = gain.times(10)
+					 if (hasUpgrade("dc", 12)) gain = gain.times(100)
+							 if (hasUpgrade("dc", 13)) gain = gain.times(5)
+										 if (hasUpgrade("as", 11)) gain = gain.times(1000)
+											 if (hasUpgrade("as", 12)) gain = gain.times(10000)
+												 if (hasUpgrade("as", 13)) gain = gain.times(100000)
+													 if (hasUpgrade("as", 14)) gain = gain.times(1e7)
     if (hasMilestone("mh", 0)) gain = gain.mul(1000000)
     if (hasMilestone("mh", 4)) gain = gain.mul(1000000)
     if (hasMilestone("mh", 9)) gain = gain.mul(1000000)
@@ -77,6 +82,24 @@ gain = gain.pow(new Decimal(tmp.tr.effect.points))
     if (hasMilestone("mh", 19)) gain = gain.mul(80)
     if (hasMilestone("mh", 24)) gain = gain.mul(160)
     if (hasMilestone("mh", 29)) gain = gain.mul(320)
+		    if (hasMilestone("el", 0)) gain = gain.mul(3)
+					     if (hasMilestone("el", 1)) gain = gain.mul(Math.log(player.el.points)^3+1)
+							    if (inChallenge("ch", 11)) gain = gain.div(1e10)   // Weak Flow
+    if (inChallenge("ch", 13)) gain = gain.div(1e100)  // Drained
+    if (inChallenge("ch", 22)) gain = gain.div(1000)   // Broken Circuit
+    if (inChallenge("ch", 23)) gain = gain.pow(0.5)    // Overload
+
+    // --- Rewards ---
+    if (hasChallenge("ch", 11)) gain = gain.mul(2)
+    if (hasChallenge("ch", 13)) gain = gain.mul(5)
+    if (hasChallenge("ch", 22)) gain = gain.mul(25)
+    if (hasUpgrade("re", 11)) gain = gain.times("1e12")
+    if (hasUpgrade("re", 31)) gain = gain.times("1e50")
+
+    // --- Reincarnation milestones (anti-moneyhop) ---
+    if (hasMilestone("re", 0)) gain = gain.times("1e6")
+    if (hasMilestone("re", 6)) gain = gain.times("1e100")
+
 		  
 	return gain			
 }
@@ -92,7 +115,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.p.points.gte("1e600")
+	return player.points.gte("1e10000")
 }
 
 

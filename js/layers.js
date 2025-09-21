@@ -30,7 +30,7 @@ addLayer("p", {
    
  
 
-     passiveGeneration() {if (hasMilestone("mh", 0)) return 1; else if (hasMilestone("p", 11)) return 1; else return 0},
+     passiveGeneration() {if (hasMilestone("mh", 0)) return 1; else if (hasUpgrade("p", 11)) return 1; else return 0},
  
  
 
@@ -966,7 +966,11 @@ addLayer("pe", {
     if (hasMilestone("mh", 13)) gain = gain.mul(200)
     if (hasMilestone("mh", 18)) gain = gain.mul(500)
     if (hasMilestone("mh", 23)) gain = gain.mul(1000)
-    if (hasMilestone("mh", 28)) gain = gain.mul(2000)   // Silicon
+    if (hasMilestone("mh", 28)) gain = gain.mul(2000)
+        if (inChallenge("ch", 22)) gain = gain.div(1000)   // Broken Circuit
+if (inChallenge("ch", 23)) gain = gain.pow(0.5)    // Overload
+
+if (hasChallenge("ch", 22)) gain = gain.mul(25)   // Silicon
 
         // Sumar elementos cada segundo
         player.pe.points = player.pe.points.add(gain.times(diff))
@@ -1328,7 +1332,529 @@ addLayer("mh", {
 
  
 }),
+addLayer("as", {
+    name: "Astral",
+    symbol: "✦",
+    color: "#9370DB", // Purple
+    row: 4,
+    position: 1,
+    requires: new Decimal("1e415"), // corregido a 1e415
+    resource: "astral essence",
+    baseResource: "points",
+    baseAmount() { return player.points },
+    type: "normal",
+    exponent: 0.25, // con esto tienes ~150 essence en 1e415
+    startData() { return {
+        unlocked: false,
+        points: new Decimal(0),
+    }},
+    layerShown() { return hasMilestone("mh", 17) }, // requiere 18 moneyhops
 
+    upgrades: {
+        11: { title: "Astral Spark", description: "×1,000 Points.", cost: new Decimal(1) },
+        12: { title: "Stellar Core", description: "×10,000 Points.", cost: new Decimal(5) },
+        13: { title: "Crystal Nexus", description: "×50 Gems.", cost: new Decimal(20) },
+        14: { title: "Void Star", description: "×100,000 Points.", cost: new Decimal(50) },
+        15: { title: "Astral Veins", description: "×250 Gems.", cost: new Decimal(100) },
+        16: { title: "Galactic Flow", description: "×1e7 Points.", cost: new Decimal(250) },
+        17: { title: "Essence Singularity", description: "×1,000 Gems.", cost: new Decimal(1e3) },
+    },
+
+    gainMult() {
+        let mult = new Decimal(1)
+        return mult
+    },
+
+    gainExp() {
+        return new Decimal(1)
+    },
+}),
+
+addLayer("am", {
+    name: "Anti Money",
+    symbol: "AM",
+    position: 1, 
+    row: 4,
+    branches: ["mh"],
+    startData() { return {
+        unlocked: false,
+        points: new Decimal(0),
+        upgrades: [], // <--- importante para no romper
+    }},
+    resource: "anti money",
+    type: "none", 
+    baseResource: "points",
+    baseAmount() { return player.points },
+
+    // desbloqueo
+    unlocked() { return hasUpgrade("as", 13) }, 
+
+    update(diff) {
+         if (!player.am.unlocked && player.mh.points.gte(0)) {
+        player.am.unlocked = true}
+        if (!player.am.upgrades) player.am.upgrades = [] // seguridad
+
+        let gain = new Decimal(0)
+
+        if (hasUpgrade("am", 11)) gain = gain.add(1)
+        if (hasUpgrade("am", 13)) gain = gain.mul(3)
+        if (hasUpgrade("am", 31)) gain = gain.mul(4)
+                // Upgrades
+    if (hasUpgrade("re", 23)) gain = gain.times("1e5")
+
+    // Milestones
+    if (hasMilestone("re", 5)) gain = gain.times("1e12")
+if (inChallenge("ch", 12)) gain = new Decimal(0)   // No Shine
+if (inChallenge("ch", 21)) gain = gain.div(1e50)   // Rusty Power
+if (inChallenge("ch", 23)) gain = gain.pow(0.5)    // Overload
+
+if (hasChallenge("ch", 12)) gain = gain.mul(2)
+if (hasChallenge("ch", 21)) gain = gain.mul(10)
+if (hasChallenge("ch", 23)) gain = gain.mul(50)
+        if (hasUpgrade("am", 12)) 
+            gain = gain.add(player.points.add(1).log10().div(100))
+
+        player.am.points = player.am.points.add(gain.times(diff))
+    },
+    upgrades: {
+        // --- Row 1: Basic boosts ---
+        11: { title: "Duality", description: "+1 Anti Money/sec.", cost: new Decimal() },
+        12: { title: "Counterforce", description: "Points boost Anti Money gain.", effect() { return player.points.add(1).log10().div(100) },
+            effectDisplay() { return "x" + format(this.effect()) }, cost: new Decimal(10) },
+        13: { title: "Reversal", description: "x3 Anti Money gain.", cost: new Decimal(50) },
+        14: { title: "Echo I", description: "x2 Gems.", cost: new Decimal(200) },
+        15: { title: "Echo II", description: "x5 Money.", cost: new Decimal(1e3) },
+        16: { title: "Echo III", description: "x10 Prestige.", cost: new Decimal(1e4) },
+        17: { title: "Echo IV", description: "x1.5 Elements.", cost: new Decimal(1e5) },
+
+        // --- Row 2: Empty echoes (no effects) ---
+        21: { title: "Null I", description: "Silent resonance.", cost: new Decimal(1e6) },
+        22: { title: "Null II", description: "Hollow reflection.", cost: new Decimal(5e6) },
+        23: { title: "Null III", description: "No effect.", cost: new Decimal(2e7) },
+        24: { title: "Null IV", description: "Pure void.", cost: new Decimal(1e8) },
+        25: { title: "Null V", description: "Echoing emptiness.", cost: new Decimal(5e8) },
+        26: { title: "Null VI", description: "Meaningless wave.", cost: new Decimal(1e9) },
+        27: { title: "Null VII", description: "Phase without change.", cost: new Decimal(1e10) },
+
+        // --- Row 3: Phase upgrades (real effects) ---
+        31: { 
+            title: "Phase I - Breach", 
+            description: "x4 Anti Money gain.", 
+            cost: new Decimal(1e11), 
+            unlocked() { return player.dc.points.gte(9) }
+        },
+        32: { 
+            title: "Phase II - Inverse Pulse", 
+            description: "Points boosted by Anti Money.", 
+            cost: new Decimal(5e11), 
+            effect() { return player.am.points.add(1).log10().add(1) },
+            effectDisplay() { return "x" + format(this.effect()) }
+        },
+        33: { 
+            title: "Phase III - Divergence", 
+            description: "Gems boosted by Anti Money.", 
+            cost: new Decimal(2e12), 
+            effect() { return player.am.points.add(1).sqrt() },
+            effectDisplay() { return "x" + format(this.effect()) }
+        },
+        34: { 
+            title: "Phase IV - Collapse", 
+            description: "Money ^1.01.", 
+            cost: new Decimal(1e13), 
+            effect() { return new Decimal(1.01) },
+            effectDisplay() { return "^" + format(this.effect()) }
+        },
+        35: { 
+            title: "Phase V - Shadow Flow", 
+            description: "Prestige boosted by Anti Money.", 
+            cost: new Decimal(5e13), 
+            effect() { return player.am.points.add(1).cbrt() },
+            effectDisplay() { return "x" + format(this.effect()) }
+        },
+        36: { 
+            title: "Phase VI - Divergent Core", 
+            description: "Elements boosted by Anti Money.", 
+            cost: new Decimal(1e14), 
+            effect() { return player.am.points.add(1).pow(0.2) },
+            effectDisplay() { return "x" + format(this.effect()) }
+        },
+        37: { 
+            title: "Phase VII - Singularity", 
+            description: "Anti Money ^1.05.", 
+            cost: new Decimal(5e14), 
+            effect() { return player.am.points.add(1).pow(0.05) },
+            effectDisplay() { return "^" + format(this.effect()) }
+        },
+    },
+}),
+addLayer("el", {
+    name: "Electricity",
+    symbol: "⚡",
+    row: 4,
+    position: 0,
+    color: "#FFD700", // dorado brillante
+    type: "none", // pasiva
+    startData() { return {
+        unlocked: true,
+        points: new Decimal(0),
+    }},
+    resource: "watts",
+baseResource: "points", // depende de transcension
+    baseAmount() { return player.mh.points },
+    
+    
+
+    update(diff) {
+        if (!player.el.unlocked && player.mh.points.gte(0)) {
+        player.el.unlocked = true}
+        let gain = new Decimal(10) // base 10/s
+        // milestone 3: watts boostean su propia generación
+        if (hasMilestone("el", 3)) gain = gain.times(player.el.points.add(1).log10().add(1))
+
+        player.el.points = player.el.points.add(gain.times(diff))
+    },
+
+    milestones: {
+        0: {
+            requirementDescription: "1 Watt",
+            effectDescription: "x3 Points",
+            done() { return player.el.points.gte(1) },
+        },
+        1: {
+            requirementDescription: "1,000 Watts",
+            effectDescription: "Watts boost Points",
+            done() { return player.el.points.gte(1e3) },
+        },
+        2: {
+            requirementDescription: "1e6 Watts",
+            effectDescription: "Watts boost Astral Essence",
+            done() { return player.el.points.gte(1e6) },
+        },
+        3: {
+            requirementDescription: "1e9 Watts",
+            effectDescription: "Watts boost their own generation",
+            done() { return player.el.points.gte(1e9) },
+        },
+    },
+}),
+addLayer("ch", {
+    name: "Challenges",
+    symbol: "C",
+    row: 4,
+    position: 2,
+    color: "#AA00FF", // morado
+    startData() { return {
+        unlocked: false,
+        points: new Decimal(0),
+    }},
+    resource: "challenge power",
+    type: "none", // no es de reset
+    baseAmount() { return new Decimal(0) },
+
+    layerShown() { return hasMilestone("mh", 5) }, // se desbloquea tras cierto milestone de moneyhop
+
+    challenges: {
+        11: {
+            name: "Weak Flow",
+            challengeDescription: "Points gain is heavily reduced.",
+            goal: new Decimal(1e50),
+            rewardDescription: "x2 Points.",
+            rewardEffect() { return new Decimal(2) },
+            unlocked() { return true },
+        },
+        12: {
+            name: "No Shine",
+            challengeDescription: "Anti Money generation is disabled.",
+            goal: new Decimal(1e75),
+            rewardDescription: "x2 Anti Money.",
+            rewardEffect() { return new Decimal(2) },
+            unlocked() { return true },
+        },
+        13: {
+            name: "Drained",
+            challengeDescription: "Money gain is divided by 1e100.",
+            goal: new Decimal(1e100),
+            rewardDescription: "x5 Points.",
+            rewardEffect() { return new Decimal(5) },
+            unlocked() { return true },
+        },
+        21: {
+            name: "Rusty Power",
+            challengeDescription: "Prestige gain is weakened.",
+            goal: new Decimal(1e125),
+            rewardDescription: "x10 Anti Money.",
+            rewardEffect() { return new Decimal(10) },
+            unlocked() { return true },
+        },
+        22: {
+            name: "Broken Circuit",
+            challengeDescription: "Elements effect is disabled.",
+            goal: new Decimal(1e150),
+            rewardDescription: "x25 Points.",
+            rewardEffect() { return new Decimal(25) },
+            unlocked() { return true },
+        },
+        23: {
+            name: "Overload",
+            challengeDescription: "All multipliers are nerfed.",
+            goal: new Decimal(1e200),
+            rewardDescription: "x50 Anti Money.",
+            rewardEffect() { return new Decimal(50) },
+            unlocked() { return true },
+        },
+    },
+
+    update(diff) {
+      if (!player.ch.unlocked && player.mh.points.gte(0)) {
+        player.ch.unlocked = true}
+    },
+}),
+addLayer("re", {
+    name: "Reincarnation",
+    symbol: "♻",
+    color: "#9932CC", // purple
+    row: 5,
+    requires: new Decimal("1e440"), // requirement en points
+    resource: "reincarnation essence",
+    baseResource: "points",
+    baseAmount() { return player.points },
+    type: "normal",
+    exponent: 0.05, // ganancias base lentas
+    position: 0,
+
+    startData() { return {
+        unlocked: true,
+        points: new Decimal(0),
+    }},
+
+    tabFormat: {
+        "Upgrades": {
+            content: ["main-display", "prestige-button", "upgrades"]
+        },
+        "Anti-Money Hop Milestones": {
+            content: ["milestones"]
+        },
+    },
+
+    upgrades: {
+        11: { 
+            title: "Cycle Reborn", 
+            description: "×1e12 points.", 
+            cost: new Decimal(1) 
+        },
+        12: { 
+            title: "Soul Overflow", 
+            description: "×1e8 gems.", 
+            cost: new Decimal(3) 
+        },
+        13: { 
+            title: "Beyond Riches", 
+            description: "Money ^5.", 
+            cost: new Decimal(10) 
+        },
+        21: { 
+            title: "Astral Surge", 
+            description: "Astral Essence ×1e6.", 
+            cost: new Decimal(50) 
+        },
+        22: { 
+            title: "Elemental Eternity", 
+            description: "Elements ×1e9.", 
+            cost: new Decimal(200) 
+        },
+        23: { 
+            title: "Anti-Money Flow", 
+            description: "Anti Money ×1e5.", 
+            cost: new Decimal(500) 
+        },
+        31: { 
+            title: "Final Awakening", 
+            description: "Points ×1e50 and Gems ×1e20.", 
+            cost: new Decimal(1000) 
+        },
+    },
+
+ milestones: {
+    0: {
+        requirementDescription: "30 moneyhops and lower",
+        effectDescription: "×1e6 points.",
+        done() { return player.mh.points.lte(30) }
+    },
+    1: {
+        requirementDescription: "25 moneyhops and lower",
+        effectDescription: "×1e4 gems.",
+        done() { return player.mh.points.lte(25) }
+    },
+    2: {
+        requirementDescription: "20 moneyhops and lower",
+        effectDescription: "Money ^50.",
+        done() { return player.mh.points.lte(20) }
+    },
+    3: {
+        requirementDescription: "15 moneyhops and lower",
+        effectDescription: "Astral Essence ×1e10.",
+        done() { return player.mh.points.lte(15) }
+    },
+    4: {
+        requirementDescription: "12 moneyhops and lower",
+        effectDescription: "Elements ×1e20.",
+        done() { return player.mh.points.lte(12) }
+    },
+    5: {
+        requirementDescription: "10 moneyhops and lower",
+        effectDescription: "Anti Money ×1e12.",
+        done() { return player.mh.points.lte(10) }
+    },
+    6: {
+        requirementDescription: "7 moneyhops and lower",
+        effectDescription: "Points ×1e100.",
+        done() { return player.mh.points.lte(7) }
+    },
+    7: {
+        requirementDescription: "5 moneyhops and lower",
+        effectDescription: "Gems ×1e50.",
+        done() { return player.mh.points.lte(5) }
+    },
+    8: {
+        requirementDescription: "3 moneyhops and lower",
+        effectDescription: "Money ^200.",
+        done() { return player.mh.points.lte(3) }
+    },
+    9: {
+        requirementDescription: "1 moneyhop and lower",
+        effectDescription: "Unlocks ultimate synergy (huge boost to everything).",
+        done() { return player.mh.points.lte(1) }
+    },
+},
+
+
+    layerShown() { return true }
+}),
+
+addLayer("mi", {
+    name: "Mine",
+    symbol: "MI",
+    row: 5,
+    color: "#8B4513",
+    startData() {
+        return {
+            unlocked: true,
+            miningCoins: new Decimal(0),
+            depth: new Decimal(1),
+            blockHP: new Decimal(5),
+            maxBlockHP: new Decimal(5),
+            cooldown: new Decimal(0),
+            pickDamage: new Decimal(10),
+            currentMineral: "stone"
+        }
+    },
+
+    clickables: {
+        mineBlock: {
+            display() {
+                return `Mine ${player.mi.currentMineral}<br>Block HP: ${player.mi.blockHP.toFixed(2)} / ${player.mi.maxBlockHP.toFixed(2)}`
+            },
+            onClick() {
+                if (player.mi.cooldown.lte(0)) {
+                    let dmg = player.mi.pickDamage
+                    player.mi.blockHP = player.mi.blockHP.sub(dmg)
+                    if (player.mi.blockHP.lte(0)) {
+                        // Mineral mined
+                        let coins = 0
+                        switch (player.mi.currentMineral) {
+                            case "stone": coins = 1; break
+                            case "coal": coins = 2; break
+                            case "iron": coins = 4; break
+                            case "tin": coins = 10; break
+                            case "copper": coins = 25; break
+                            case "gold": coins = 50; break
+                        }
+                        player.mi.miningCoins = player.mi.miningCoins.add(coins)
+                        player.mi.depth = player.mi.depth.add(1)
+
+                        // New mineral depending on depth
+                        let d = player.mi.depth.toNumber()
+                        if (d <= 100) player.mi.currentMineral = Math.random() < 0.5 ? "stone" : "coal"
+                        else if (d <= 500) {
+                            let r = Math.random()
+                            if (r < 0.4) player.mi.currentMineral = "stone"
+                            else if (r < 0.7) player.mi.currentMineral = "coal"
+                            else player.mi.currentMineral = "iron"
+                        }
+                        else if (d <= 1500) {
+                            let r = Math.random()
+                            if (r < 0.3) player.mi.currentMineral = "stone"
+                            else if (r < 0.5) player.mi.currentMineral = "coal"
+                            else if (r < 0.8) player.mi.currentMineral = "iron"
+                            else player.mi.currentMineral = "tin"
+                        }
+                        else if (d <= 4500) {
+                            let r = Math.random()
+                            if (r < 0.2) player.mi.currentMineral = "stone"
+                            else if (r < 0.35) player.mi.currentMineral = "coal"
+                            else if (r < 0.6) player.mi.currentMineral = "iron"
+                            else if (r < 0.85) player.mi.currentMineral = "tin"
+                            else player.mi.currentMineral = "copper"
+                        }
+
+                        // Reset block HP
+                        switch (player.mi.currentMineral) {
+                            case "stone": player.mi.maxBlockHP = new Decimal(5); break
+                            case "coal": player.mi.maxBlockHP = new Decimal(15); break
+                            case "iron": player.mi.maxBlockHP = new Decimal(50); break
+                            case "tin": player.mi.maxBlockHP = new Decimal(100); break
+                            case "copper": player.mi.maxBlockHP = new Decimal(250); break
+                            case "gold": player.mi.maxBlockHP = new Decimal(500); break
+                        }
+                        player.mi.blockHP = player.mi.maxBlockHP
+                    }
+                    player.mi.cooldown = new Decimal(0.01)
+                }
+            },
+            canClick() { return player.mi.cooldown.lte(0) }
+        }
+    },
+
+   
+    bars: {
+        blockHPBar: {
+            direction: RIGHT,
+            width: 400,
+            height: 20,
+            progress() { return player.mi.blockHP.div(player.mi.maxBlockHP).toNumber() },
+            fillStyle: {"background-color":"#00ff00"},
+            display() { return `Block HP: ${player.mi.blockHP.toFixed(2)} / ${player.mi.maxBlockHP.toFixed(2)}` }
+        },
+        layerProgressBar: {
+            direction: RIGHT,
+            width: 400,
+            height: 20,
+            progress() {
+                let layerStart = new Decimal(Math.floor((player.mi.depth.sub(1).toNumber())/100)*100+1)
+                let layerEnd = layerStart.add(100)
+                return player.mi.depth.sub(layerStart).div(layerEnd.sub(layerStart)).toNumber()
+            },
+            fillStyle: {"background-color":"#0000ff"},
+            display() { return `Progress to next layer: ${player.mi.depth.mod(100)}/100 m` }
+        }
+    },
+
+    tabFormat: [
+        ["display-text", function() {
+            return `Depth: ${player.mi.depth.toFixed(0)}m<br>Mining Coins: ${format(player.mi.miningCoins)}<br>Pick Damage: ${player.mi.pickDamage}`
+        }],
+        ["clickable","mineBlock"],
+        ["buyables",[11,12,13]],
+        ["bar","blockHPBar"],
+        ["bar","layerProgressBar"]
+    ],
+
+    update(diff) {
+        if (!player.mi.unlocked && player.re.points.gte(0)) {
+        player.mi.unlocked = true}
+        if (player.mi.cooldown.gt(0)) player.mi.cooldown = player.mi.cooldown.sub(diff).max(0)
+    }
+})
 
 
 
