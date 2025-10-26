@@ -3,7 +3,6 @@ addLayer("p", {
     symbol: "S", // This appears on the layer's node. Default is the id with the first letter capitalized
     position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
-        pseudoUpgs: [],
         unlocked: false,
 		points: new Decimal(0),
     }},
@@ -222,11 +221,20 @@ addLayer("p", {
                                 if (hasUpgrade('mul', 11)) mult = mult.times(256)
                                     if (hasUpgrade('mul', 11)) mult = mult.add(1e12)
                                         if (hasUpgrade('uf', 11)) mult = mult.pow(1.25)
+                                               if (hasUpgrade('uf', 76)) mult = mult.pow(1.1)
                                         if (hasUpgrade('mul', 47)) mult = mult.times((upgradeEffect('mul', 47)))
                                         if (inChallenge("gb", 22)) mult = mult.div(5)
                                 if (hasChallenge("gb", 12)) mult = mult.times(8)
                             if (hasUpgrade('gb', 17)) mult = mult.times((upgradeEffect('gb', 17)))
                                 if (hasUpgrade('gb', 24)) mult = mult.times((upgradeEffect('gb', 17)))
+                            if (hasUpgrade('uf', 56)) mult = mult.times(buyableEffect('uf', 11))
+                                 if (hasUpgrade('uf', 101)) mult = mult.times(2500)
+    if (hasUpgrade('uf', 102)) mult = mult.times(15000)
+    if (hasUpgrade('uf', 103)) mult = mult.times(200000)
+    if (hasUpgrade('uf', 104)) mult = mult.times(1e9)
+    if (hasUpgrade('uf', 105)) mult = mult.times(1e11)
+    if (hasUpgrade('uf', 106)) mult = mult.times(1e13)
+    if (hasUpgrade('uf', 107)) mult = mult.times(1e15)   
             return mult
 
         
@@ -252,6 +260,8 @@ addLayer("p", {
         startData() { return {
             unlocked: false,
             points: new Decimal(0),
+            pseudo31: false,
+hasBase31: false,
         }},
         color: "#42ff55",
         requires: new Decimal(1e22), // Can be a function that takes requirement increases into account
@@ -274,7 +284,7 @@ addLayer("p", {
        
         canBuyMax() { return hasUpgrade("gb", 23) },
         resetsNothing() {return hasUpgrade("gb", 57)},
-        
+      
         layerShown(){return true},
         passiveGeneration() {if (hasUpgrade("uf", 13)) return (1000*Math.log(player.gb.points)); else return 0},
         autoPrestige() {
@@ -455,21 +465,69 @@ addLayer("p", {
             },
         },
            
-            31: {
-                title: "#31: Friendliness 1",
-                description: "Cash Boosts points exponentially",
-                cost: new Decimal(67),
-                tooltip: "formula: log10 pow(0.1), Capped at 1.33 ",
-                effect() {
-                    return player[this.layer].points.add(2).log10().pow(0.1).min(1.33)
-                },
-                effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"^" }, // Add formatting to the effect
-                unlocked() {
-                    return hasUpgrade("gb", 27)
-                
-                },
+31: {
+    title() {
+        return player.gb.pseudo31 ? "#31: Friendliness 1+" : "#31: Friendliness 1"
+    },
+    description() {
+        return player.gb.pseudo31
+            ? "Cash boosts points exponentially (Pseudo version active)"
+            : "Cash boosts points exponentially"
+    },
+    cost() {
+        // Si ya tiene la base y puede acceder al pseudo
+        if (player.gb.hasBase31 && hasUpgrade("uf", 124) && !player.gb.pseudo31)
+            return new Decimal("1e43")
+        return new Decimal(67)
+    },
+    tooltip() {
+        return player.gb.pseudo31
+            ? "Formula: log10(Cash + 2)^0.11, capped at 1.7"
+            : "Formula: log10(Cash + 2)^0.1, capped at 1.33"
+    },
+    effect() {
+        let pow = player.gb.pseudo31 ? 0.11 : 0.1
+        let cap = player.gb.pseudo31 ? 1.7 : 1.33
+        return player.gb.points.add(2).log10().pow(pow).min(cap)
+    },
+    effectDisplay() {
+        return "^" + format(upgradeEffect("gb", 31))
+    },
+    canAfford() {
+        let cost = tmp.gb.upgrades[31].cost
+        return player.gb.points.gte(cost)
+    },
+    unlocked() {
+        return hasUpgrade("gb", 27)
+    },
+    purchaseLimit() {
+        // Permitimos 2 compras: normal y pseudo
+        return hasUpgrade("uf", 124) ? 2 : 1
+    },
+    onPurchase() {
+        if (!player.gb.hasBase31) {
+            // Primera compra normal
+            player.gb.hasBase31 = true
+            player.gb.upgrades.push(31)
+        } else if (hasUpgrade("uf", 124) && !player.gb.pseudo31) {
+            // Segunda compra = pseudo-upgrade
+            player.gb.pseudo31 = true
+            addPopup("normal", {
+                title: "Pseudo Upgrade Unlocked!",
+                message: "Friendliness 1 upgraded to its pseudo form!",
+                color: "#ffd700",
+                time: 3,
+            })
+        }
+    },
+    style() {
+        if (player.gb.pseudo31)
+            return { "background-color": "#ffd700", "color": "black", "border": "2px solid #222" }
+        if (player.gb.hasBase31)
+            return { "background-color": "#42ff55", "color": "white" }
+    },
+},
 
-            },
             32: {
                 title: "#32: Friendliness 2",
                 description: "this upgrade is made on 3/15/2025, so 3.15x point boost",
@@ -609,7 +667,9 @@ addLayer("p", {
                 cost: new Decimal(734),
                 tooltip: "log10()^4 + 3 Caps at 1e9/ Cash Cost Scaling",
                 effect() {
-                    return player.gb.points.log10().pow(4).add(3).min(1e9)
+                    let val = 4
+                     if	(hasUpgrade('uf', 74)) val = val+4
+                    return player.gb.points.log10().pow(val).add(3).min(1e9)
                 },
                 effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"/ Cash Cost Scaling" }, // Add formatting to the effect
                 unlocked() {
@@ -823,6 +883,8 @@ addLayer("p", {
             },
             effect(x) {
                 let base1 = new Decimal(1.25)
+                if	(hasUpgrade('uf', 82)) base1 = base1.add(0.1)
+                      if	(hasUpgrade('uf', 1116)) base1 = base1.add(0.35)
                 let base2 = x
             let expo = new Decimal(1.001)
                 let eff = base1.pow(Decimal.pow(base2, expo))
@@ -940,14 +1002,19 @@ addLayer("p", {
                                                     if (hasUpgrade('mul', 33)) exp = exp.times(9)
                                                         if (hasUpgrade('mul', 35)) exp = exp.times(1.02)
                                                             if (hasUpgrade('uf', 11)) exp = exp.pow(1.25)
+                                                                   if (hasUpgrade('uf', 82)) exp = exp.times(1e11)
                                                                 if (hasUpgrade('uf', 11)) exp = exp.times(10)
                                                                     if (hasUpgrade('uf', 36)) exp = exp.times(1.5)
+                                                                        if (hasUpgrade('uf', 64)) exp = exp.times(500)
+                                                                            if (hasUpgrade('uf', 67)) exp = exp.times(0.95)
+                                                                                if (hasUpgrade('uf', 91)) exp = exp.times(10)
                             if (hasUpgrade('gb', 52)) exp = exp.times((upgradeEffect('gb', 52)))
                                 if (hasUpgrade('mul', 36)) exp = exp.times((upgradeEffect('mul', 36)))
                                     if (hasUpgrade('mul', 44)) exp = exp.times((upgradeEffect('mul', 44)))
                                         if (hasUpgrade('mul', 52)) exp = exp.times((upgradeEffect('mul', 52)))
                                 if (hasUpgrade('gb', 65)) exp = exp.times((upgradeEffect('gb', 65)))
                                     if (inChallenge("gb", 23)) exp = exp.times(4)
+                                        
                                         exp = exp.times(buyableEffect('gb', 11))
                 return exp
     
@@ -979,6 +1046,15 @@ addLayer("p", {
         
             gainMult() { // Calculate the multiplier for main currency from bonuses
                 mult = new Decimal(1)
+                    if (hasUpgrade('uf', 26)) mult = mult.times(2)
+                        if (hasUpgrade('uf', 76)) mult = mult.times(10)
+                                if (hasUpgrade('uf', 102)) mult = mult.times(3)
+    if (hasUpgrade('uf', 103)) mult = mult.times(5)
+    if (hasUpgrade('uf', 104)) mult = mult.times(10)
+    if (hasUpgrade('uf', 105)) mult = mult.times(100)
+    if (hasUpgrade('uf', 106)) mult = mult.times(1000)
+    if (hasUpgrade('uf', 107)) mult = mult.times(10000)
+               if (hasUpgrade('uf', 111)) mult = mult.times((upgradeEffect('uf', 111)))
                 return mult
             },
             gainExp() { // Calculate the exponent on main currency from bonuses
@@ -990,7 +1066,7 @@ addLayer("p", {
            
            
             resetsNothing() {return hasUpgrade("mul", 21)},
-            passiveGeneration() {if (hasUpgrade("uf", 45)) return (1+(mult+1)); else return 0},
+            passiveGeneration() {if (hasUpgrade("uf", 45)) return (1+(mult)); else return 0},
             layerShown(){return true},
            
             
@@ -1221,7 +1297,11 @@ addLayer("p", {
                     description: "Cash reduces his own scaling (Caps at 1e10/)",
                     cost: new Decimal(4),
                     effect() {
-                        return player.gb.points.add(1).log10().min(1e10)
+                        let val = 1
+                     if	(hasUpgrade('uf', 85)) val = val+9
+                     if	(hasUpgrade('uf', 116)) val = val*5
+                          if	(hasUpgrade('uf', 131)) val = val*3
+                        return player.gb.points.add(1).pow(val).log10().min(1e10)
                     },
                     effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"/" }, // Add formatting to the effect
                     unlocked() {
@@ -1302,7 +1382,8 @@ addLayer("p", {
                 
                 gainMult() {
                     let mult = new Decimal(1)
-                    if (hasUpgrade('uf', 26)) mult = mult.times(2)
+                
+              
         
         
                     return mult
@@ -1314,6 +1395,7 @@ addLayer("p", {
                     if (hasUpgrade('uf', 26)) exp = exp.times(5)
                         if (hasUpgrade('uf', 43)) exp = exp.times(2)
                             if (hasUpgrade('uf', 45)) exp = exp.pow(2)
+                                if (hasUpgrade('uf', 57)) exp = exp.pow(2)
                     return exp
         
                 
@@ -1331,10 +1413,11 @@ addLayer("p", {
                 startData() { return {
                     unlocked: false,
                     points: new Decimal(0),
+                    spentuf: new Decimal(0),
                 }},
                 color: "violet",
-            
-                requires: new Decimal(1.1e26),
+                
+                requires: new Decimal("1.1e26"),
               // Can be a function that takes requirement increases into account
                 resource: "UF", // Name of prestige currency
                 baseResource: "$", // Name of resource prestige is based on
@@ -1344,12 +1427,21 @@ addLayer("p", {
             
                 gainMult() { // Calculate the multiplier for main currency from bonuses
                     mult = new Decimal(1)
+                     mult = mult.times(buyableEffect('uf', 13))
+                          mult = mult.times(buyableEffect('e', 12))
+                    if (hasUpgrade('uf', 61)) mult = mult.times(1.1)
+                          if (hasUpgrade('uf', 115)) mult = mult.times(8)
+                         if (hasUpgrade('uf', 86)) mult = mult.times(2)
+                              if (hasUpgrade('uf', 91)) mult = mult.times(10)
+                                 if (hasUpgrade('uf', 104)) mult = mult.times(15)
+    if (hasUpgrade('uf', 105)) mult = mult.times(250)
+    if (hasUpgrade('uf', 106)) mult = mult.times(5000)
                     return mult
                 },
                 gainExp() { // Calculate the exponent on main currency from bonuses
                     return new Decimal(1)
                 },
-                
+                resetsNothing() {return hasUpgrade("uf", 11)},
                
                 row: 3, // Row the layer is in on the tree (0 is the first row)
                
@@ -1408,7 +1500,7 @@ addLayer("p", {
                         description: "Points are boosted by cash upgrades (upgrades^2)",
                         cost: new Decimal(1),
                         effect() {
-                            return player.gb.upgrades.length*player.gb.upgrades.length
+                            return player.gb.upgrades.length*player.gb.upgrades.length+(1)
                         },
                         effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
                         unlocked() {
@@ -1451,7 +1543,7 @@ addLayer("p", {
                         description: "what are the boost? i dont know please!",
                         cost: new Decimal("1e6400"),
                         unlocked() {
-                            return hasUpgrade("uf", 25)
+                            return hasUpgrade("uf", 21)
                         
                         },
                         currencyInternalName: "points",
@@ -1645,9 +1737,9 @@ addLayer("p", {
                         currencyLayer: "mul",
                     },
                     51:{
-                        title: "#127: Do Something 1",
+                        title: "#127: Do Nothing 1",
                         description: "Make the Other Choice Upgrades From Win not more mutually exclusive",
-                        cost: new Decimal("1e3050"),
+                        cost: new Decimal("1e3040"),
                         unlocked() {
                             return hasUpgrade("uf", 46)
                         
@@ -1656,20 +1748,609 @@ addLayer("p", {
                         currencyDisplayName: "points",
 
                     },
-                    // Look in the upgrades docs to see what goes here!
+                    52:{
+                        title: "#128: Do Nothing 2",
+                        description: "more points based on your total every minute time played (HARD RESET RESETS)",
+                        cost: new Decimal("1e3042"),
+                        effect() {
+                            return player.timePlayed/60
+                        },
+                        effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+                        unlocked() {
+                            return hasUpgrade("uf", 51)
+                        
+                        },
+                        currencyInternalName: "points",
+                        currencyDisplayName: "points",
+
+                    },
+                    53:{
+                        title: "[FEATURE] #129: Do Nothing 3",
+                        description: "Unlocks the point store! they are located in acheivements",
+                        cost: new Decimal("1e3046"),
+                        unlocked() {
+                            return hasUpgrade("uf", 52)
+                        
+                        },
+                        currencyInternalName: "points",
+                        currencyDisplayName: "points",
+
+                    },
+                    54:{
+                        title: "#130: Do Nothing 4",
+                        description: "3.5x Point Boost!",
+                        cost: new Decimal("1.5e3047"),
+                        unlocked() {
+                            return hasUpgrade("uf", 53)
+                        
+                        },
+                        currencyInternalName: "points",
+                        currencyDisplayName: "points",
+
+                    },
+                    55: {
+                        title: "#131: Do Nothing 5",
+                        description: "the fourth Final Point upgrade in a streak.. Points Are Boosted by total upgrades (INCLUDING POINT STORE UPGRADES), also a extra 1.666x Point gain",
+                        cost: new Decimal("1e3050"),
+                        effect() {
+                            return player.p.upgrades.length+player.gb.upgrades.length+player.mul.upgrades.length+player.uf.upgrades.length+player.ps.upgrades.length+1
+                        },
+                        effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+                        unlocked() {
+                            return hasUpgrade("uf", 54)
+                        
+                        },
+                        currencyInternalName: "points",
+                        currencyDisplayName: "points",
+                    },
+                    56:{
+                        title: "#132: Do Nothing 6",
+                        description: "Now Winsome 4 boosts Skill",
+                        cost: new Decimal("5e3056"),
+                        unlocked() {
+                            return hasUpgrade("uf", 55)
+                        
+                        },
+                        currencyInternalName: "points",
+                        currencyDisplayName: "points",
+
+                    },
+                    57:{
+                        title: "#133: Do Nothing 7",
+                        description: "^2 Multiplier cost scaling (useless!)",
+                        cost: new Decimal("4e3057"),
+                        unlocked() {
+                            return hasUpgrade("uf", 56)
+                        
+                        },
+                        currencyInternalName: "points",
+                        currencyDisplayName: "points",
+
+                    },
+                    61:{
+                        title: "#134: Sleepful 1",
+                        description: "x1.1 nice boost of UF!",
+                        cost: new Decimal("1.35e3058"),
+                        unlocked() {
+                            return hasUpgrade("uf", 57)
+                        
+                        },
+                        currencyInternalName: "points",
+                        currencyDisplayName: "points",
+
+                    },
+                    62:{
+                        title: "#135: Sleepful 2",
+                        description: "pi^e points.. You are asking WHY IS SO EXPENSIVE.. ",
+                        cost: new Decimal(4),
+                        unlocked() {
+                            return hasUpgrade("uf", 61)
+                        
+                        },
+            
+
+                    },
+                    63:{
+                        title: "#136: Sleepful 3",
+                        description: "Multiplier and Cash and Point Store is keep on uf (MEANING THAT UF WILL KEEP ALL!) but is expensive",
+                        cost: new Decimal(5),
+                        unlocked() {
+                            return hasUpgrade("uf", 62)
+                    },
+              
                 },
+                64:{
+                    title: "#137: Sleepful 4",
+                    description: "get prepared because theres a /500 cash scaling boost",
+                    cost: new Decimal(325),
+                    unlocked() {
+                        return hasUpgrade("uf", 63)
+                },
+            },
+                65:{
+                    title: "#139: Sleepful 6",
+                    description: "8.333x point gain",
+                    cost: new Decimal(400),
+                    unlocked() {
+                        return player.uf.buyables[11].gte(10)
+                },
+            },
+            66:{
+                title: "#140: Sleepful 7",
+                description: "2x point gain",
+                cost: new Decimal(400),
+                unlocked() {
+                    return hasUpgrade("uf", 65)
+            },
+            currencyInternalName: "points",
+            currencyDisplayName: "points",
+
+        },
+        67:{
+            title: "(RISKGRADE) #141: Sleepful 8",
+            description: "3x point gain and multiply cash cost scaling by 1.05",
+            cost: new Decimal(400),
+            
+            unlocked() {
+                return hasUpgrade("uf", 65)
+        },
+    },
+      71:{
+            title: " #142: Blessing 1",
+            description: "6x Skill indeed..",
+            cost: new Decimal(1000),
+            
+            unlocked() {
+                return hasUpgrade("uf", 67)
+        },
+    },
+    72:{
+            title: " #143: Blessing 2",
+            description: "Adds +0.05 to #123's base",
+            cost: new Decimal(1500),
+            
+            unlocked() {
+                return hasUpgrade("uf", 71)
+        },
+    },
+      73:{
+                title: "#144: Blessing 3",
+                description: "Did you say the previous upgrade is weak???, then boost #123's base again by +0.04 and get his limit to 20",
+                cost: new Decimal("1e3100"),
+                unlocked() {
+                    return hasUpgrade("uf", 72)
+            },
+            currencyInternalName: "points",
+            currencyDisplayName: "points",
+
+        },
+        74:{
+            title: " #145: Blessing 4",
+            description: "UP46 boost is squared",
+            cost: new Decimal(2200),
+            
+            unlocked() {
+                return hasUpgrade("uf", 73)
+        },
+    },
+    75:{
+            title: " #146: Blessing 5",
+            description: "Shall we stop doing formula changes, alright.... 100x Point gain ",
+            cost: new Decimal(1500),
+            
+            unlocked() {
+                return hasUpgrade("uf", 74)
+        },
+    },
+      76: {
+                        title: "#147: Blesing 6",
+                        description: "Points are boosted by uf upgrades bought (upgrades^1.5)",
+                        cost: new Decimal(1750),
+                        effect() {
+                            return player.uf.upgrades.length*(player.uf.upgrades.length^0.5)+(1)
+                        },
+                        effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+                        unlocked() {
+                            return hasUpgrade("uf", 75)
+                        
+                        },
+                    },
+                    77:{
+            title: " #148: Blessing 7",
+            description: "WHO SAID NO TO MULTIPLIER! x10 multiplier gain and a additional ^1.1 to skill ",
+            cost: new Decimal("1e3150"),
+            
+            unlocked() {
+                return hasUpgrade("uf", 76)
+        },
+                    currencyInternalName: "points",
+            currencyDisplayName: "points",
+    },
+ 81:{
+                    title: "#150: Vintage 2",
+                    description: "BIG WIN!!!!!! +25 cap to #123",
+                    cost: new Decimal(10000),
+                    unlocked() {
+                        return player.uf.buyables[13].gte(10)
+                },
+            }, 
+ 82:{
+            title: " #151: Vintage 3",
+            description: "Oh my god... /1e11 Cash Cost Scaling..... MONEY MONEY MONEY, add +0.1 to Legendary brick base!",
+            cost: new Decimal(15000),
+            
+            unlocked() {
+                return hasUpgrade("uf", 81)
+        },
+    },   
+83:{
+            title: " #152: Vintage 4",
+            description: "UF EXPANSION!!!!!!!!! +10 Cap to #149",
+            cost: new Decimal(22500),
+            
+            unlocked() {
+                return hasUpgrade("uf", 82)
+        },
+    }, 
+    84:{
+            title: " #153: Vintage 5",
+            description: "Did they hurtt to you, dont worry! +0.15 base to #149",
+            cost: new Decimal(250000),
+            
+            unlocked() {
+                return hasUpgrade("uf", 83)
+        },
+    }, 
+      85:{
+            title: " #154: Vintage 6",
+            description: "TIME TO SEE THEY GROW!!! #94 pow is increased by +9! meaning the boost will get too good!",
+            cost: new Decimal(370000),
+            
+            unlocked() {
+                return hasUpgrade("uf", 84)
+        },
+    }, 
+    86:{
+            title: " #155: Vintage 7",
+            description: "x2 UF..",
+            cost: new Decimal(750000),
+            
+            unlocked() {
+                return hasUpgrade("uf", 85)
+        },
+    }, 
+     87:{
+                title: "#156: Vintage 8",
+                description: "I was too harsh on you... lower the price scaling and +20 max level on #149",
+                cost: new Decimal("1e3100"),
+                unlocked() {
+                    return hasUpgrade("uf", 86)
+            },
+            currencyInternalName: "points",
+            currencyDisplayName: "points",
+
+        },
+  91:{
+            title: " #157: Ifinitude 1",
+            description: "We are so excited for this! fr, this will get a lot a boosts to make you prepared for Just air.. it will take a lot to take this. but it will be so good, starting with a powerful x50000 point boost, then add +50 to #123 and make #139 cheaper the base -0.3 cost and +5 limit, then your time will be set to 30000, meaning around ~x100 point boost, at the last, x10 UF for your effort, since you are champion,  and /10 cash cost scaling, good luck on your adventure!",
+            cost: new Decimal(2500000),
+            
+            unlocked() {
+                return hasUpgrade("uf", 87)
+        },
+        onPurchase() {
+        // Reproduce un sonido al comprar
+        player.timePlayed = 30000
+        const audio = new Audio("sounds/upgrade.mp3");
+        audio.volume = 0.6; // volumen entre 0.0 y 1.0
+        audio.play();
+    },
+    }, 
+    101: {
+    title: "#158: Just Air 1",
+    description: "A fresh start in the air... Multiply your points by x250,000 and your skill by x2,500. The wind begins to favor you.",
+    cost: new Decimal(500000),
+    unlocked() { return hasUpgrade('uf', 91) },
+},
+
+102: {
+    title: "#159: Just Air 2",
+    description: "Your potential rises with the skies. x10,000,000 points and x15,000 skill boost, plus your multiplier gets x3 more powerful.",
+    cost: new Decimal(750000),
+    unlocked() { return hasUpgrade('uf', 101) },
+},
+
+103: {
+    title: "#160: Just Air 3",
+    description: "You start feeling infinite power... x100,000,000 points, x200,000 skill, and x5 multiplier. #123 base is now +0.15 for stronger scaling.",
+    cost: new Decimal(1000000),
+    unlocked() { return hasUpgrade('uf', 102) },
+},
+
+104: {
+    title: "#161: Just Air 4",
+    description: "The storm pushes you forward! x1e12 points, x1e9 skill, and x15 UF power. Your multiplier surges by x10.",
+    cost: new Decimal(1250000),
+    unlocked() { return hasUpgrade('uf', 103) },
+},
+
+105: {
+    title: "#162: Just Air 5",
+    description: "You transcend normal winds... x1e15 points, x1e11 skill, x100 multiplier, and x250 UF gain. The air thickens with strength.",
+    cost: new Decimal(1500000),
+    unlocked() { return hasUpgrade('uf', 104) },
+},
+
+106: {
+    title: "#163: Just Air 6",
+    description: "You breathe pure energy. x1e20 points, x1e13 skill, and x1000 multiplier. UF generation now feels endless (x5,000 UF gain).",
+    cost: new Decimal(1750000),
+    unlocked() { return hasUpgrade('uf', 105) },
+},
+
+107: {
+    title: "#164: Just Air 7",
+    description: "The sky opens before you. x1e25 points, x1e15 skill, and x10000 multiplier. Unlock the ",
+    cost: new Decimal(2500000),
+    unlocked() { return hasUpgrade('uf', 106) },
+},
+111: {
+                        title: "#165: Happylike 1",
+                        description: "Multiplier Explosion!!!! Multiplier boost itself! Effect: log10(mul)^0.66+1",
+                        cost: new Decimal(2.5e13),
+                        effect() {
+                            return player.mul.points.log10().pow(2/3).add(1)
+                        },
+                        effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+                        unlocked() {
+                            return hasUpgrade("uf", 107)
+                        
+                        },
+                    },
+112: {
+    title: "#166: Happylike 2",
+                        description: "Never Seen that before! Unfailability boosts #123's limit! by log10(UF)^0.2+1  Max is 15x",
+                        cost: new Decimal(8.5e13),
+                        effect() {
+                            return player.uf.points.log10().pow(0.2).add(1).min(100).round()
+                        },
+                        effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+                        unlocked() {
+                            return hasUpgrade("uf", 111)
+                        
+                        },
+},    
+113: {
+    title: "(SUPER UPGRADE) #167: Happylike 3",
+    description: " Multiply your CURRENT playtime by 1,000,000x",
+    cost: new Decimal(3e14),
+    unlocked() { return hasUpgrade('uf', 112) },
+     onPurchase() {
+        // Reproduce un sonido al comprar
+        player.timePlayed = player.timePlayed*1e6
+        const audio = new Audio("sounds/pum.mp3");
+        audio.volume = 1; // volumen entre 0.0 y 1.0
+        audio.play();
+    },
+},        
+114: {
+    title: "#168: Happylike 4",
+    description: "Prepared for choice? x1.25 point gain, unlocks euros.",
+    cost: new Decimal(6e14),
+    unlocked() { return hasUpgrade('uf', 113) },
+},        
+115: {
+                        title: "#169: Happylike 5",
+                        description: "For the stats...? 8x Points,UF ",
+                        cost: new Decimal(1e15),
+                     
+                        unlocked() {
+                            return hasUpgrade("uf", 114)
+                        
+                        },
+                        canAfford() {
+                            return (hasUpgrade('uf', 116)) == false},
+
+                      onPurchase() {
+        // Reproduce un sonido al comprar
+        
+        const audio = new Audio("sounds/pum.mp3");
+        audio.volume = 1; // volumen entre 0.0 y 1.0
+        audio.play();
+    },
+                    },
+                    116: {
+                        title: "#170: Happylike 6",
+                        description: "Or for the effects...? #123 +0.25 base, Legendary Brick +0.35 base and #94 pow gets x5? (recommended please buy this 100% real no fake",
+                        cost: new Decimal(1e15),
+                     
+                        unlocked() {
+                            return hasUpgrade("uf", 114)
+                        
+                        },
+                        canAfford() {
+                            return (hasUpgrade('uf', 115)) == false},
+
+                      onPurchase() {
+        // Reproduce un sonido al comprar
+        
+        const audio = new Audio("sounds/pum.mp3");
+        audio.volume = 1; // volumen entre 0.0 y 1.0
+        audio.play();
+    },
+                    },
+                    117: {
+    title: "#171: Happylike 7",
+    description: "IS THIS WORTH SOMETHING???? ^1.001 points.",
+    cost: new Decimal("1e3599"),
+    unlocked() { return hasUpgrade('uf', 113) },
+       currencyInternalName: "points",
+                        currencyDisplayName: "points",
+},     
+ 121: {
+    title: "#172: Locomotion 1",
+    description: "Starting with euros locomoted! x12 points if you have more than 50 points (real)",
+    cost: new Decimal(150),
+    unlocked() { return hasUpgrade('uf', 117) },
+       currencyInternalName: "points",
+                        currencyDisplayName: "Euros",
+                        currencyLayer: "e",
+},    
+122: {
+    title: "#173: Locomotion 2",
+    description: "More Euros to the conveyor!! x2 Euros!",
+    cost: new Decimal(250),
+    unlocked() { return hasUpgrade('uf', 121) },
+       currencyInternalName: "points",
+                        currencyDisplayName: "Euros",
+                        currencyLayer: "e",
+},    
+123: {
+                        title: "#174: Locomotion 3",
+                        description: "We Are grinding Euros for this one!! Euro boosts points!",
+                        cost: new Decimal(2.5e15),
+                        effect() {
+                            return player.e.points.log10().pow(1.5).add(1)
+                        },
+                        effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+                        unlocked() {
+                            return hasUpgrade("uf", 122)
+                        
+                        },
+                    }, 
+124: {
+                        title: "#175: Locomotion 4",
+                        description: "good boy, you reached #175 sooo get a Extension Upgrade fo- WAIT i have a better idea, unlocks a pseudo upgrade to friendliness 1.",
+                        cost: new Decimal(1e16),
+                        
+                        unlocked() {
+                            return hasUpgrade("uf", 123)
+                        
+                        },
+                    }, 
+125: {
+                        title: "#176: Locomotion 5",
+                        description: "Dont tell, me, this is getting inflated again? x1.5 euros",
+                        cost: new Decimal(5e8),
+                        
+                        unlocked() {
+                            return hasUpgrade("uf", 124)
+                        
+                        },
+                                         
+   currencyInternalName: "points",
+                        currencyDisplayName: "Euros",
+                        currencyLayer: "e",
+                        },
+
+126: {
+    title: "#177: Locomotion 6",
+    description: "NOOOO ITS INCREASING! ×1.02 Euro gain per every bought upgrade after #150 ",
+    cost: new Decimal(1e26),
+
+    unlocked() {
+        return hasUpgrade("uf", 125)
+    },
+
+    effect() {
+        let totalUpgs = 0
+
+    
+        for (let id in layers) {
+            if (player[id] && Array.isArray(player[id].upgrades)) {
+                totalUpgs += player[id].upgrades.length
+            }
+        }
+
+     
+        let extra = Math.max(totalUpgs - 150, 0)
+
+    
+        return Decimal.pow(1.02, extra)
+    },
+
+    effectDisplay() {
+        return format(upgradeEffect(this.layer, this.id)) + "x"
+    },
+},
+127: {
+    title: "#178: Locomotion 7",
+    description: "For one, for everyone! x1.03 point gain for every upgrade starting on 125",
+    cost: new Decimal(8e26),
+
+    unlocked() {
+        return hasUpgrade("uf", 125)
+    },
+
+    effect() {
+        let totalUpgs = 0
+
+    
+        for (let id in layers) {
+            if (player[id] && Array.isArray(player[id].upgrades)) {
+                totalUpgs += player[id].upgrades.length
+            }
+        }
+
+     
+        let extra = Math.max(totalUpgs - 125, 0)
+
+    
+        return Decimal.pow(1.03, extra)
+    },
+
+    effectDisplay() {
+        return format(upgradeEffect(this.layer, this.id)) + "x"
+    },
+},
+     
+131: {
+                        title: "#179: Walktrough 1",
+                        description: "Just walk, x3 pow to #96",
+                        cost: new Decimal(5e17),
+                        
+                        unlocked() {
+                            return hasUpgrade("uf", 127)
+                        
+                        },
+                    },
+                    132: {
+                        title: "#180: Walktrough 2",
+                        description: "The final upgrade, for now, For V1.1, ^1.1 point gain. ",
+                        cost: new Decimal(5e17),
+                        
+                        unlocked() {
+                            return hasUpgrade("uf", 131)
+                        
+                        },
+                    },
+
+
+
+
+            },
                 buyables: {
                     11: {
                     title: "#123: Winsome 4",
                     unlocked() { return (hasUpgrade("uf", 43)) },
-                    purchaseLimit: 10,
+                    purchaseLimit() {
+let limit = 10
+   if	(hasUpgrade('uf', 73)) limit = limit+10
+   if	(hasUpgrade('uf', 81)) limit = limit+25
+    if	(hasUpgrade('uf', 91)) limit = limit+50
+      if (hasUpgrade('uf', 112)) limit = limit*upgradeEffect('uf', 112)
+                  return purchaseLimit2 = limit
+                    },
+                    
+                    
+                    
                     cost(x) {
-                        let exp2 = 1.05 
+                        let exp2 = 1.05
                         return new Decimal("1e3010").mul(Decimal.pow(6, x)).mul(Decimal.pow(x , Decimal.pow(exp2 , x))).floor()
                        
                     },
                     display() {
-                        return "Cost: " + format(tmp[this.layer].buyables[this.id].cost) + "  Points" + "<br>Bought: " + getBuyableAmount(this.layer, this.id) + "/10" + "<br>Needs Maxed to order to unlock Winsome 5" + "<br>Effect: Point Gain is Boosted by " + format(buyableEffect(this.layer, this.id))
+                        return "Cost: " + format(tmp[this.layer].buyables[this.id].cost) + "  Points" + "<br>Bought: " + getBuyableAmount(this.layer, this.id) + "/" + purchaseLimit2 + "<br>Needs Maxed to order to unlock Winsome 5" + "<br>Effect: Point Gain is Boosted by " + format(buyableEffect(this.layer, this.id))
                     },
                     canAfford() {
                         return player.points.gte(this.cost())
@@ -1681,25 +2362,207 @@ addLayer("p", {
                     },
                     effect(x) {
                         let base1 = new Decimal(1.4)
+                        if	(hasUpgrade('uf', 72)) base1 = base1.add(0.05)
+                               if	(hasUpgrade('uf', 73)) base1 = base1.add(0.04)
+                                      if	(hasUpgrade('uf', 116)) base1 = base1.add(0.25)
                         let base2 = x
                     let expo = new Decimal(1.001)
                         let eff = base1.pow(Decimal.pow(base2, expo))
                         return eff
                     },
                 },
+                12: {
+                    title: "#138: Sleepful 5",
+                    unlocked() { return (hasUpgrade("uf", 43)) },
+                    purchaseLimit: 100,
+                    
+                    cost(x) {
+                        let exp2 = 1.05
+ if	(hasUpgrade('uf', 91)) exp2 = exp2-0.3
+                        return new Decimal(5).mul(Decimal.pow(1.15, x)).mul(Decimal.mul(x , Decimal.pow(exp2 , x))).floor()
+                       
+                    },
+                    display() {
+                        return "Cost: " + format(tmp[this.layer].buyables[this.id].cost) + "  UF" + "<br>Bought: " + getBuyableAmount(this.layer, this.id) + "/100" + "<br>Needs 100 of them to unlock Pseudo Upgrade 1" +  "<br>Needs 10 of them to unlock Sleepful 6" + "<br>Effect: Point Gain is multiplied by " + format(buyableEffect(this.layer, this.id))
+                    },
+                    canAfford() {
+                        return player.uf.points.gte(this.cost())
+                    },
+                    buy() {
+                        let cost = new Decimal (1)
+                        player.uf.points = player.uf.points.sub(this.cost().mul(cost))
+                        setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+                    },
+                    effect(x) {
+                        let base1 = new Decimal(1.05)
+                        let base2 = x
+                    let expo = new Decimal(2)
+                        let eff = base1.pow(Decimal.pow(base2, expo))
+                        return eff
+                    },
+                },
+                 13: {
+                    title: "#149: Vintage 1",
+                    unlocked() { return (hasUpgrade("uf", 77)) },
+   purchaseLimit() {
+let limit = 10
+   if	(hasUpgrade('uf', 83)) limit = limit+20
+    if	(hasUpgrade('uf', 87)) limit = limit+20
+   
+                  return purchaseLimit = limit
+                    },
+                    
+                    cost(x) {
+                        let exp2 = 1.025
+                            if	(hasUpgrade('uf', 91)) exp2 = exp2-0.1
+                        return new Decimal(100).mul(Decimal.pow(1.3, x)).mul(Decimal.mul(x , Decimal.pow(exp2 , x))).floor()
+                       
+                    },
+                    display() {
+                        return "Cost: " + format(tmp[this.layer].buyables[this.id].cost) + "  UF" + "<br>Bought: " + getBuyableAmount(this.layer, this.id) + "/" +  purchaseLimit + "<br>The UF inflation started!" +  "<br>Needs 10 of them to unlock Vintage 2" + "<br>Effect: UF Gain is multiplied by " + format(buyableEffect(this.layer, this.id))
+                    },
+                    canAfford() {
+                        return player.uf.points.gte(this.cost())
+                    },
+                    buy() {
+                        let cost = new Decimal (1)
+                        player.uf.points = player.uf.points.sub(this.cost().mul(cost))
+                        setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+                    },
+                    effect(x) {
+                        let base1 = new Decimal(1.2)
+                           if	(hasUpgrade('uf', 84)) base1 = base1.add(0.1)
+                         
+                        let base2 = x
+                    let expo = new Decimal(1.5)
+                        let eff = base1.mul(Decimal.pow(base2, expo).add(1))
+                        return eff
+                    },
+                },
             },
-            infoboxes:{
-                coolInfo: {
-                    title: "the unfailability lore",
-                    titleStyle: {'color': '#FE0000'},
-                    body: "DEEP LORE!",
-                    bodyStyle: {'background-color': "#0000EE"}
-                }
-            },
-            }),
-        
-        
                 
+        },
+    
+ addLayer("e", {
+    name: "Euros", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "€", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+    }},
+    color: "#a3c0ffff",
+    requires: new Decimal("1e3570"), // Can be a function that takes requirement increases into account
+    resource: "Euros", // Name of prestige currency
+    baseResource: "points", // Name of resource prestige is based on
+    baseAmount() {return player.points}, // Get the current amount of baseResource
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0.009, // Prestige currency exponent
+ 
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+         
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+
+    row: 3, // Row the layer is in on the tree (0 is the first row)
+    
+   resetsNothing() {return hasUpgrade("uf", 11)},
+   
+  
+
+   
+
+    layerShown(){return (hasUpgrade('uf', 114))},
+  
+    buyables: {
+ 11: {
+                    title: "More Points I",
+                    unlocked() { return (hasUpgrade("uf", 114)) },
+                    purchaseLimit: 175,
+                    
+                    cost(x) {
+                        let exp2 = 1.025
+
+                        return new Decimal(5).mul(Decimal.pow(1.05, x)).mul(Decimal.mul(x , Decimal.pow(exp2 , x))).floor()
+                       
+                    },
+                    display() {
+                        return "Cost: " + format(tmp[this.layer].buyables[this.id].cost) + " Euros " + "<br>Bought: " + getBuyableAmount(this.layer, this.id) + "/175" + "<br>Effect: Point Gain is multiplied by " + format(buyableEffect(this.layer, this.id))
+                    },
+                    canAfford() {
+                        return player.e.points.gte(this.cost())
+                    },
+                    buy() {
+                        let cost = new Decimal (1)
+                        player.e.points = player.e.points.sub(this.cost().mul(cost))
+                        setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+                    },
+                    effect(x) {
+                        let base1 = new Decimal(1.035)
+                        let base2 = x
+                    let expo = new Decimal(1.75)
+                        let eff = base1.pow(Decimal.pow(base2, expo))
+                        return eff
+                    },
+                },  
+            
+  12: {
+                    title: "More UF I",
+                    unlocked() { return (hasUpgrade("uf", 114)) },
+                    purchaseLimit: 120,
+                    
+                    cost(x) {
+                        let exp2 = 1.035
+
+                        return new Decimal(10).mul(Decimal.pow(1.05, x)).mul(Decimal.mul(x , Decimal.pow(exp2 , x))).floor()
+                       
+                    },
+                    display() {
+                        return "Cost: " + format(tmp[this.layer].buyables[this.id].cost) + " Euros " + "<br>Bought: " + getBuyableAmount(this.layer, this.id) + "/120" + "<br>Effect: UF Gain is multiplied by " + format(buyableEffect(this.layer, this.id))
+                    },
+                    canAfford() {
+                        return player.e.points.gte(this.cost())
+                    },
+                    buy() {
+                        let cost = new Decimal (1)
+                        player.e.points = player.e.points.sub(this.cost().mul(cost))
+                        setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+                    },
+                    effect(x) {
+                        let base1 = new Decimal(1.025)
+                        let base2 = x
+                    let expo = new Decimal(1.5)
+                        let eff = base1.pow(Decimal.pow(base2, expo))
+                        return eff
+                    },
+                },             
+        },    
+        gainMult() {
+            let mult = new Decimal(1)
+           if (hasUpgrade('uf', 122)) mult = mult.times(2)
+                if (hasUpgrade('uf', 125)) mult = mult.times(1.5)
+                    if (hasUpgrade('uf', 126)) mult = mult.times((upgradeEffect('uf', 126)))
+                  // Primer softcap a partir de 1e5
+         
+            return mult
+
+        
+        }, 
+        gainExp() {
+            let exp = new Decimal(1)
+           
+            return exp
+
+        
+        }, 
+
+    },           
+      
+    
           
     
         
@@ -1715,6 +2578,7 @@ addLayer("p", {
         tooltip() { // Optional, tooltip displays when the layer is locked
             return ("Achievements")
         },
+        
         achievements: {
             rows: 2,
             cols: 10,
@@ -1777,5 +2641,34 @@ addLayer("p", {
                 },
     
             },
-    
-    })))))
+        },
+            addLayer("ps", {
+                startData() { return {
+                    unlocked() {
+                        return hasUpgrade("uf", 53)
+                    
+                    },
+                }},
+                color: "white",
+                row: "side",
+                layerShown() {return true}, 
+                tooltip() { // Optional, tooltip displays when the layer is locked
+                    return ("Point store")
+                },
+                upgrades: {
+                11:{
+                    title: "#1-S: Special Upgrade 1",
+                    description: "^1.05 Points",
+                    cost: new Decimal("1e3000"),
+                    unlocked() {
+                        return hasUpgrade("uf", 53)
+                    
+                    },
+                    currencyInternalName: "points",
+                    currencyDisplayName: "points",
+
+                }
+            }
+        
+        
+    }))))))))

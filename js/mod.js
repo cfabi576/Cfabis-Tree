@@ -12,16 +12,19 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "anish TM The Class Upper Negative Update Private Servers",
-	name: "Release",
+	num: "1.1",
+	name: "The Class Upper Negative update idk",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
 	<h3>v0.12</h3><br>
 
-		- Added stuff.`
+		- Added upgrades from #142 to #180
+		- Added "Euros" 
+		- Added Formula changes
+		.`
 
-let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
+let winText = `Congratulations! You have reached the end and beaten this game, but for now... as V1.1`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -122,10 +125,24 @@ function getPointGen() {
 																		if	(hasUpgrade('uf', 41)) gain = gain.times(3)
 																			if	(hasUpgrade('uf', 42)) gain = gain.pow(1.001)
 																				if	(hasUpgrade('uf', 44)) gain = gain.times(1.75)
-												if	(hasUpgrade('uf', 12)) gain = gain.times(120)
+																					if	(hasUpgrade('uf', 54)) gain = gain.times(3.5)
+																						if	(hasUpgrade('uf', 55)) gain = gain.times(1.666)
+																							if	(hasUpgrade('uf', 62)) gain = gain.times(22.4591577184)
+																								if	(hasUpgrade('uf', 65)) gain = gain.times(8.333)
+																									if	(hasUpgrade('uf', 66)) gain = gain.times(2)
+																										if	(hasUpgrade('uf', 67)) gain = gain.times(3)
+												if	(hasUpgrade('uf', 12)) gain = gain.times(1e20)
 													if	(hasUpgrade('uf', 16)) gain = gain.times(5)
 														if	(hasUpgrade('uf', 33)) gain = gain.times(6)
+															if	(hasUpgrade('uf', 71)) gain = gain.times(6)
+																		if	(hasUpgrade('uf', 75)) gain = gain.times(100)
+																			if	(hasUpgrade('uf', 91)) gain = gain.times(50000)
 													if	(hasUpgrade('uf', 14)) gain = gain.times(upgradeEffect('uf', 14))	
+														if	(hasUpgrade('uf', 76)) gain = gain.times(upgradeEffect('uf', 76))	
+																		if	(hasUpgrade('uf', 123)) gain = gain.times(upgradeEffect('uf', 123))	
+																				if	(hasUpgrade('uf', 127)) gain = gain.times(upgradeEffect('uf', 127))	
+														if	(hasUpgrade('uf', 52)) gain = gain.times(upgradeEffect('uf', 52))	
+															if	(hasUpgrade('uf', 55)) gain = gain.times(upgradeEffect('uf', 55))	
 												if (inChallenge("gb", 14)) gain = gain.pow(0.85)
 													if (inChallenge("gb", 21)) gain = gain.times(1.5)
 														if (inChallenge("gb", 22)) gain = gain.times(3)
@@ -140,6 +157,19 @@ function getPointGen() {
 													if (hasUpgrade('gb', 17)) gain = gain.times(upgradeEffect('gb', 17))	
 														if (hasUpgrade('gb', 31)) gain = gain.pow(upgradeEffect('gb', 31))	
 															gain = gain.times(buyableEffect('uf', 11))
+												gain = gain.times(buyableEffect('uf', 12))
+												gain = gain.times(buyableEffect('e', 11))
+												  if (hasUpgrade('uf', 101)) gain = gain.times(250000)
+													 if (hasUpgrade('uf', 117)) gain = gain.pow(1.001)
+																		 if (hasUpgrade('uf', 132)) gain = gain.pow(1.1)
+														  if (hasUpgrade('uf', 115)) gain = gain.times(8)
+															 if (hasUpgrade('uf', 121)) gain = gain.times(12)
+    if (hasUpgrade('uf', 102)) gain = gain.times(1e7)
+    if (hasUpgrade('uf', 103)) gain = gain.times(1e8)
+    if (hasUpgrade('uf', 104)) gain = gain.times(1e12)
+    if (hasUpgrade('uf', 105)) gain = gain.times(1e15)
+    if (hasUpgrade('uf', 106)) gain = gain.times(1e20)
+    if (hasUpgrade('uf', 107)) gain = gain.times(1e25)
 															
 	return gain
 }
@@ -155,7 +185,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return (hasUpgrade('uf', 25))
+	return (hasUpgrade('uf', 132))
 }
 
 
