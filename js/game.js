@@ -6,6 +6,30 @@ const TMT_VERSION = {
 	tmtNum: "2.7",
 	tmtName: "Δ"
 }
+let bgMusic = new Audio("sounds/Candyland.mp3");
+bgMusic.loop = true;
+bgMusic.volume = 0.5;
+
+if (localStorage.getItem("musicEnabled") === null) {
+    localStorage.setItem("musicEnabled", "true");
+}
+
+function updateMusicState() {
+    let enabled = localStorage.getItem("musicEnabled") === "true";
+    if (enabled) {
+        bgMusic.play().catch(() => {
+            // navegador bloquea autoplay, esperar interacción del jugador
+            document.addEventListener("click", () => {
+                bgMusic.play();
+            }, { once: true });
+        });
+    } else {
+        bgMusic.pause();
+    }
+}
+
+// Llamar al iniciar el juego
+updateMusicState();
 
 function getResetGain(layer, useType = null) {
 	let type = useType
@@ -432,5 +456,6 @@ var interval = setInterval(function() {
 	updateParticles(trueDiff)
 	ticking = false
 }, 50)
-
 setInterval(function() {needCanvasUpdate = true}, 500)
+// ======== Detectar si el jugador abre la consola (versión segura) ========
+// === Sistema de Música ===

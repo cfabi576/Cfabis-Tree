@@ -1,8 +1,9 @@
+
 * {
 	transition-duration: 0.5s;
 	text-align: center;
-	font-family: "Inconsolata", monospace;
-	font-weight: bold;
+	    font-family: 'Lato', sans-serif ;
+		font-weight: bold;
 	table-align: center;
 	margin: auto;
 	-webkit-text-size-adjust: none;
@@ -242,10 +243,76 @@ button > * {
 	position: absolute;
 	top: 0
 }
-
-.noBackground {
-	background: transparent !important;
-	background-image: none !important;
-	--background: transparent !important;
+/* === Animación de gradiente para #200 === */
+/* === Animación gradiente y fade del texto "200" === */
+/* === Texto especial 200 animado === */
+@keyframes gradient200 {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
+@keyframes shake200 {
+    0%, 100% { transform: translate(0, 0); }
+    20% { transform: translate(-8px, 6px); }
+    40% { transform: translate(7px, -5px); }
+    60% { transform: translate(-5px, 4px); }
+    80% { transform: translate(5px, -6px); }
+}
+
+.shake200 {
+    animation: shake200 0.5s ease infinite;
+}
+@keyframes fadeOut200 {
+  0% { opacity: 1; transform: scale(1) rotate(0deg); }
+  90% { opacity: 1; transform: scale(1.1) rotate(10deg); }
+  100% { opacity: 0; transform: scale(1.2) rotate(20deg); }
+}
+/* Texto "200" que aparece y se desvanece */
+.upgrade200-text {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(0deg);
+    font-size: 160px;
+    color: white;
+    text-shadow: 0 0 20px #fff;
+    z-index: 99999;
+    opacity: 0;
+    animation: text200anim 2s ease forwards;
+    pointer-events: none;
+    font-family: 'Lato', sans-serif;
+}
+
+@keyframes text200anim {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5) rotate(0deg);
+    }
+    20% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2) rotate(360deg);
+    }
+    80% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1) rotate(360deg);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8) rotate(360deg);
+    }
+}
+/* 🔥 Aura animada en el botón de reset JP */
+#prestigeButton.jp {
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 65x 65px rgb(179, 255, 0);
+    animation: jpPulse 2s infinite ease-in-out;
+    border-radius: 40px;
+}
+
+@keyframes jpPulse {
+    0% { box-shadow: 0 0 65px 65px rgb(255, 255, 255); }
+    50% { box-shadow: 0 0 55px 55px rgba(180, 255, 0, 1); }
+    100% { box-shadow: 0 0 60px 60px rgb(255, 255, 255); }
+}

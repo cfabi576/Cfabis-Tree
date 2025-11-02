@@ -4,27 +4,30 @@ let modInfo = {
 	pointsName: "points",
 	modFiles: ["layers.js", "tree.js"],
 
-	discordName: "Servidor de RainSky Developers",
-	discordLink: "https://discord.gg/ASeRsJ4JNz",
+	discordName: "4rum",
+	discordLink: "https://discord.com/channels/762036407719428096/1432788709945905162",
 	initialStartPoints: new Decimal (1), // Used for hard resets and new players
 	offlineLimit: 10000000,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.1",
-	name: "The Class Upper Negative update idk",
+	num: "1.15",
+	name: "The Jumpify Era, Part 1",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.12</h3><br>
+	<h3>v1.15</h3><br>
 
-		- Added upgrades from #142 to #180
-		- Added "Euros" 
-		- Added Formula changes
+		- Added upgrades from #181 to #211
+		<br>- Added "Jumpify" 
+		<br>- Added More Acheivements for both Normal and Secret
+		<br>- Text font changed
+		<br>- Added Music hell yeah
+		<br>- New Server Link
 		.`
 
-let winText = `Congratulations! You have reached the end and beaten this game, but for now... as V1.1`
+let winText = `Congratulations! You have reached the end and beaten this game, but for now... as V1.15`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -63,6 +66,7 @@ function getPointGen() {
 					if (hasUpgrade('p', 25)) gain = gain.times(upgradeEffect('p', 25))
 				if (hasUpgrade('p', 14)) gain = gain.add(8)
 					if (hasMilestone('gb', 11)) gain = gain.pow(1.03)
+							if (hasMilestone('uf', 0)) gain = gain.pow(1.05)
 					if (hasUpgrade('p', 16)) gain = gain.add(100)
 						if (hasUpgrade('p', 32)) gain = gain.add(1e6)
 						if (hasUpgrade('p', 18)) gain = gain.times(5)
@@ -124,6 +128,7 @@ function getPointGen() {
 																	if	(hasUpgrade('uf', 36)) gain = gain.times(1.5)
 																		if	(hasUpgrade('uf', 41)) gain = gain.times(3)
 																			if	(hasUpgrade('uf', 42)) gain = gain.pow(1.001)
+																						if	(hasUpgrade('uf', 161)) gain = gain.pow(1.15)
 																				if	(hasUpgrade('uf', 44)) gain = gain.times(1.75)
 																					if	(hasUpgrade('uf', 54)) gain = gain.times(3.5)
 																						if	(hasUpgrade('uf', 55)) gain = gain.times(1.666)
@@ -137,15 +142,22 @@ function getPointGen() {
 															if	(hasUpgrade('uf', 71)) gain = gain.times(6)
 																		if	(hasUpgrade('uf', 75)) gain = gain.times(100)
 																			if	(hasUpgrade('uf', 91)) gain = gain.times(50000)
+																						if	(hasUpgrade('uf', 147)) gain = gain.times(2)
 													if	(hasUpgrade('uf', 14)) gain = gain.times(upgradeEffect('uf', 14))	
 														if	(hasUpgrade('uf', 76)) gain = gain.times(upgradeEffect('uf', 76))	
 																		if	(hasUpgrade('uf', 123)) gain = gain.times(upgradeEffect('uf', 123))	
 																				if	(hasUpgrade('uf', 127)) gain = gain.times(upgradeEffect('uf', 127))	
+																							if	(hasUpgrade('uf', 143)) gain = gain.times(upgradeEffect('uf', 143))	
+																					if	(hasUpgrade('uf', 136)) gain = gain.times(upgradeEffect('uf', 136))	
+																										if	(hasUpgrade('uf', 152)) gain = gain.times(upgradeEffect('uf', 152))	
+																												if	(hasUpgrade('uf', 153)) gain = gain.times(9.0909)	
+																														if	(hasUpgrade('uf', 157)) gain = gain.times(19.999)	
 														if	(hasUpgrade('uf', 52)) gain = gain.times(upgradeEffect('uf', 52))	
 															if	(hasUpgrade('uf', 55)) gain = gain.times(upgradeEffect('uf', 55))	
 												if (inChallenge("gb", 14)) gain = gain.pow(0.85)
 													if (inChallenge("gb", 21)) gain = gain.times(1.5)
 														if (inChallenge("gb", 22)) gain = gain.times(3)
+														if	(inChallenge("gb", 31)) gain = gain.times(15)
 													if (inChallenge("gb", 15)) gain = gain.pow(0.55)
 														gain = gain.times(buyableEffect('gb', 11))
 												if (inChallenge("gb", 13)) gain = gain.div(1e6)
@@ -157,9 +169,11 @@ function getPointGen() {
 													if (hasUpgrade('gb', 17)) gain = gain.times(upgradeEffect('gb', 17))	
 														if (hasUpgrade('gb', 31)) gain = gain.pow(upgradeEffect('gb', 31))	
 															gain = gain.times(buyableEffect('uf', 11))
+															gain = gain.pow(buyableEffect('jp', 11))
 												gain = gain.times(buyableEffect('uf', 12))
 												gain = gain.times(buyableEffect('e', 11))
 												  if (hasUpgrade('uf', 101)) gain = gain.times(250000)
+													if (hasUpgrade('jp', 11)) gain = gain.pow(1.25)
 													 if (hasUpgrade('uf', 117)) gain = gain.pow(1.001)
 																		 if (hasUpgrade('uf', 132)) gain = gain.pow(1.1)
 														  if (hasUpgrade('uf', 115)) gain = gain.times(8)
@@ -185,7 +199,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return (hasUpgrade('uf', 132))
+	return (hasUpgrade('jp', 25))
 }
 
 
