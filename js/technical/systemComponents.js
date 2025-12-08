@@ -106,8 +106,12 @@ var systemComponents = {
 		template: `			
 		<div class="overlayThing" style="padding-bottom:7px; width: 90%; z-index: 1000; position: relative">
 		<span v-if="player.devSpeed && player.devSpeed != 1" class="overlayThing">
-			<br>Dev Speed: {{format(player.devSpeed)}}x<br>
+			<br>Game Speed: {{format(player.devSpeed)}}x<br>
 		</span>
+			<span v-if>
+			<br>NOTE: CHANGE MAXIMUM OOMS TO 3 OR 6! AND CLICK THE NOTATION BUTTON OR ELSE UNDEFINED BTW RELOAD WHEN DOING IT<br>
+		</span>
+		
 		<span v-if="player.offTime !== undefined"  class="overlayThing">
 			<br>Offline Time: {{formatTime(player.offTime.remain)}}<br>
 		</span>
@@ -116,8 +120,18 @@ var systemComponents = {
 		<h2  class="overlayThing" id="points">{{format(player.points)}}</h2>
 		<span v-if="player.points.lt('1e1e6')"  class="overlayThing"> {{modInfo.pointsName}}</span>
 		<br>
+		
 		<span v-if="canGenPoints()"  class="overlayThing">({{tmp.other.oompsMag != 0 ? format(tmp.other.oomps) + " OOM" + (tmp.other.oompsMag < 0 ? "^OOM" : tmp.other.oompsMag > 1 ? "^" + tmp.other.oompsMag : "") + "s" : formatSmall(getPointGen())}}/sec)</span>
 		<div v-for="thing in tmp.displayThings" class="overlayThing"><span v-if="thing" v-html="thing"></span></div>
+
+
+		<br>
+		<br>
+		<span v-if="player.as.points.lt('1e10000')"  class="overlayThing">You have </span>
+		<h2  class="overlayThing" id="points">{{format(player.as.points)}}</h2>
+		<span v-if="player.as.points.lt('1e1e6')"  class="overlayThing"> Abnormal Skill</span>
+		<br>
+		
 	</div>
 	`
     },
@@ -148,34 +162,37 @@ var systemComponents = {
     `
     },
 
-    'options-tab': {
-        template: `
+'options-tab': {
+		template: `
         <table>
             <tr>
                 <td><button class="opt" onclick="save()">Save</button></td>
                 <td><button class="opt" onclick="toggleOpt('autosave')">Autosave: {{ options.autosave?"ON":"OFF" }}</button></td>
-                <td><button class="opt" onclick="hardReset()">HARD RESET</button></td>
+                <td><button class="opt" onclick="hardReset()" style="color: red">HARD RESET</button></td>
+				<td><button class="opt" onclick="exportSave()">Export to clipboard</button></td>
+                <td><button class="opt" onclick="importSave()">Import from prompt</button></td>
             </tr>
             <tr>
-                <td><button class="opt" onclick="exportSave()">Export to clipboard</button></td>
-                <td><button class="opt" onclick="importSave()">Import</button></td>
+                <td><button class="opt" onclick="exportSaveToFile()">Export to file</button></td>
+                <td><button class="opt" onclick="importSaveFromFile()">Import from file </button></td>
                 <td><button class="opt" onclick="toggleOpt('offlineProd')">Offline Prod: {{ options.offlineProd?"ON":"OFF" }}</button></td>
-            </tr>
-            <tr>
-                <td><button class="opt" onclick="switchTheme()">Theme: {{ getThemeName() }}</button></td>
+				<td><button class="opt" onclick="switchTheme()">Theme: {{ getThemeName() }}</button></td>
                 <td><button class="opt" onclick="adjustMSDisp()">Show Milestones: {{ MS_DISPLAYS[MS_SETTINGS.indexOf(options.msDisplay)]}}</button></td>
-                <td><button class="opt" onclick="toggleOpt('hqTree')">High-Quality Tree: {{ options.hqTree?"ON":"OFF" }}</button></td>
             </tr>
             <tr>
-                <td><button class="opt" onclick="toggleOpt('hideChallenges')">Completed Challenges: {{ options.hideChallenges?"HIDDEN":"SHOWN" }}</button></td>
+                <td><button class="opt" onclick="toggleOpt('hqTree')">High-Quality Tree: {{ options.hqTree?"ON":"OFF" }}</button></td>
+				<td><button class="opt" onclick="toggleOpt('hideChallenges')">Completed Challenges: {{ options.hideChallenges?"HIDDEN":"SHOWN" }}</button></td>
                 <td><button class="opt" onclick="toggleOpt('forceOneTab'); needsCanvasUpdate = true">Single-Tab Mode: {{ options.forceOneTab?"ALWAYS":"AUTO" }}</button></td>
 				<td><button class="opt" onclick="toggleOpt('forceTooltips'); needsCanvasUpdate = true">Shift-Click to Toggle Tooltips: {{ options.forceTooltips?"ON":"OFF" }}</button></td>
-				</tr> 
-			<tr>
-                <td><button class="opt" onclick="toggleOpt('hideMilestonePopups')">Show Milestone Popups: {{ formatOption(!options.hideMilestonePopups) }}</button></td>
+				<td><button class="opt" onclick="changeNotation()">Notation: {{ player.notation }}</button></td>
             </tr>
+			<tr>
+				<td><button class="opt" onclick="changeEndgameShown()">Show Endgame (Spoiler): {{ options.endgameShown?"ON":"OFF" }}</button></td>
+				<td><button class="opt" onclick="changeMaximumOoMsInCommas()">Maximum OoMs in Commas (Not affact all notations): {{ formatWhole(options.maximumOoMsInCommas) }} </button></td>
+			</tr>
+
         </table>`
-    },
+	},
 
     'back-button': {
         template: `

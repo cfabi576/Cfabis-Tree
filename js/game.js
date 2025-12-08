@@ -6,30 +6,51 @@ const TMT_VERSION = {
 	tmtNum: "2.7",
 	tmtName: "Δ"
 }
-let bgMusic = new Audio("sounds/Candyland.mp3");
-bgMusic.loop = true;
-bgMusic.volume = 0.5;
+let bgMusicNormal = new Audio("sounds/icosa.mp3");
+bgMusicNormal.loop = true;
+bgMusicNormal.volume = 0.5;
 
+// Música del Realm
+let bgMusicRealm  = new Audio("sounds/realm.mp3");
+bgMusicRealm.loop = true;
+bgMusicRealm.volume = 0.5;
+
+// Configuración inicial
 if (localStorage.getItem("musicEnabled") === null) {
     localStorage.setItem("musicEnabled", "true");
 }
 
+// Control de música final
 function updateMusicState() {
     let enabled = localStorage.getItem("musicEnabled") === "true";
-    if (enabled) {
-        bgMusic.play().catch(() => {
-            // navegador bloquea autoplay, esperar interacción del jugador
-            document.addEventListener("click", () => {
-                bgMusic.play();
-            }, { once: true });
+
+    if (!enabled) {
+        bgMusicNormal.pause();
+        bgMusicRealm.pause();
+        return;
+    }
+
+    // Si estás dentro del realm
+    if (player.inRealm) {
+        bgMusicNormal.pause();
+
+        bgMusicRealm.play().catch(() => {
+            document.addEventListener("click", () => bgMusicRealm.play(), { once: true });
         });
+
     } else {
-        bgMusic.pause();
+        bgMusicRealm.pause();
+
+        bgMusicNormal.play().catch(() => {
+            document.addEventListener("click", () => bgMusicNormal.play(), { once: true });
+        });
     }
 }
 
-// Llamar al iniciar el juego
-updateMusicState();
+// Lo refrescamos cada segundo por seguridad
+setInterval(() => {
+    updateMusicState();
+}, 1000);
 
 function getResetGain(layer, useType = null) {
 	let type = useType

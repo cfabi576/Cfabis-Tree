@@ -1,5 +1,7 @@
 // ************ Options ************
 
+// ************ Options ************
+
 let options = {}
 
 function getStartOptions() {
@@ -10,13 +12,26 @@ function getStartOptions() {
 		hqTree: false,
 		offlineProd: true,
 		hideChallenges: false,
-		showStory: true,
+	
 		forceOneTab: false,
 		oldStyle: false,
-		forceTooltips: true,
-		hideMilestonePopups: false,
-			
+		tooltipForcing: true,
+		endgameShown: false,
+		maximumOoMsInCommas: 9,
+		
 	}
+}
+
+let notations = ['Standard']
+
+function changeNotation() {
+	player.notation = notations[(notations.indexOf(player.notation) + 1) % notations.length]
+}
+
+function changeMaximumOoMsInCommas() {
+	if (options.maximumOoMsInCommas != 15) options.maximumOoMsInCommas = options.maximumOoMsInCommas + 3
+	else if (options.maximumOoMsInCommas == 15) options.maximumOoMsInCommas = 3
+	player.maximumOoMsInCommas = options.maximumOoMsInCommas
 }
 
 function toggleOpt(name) {
@@ -80,3 +95,4 @@ function milestoneShown(layer, id) {
 }
 
 let formatOption = (opt) => opt ? 'ON' : 'OFF'
+

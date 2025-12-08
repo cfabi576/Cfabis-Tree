@@ -1,0 +1,226 @@
+let modInfo = {
+	name: "TDUT",
+	author: "Cfabi",
+	pointsName: "points",
+	modFiles: ["layers.js", "tree.js"],
+
+	discordName: "4rum",
+	discordLink: "https://discord.com/channels/762036407719428096/1432788709945905162",
+	initialStartPoints: new Decimal (1), // Used for hard resets and new players
+	offlineLimit: 10000000,  // In hours
+}
+
+// Set your version in num and name
+let VERSION = {
+	num: "1.15",
+	name: "The Jumpify Era, Part 1",
+}
+
+let changelog = `<h1>Changelog:</h1><br>
+	<h3>v1.15</h3><br>
+
+		- Added upgrades from #181 to #211
+		<br>- Added "Jumpify" 
+		<br>- Added More Acheivements for both Normal and Secret
+		<br>- Text font changed
+		<br>- Added Music hell yeah
+		<br>- New Server Link
+		.`
+
+let winText = `Congratulations! You have reached the end and beaten this game, but for now... as V1.15`
+
+// If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
+// (The ones here are examples, all official functions are already taken care of)
+var doNotCallTheseFunctionsEveryTick = ["blowUpEverything"]
+
+function getStartPoints(){
+    return new Decimal(modInfo.initialStartPoints)
+}
+
+// Determines if it should show points/sec
+function canGenPoints(){
+	return true
+}
+
+// Calculate points/sec!
+function getPointGen() {
+	if(!canGenPoints())
+		return new Decimal(0)
+
+	let gain = new Decimal(1)
+	if (hasUpgrade('p', 11)) gain = gain.times(2)
+		if (hasUpgrade('p', 18)) gain = gain.times(3.5)
+		if (hasUpgrade('p', 12)) gain = gain.times(2)
+			if (hasUpgrade('p', 22)) gain = gain.pow(1.01)
+				if (hasUpgrade('p', 41)) gain = gain.pow(1.1)
+					if (hasUpgrade('p', 42)) gain = gain.times(1e10)
+						if (hasUpgrade('p', 44)) gain = gain.tetrate(1.1)
+							
+				if (hasUpgrade('p', 22)) gain = gain.times(1.03)
+					if (hasUpgrade('p', 26)) gain = gain.times(4)
+						if (hasUpgrade('p', 31)) gain = gain.times(4)
+		if (hasAchievement("a", 11)) gain = gain.times(2.5)
+			if (hasAchievement("a", 13)) gain = gain.times(3)
+			if (hasUpgrade('p', 13)) gain = gain.times(upgradeEffect('p', 13))
+				if (hasUpgrade('p', 24)) gain = gain.times(upgradeEffect('p', 24))
+					if (hasUpgrade('p', 25)) gain = gain.times(upgradeEffect('p', 25))
+				if (hasUpgrade('p', 14)) gain = gain.add(8)
+					if (hasMilestone('gb', 11)) gain = gain.pow(1.03)
+							if (hasMilestone('uf', 0)) gain = gain.pow(1.05)
+					if (hasUpgrade('p', 16)) gain = gain.add(100)
+						if (hasUpgrade('p', 32)) gain = gain.add(1e6)
+						if (hasUpgrade('p', 18)) gain = gain.times(5)
+					if (hasUpgrade('p', 15)) gain = gain.pow(upgradeEffect('p', 15))
+						if (hasUpgrade('gb', 54)) gain = gain.times(upgradeEffect('gb', 54))
+							if (hasUpgrade('mul', 32)) gain = gain.times(upgradeEffect('mul', 32))
+								if (hasUpgrade('mul', 51)) gain = gain.times(upgradeEffect('mul', 51))
+						if (hasAchievement("sa", 11)) gain = gain.times(upgradeEffect('p', 13))
+							if (hasMilestone("gb", 0)) gain = gain.times(6)		
+								if (hasMilestone("gb", 1)) gain = gain.times(12)		
+								if (hasUpgrade('gb', 11)) gain = gain.times(3)
+								if	(hasUpgrade('gb', 41)) gain = gain.times(7)
+									if	(hasUpgrade('gb', 42)) gain = gain.times(6)
+										if	(hasUpgrade('gb', 44)) gain = gain.times(0.5)
+											if	(hasUpgrade('gb', 45)) gain = gain.times(12)
+												if	(hasUpgrade('gb', 46)) gain = gain.times(481)
+													if	(hasUpgrade('gb', 47)) gain = gain.times(183)
+														if	(hasUpgrade('gb', 53)) gain = gain.times(6)
+															if	(hasUpgrade('gb', 57)) gain = gain.times(1e20)
+																if	(hasUpgrade('gb', 61)) gain = gain.times(9)
+																	if	(hasUpgrade('gb', 18)) gain = gain.pow(1.01)
+																		if	(hasUpgrade('gb', 28)) gain = gain.pow(1.01)
+																	if	(hasUpgrade('mul', 11)) gain = gain.times(256)
+																		if	(hasUpgrade('mul', 11)) gain = gain.add(1e12)
+																			if	(hasUpgrade('mul', 11)) gain = gain.pow(1.1)
+																				if	(hasUpgrade('mul', 12)) gain = gain.pow(1.15)
+																				if	(hasUpgrade('mul', 12)) gain = gain.times(500000000)
+																					if	(hasUpgrade('mul', 13)) gain = gain.times(25)
+																						if	(hasUpgrade('mul', 15)) gain = gain.times(100000)
+																							if	(hasUpgrade('mul', 21)) gain = gain.times(1000)
+																								if	(hasUpgrade('mul', 22)) gain = gain.times(10000)
+																									if	(hasUpgrade('mul', 23)) gain = gain.times(100000)
+																										if	(hasUpgrade('mul', 24)) gain = gain.times(100000)
+																											if	(hasUpgrade('mul', 25)) gain = gain.times(1000000)
+																												if	(hasUpgrade('mul', 26)) gain = gain.times(10000000)
+																													if	(hasUpgrade('mul', 27)) gain = gain.times(100000000)
+																														if	(hasUpgrade('mul', 31)) gain = gain.times(8)
+																															if	(hasUpgrade('mul', 37)) gain = gain.times(6.25)
+																																if	(hasUpgrade('mul', 42)) gain = gain.times(90)
+																																	if	(hasUpgrade('mul', 45)) gain = gain.times(5)
+																																		if	(hasUpgrade('mul', 46)) gain = gain.times(50)
+																																			if	(hasUpgrade('mul', 53)) gain = gain.times(1e21)
+																																				if	(hasUpgrade('uf', 11)) gain = gain.pow(1.25)
+																						if	(hasUpgrade('mul', 14)) gain = gain.times(upgradeEffect('mul', 14))
+																	if	(hasUpgrade('gb', 64)) gain = gain.pow(1.2)
+									if (hasUpgrade('gb', 12)) gain = gain.times(2)
+										if (hasUpgrade('gb', 13)) gain = gain.times(10)
+											if (hasUpgrade('gb', 27)) gain = gain.times(10)
+												if (hasUpgrade('gb', 32)) gain = gain.times(3.15)
+													if (hasUpgrade('gb', 33)) gain = gain.times(1.69)
+											if (hasUpgrade('gb', 16)) gain = gain.times(6)
+											if (inChallenge("gb", 11)) gain = gain.log10()
+												if	(hasUpgrade('uf', 15)) gain = gain.pow(1.1)
+													if	(hasUpgrade('uf', 22)) gain = gain.pow(1.01)
+														if	(hasUpgrade('uf', 24)) gain = gain.times(10)
+															if	(hasUpgrade('uf', 25)) gain = gain.times(4)
+																if	(hasUpgrade('uf', 31)) gain = gain.times(2)
+																	if	(hasUpgrade('uf', 35)) gain = gain.times(2)
+																	if	(hasUpgrade('uf', 36)) gain = gain.times(1.5)
+																		if	(hasUpgrade('uf', 41)) gain = gain.times(3)
+																			if	(hasUpgrade('uf', 42)) gain = gain.pow(1.001)
+																						if	(hasUpgrade('uf', 161)) gain = gain.pow(1.15)
+																				if	(hasUpgrade('uf', 44)) gain = gain.times(1.75)
+																					if	(hasUpgrade('uf', 54)) gain = gain.times(3.5)
+																						if	(hasUpgrade('uf', 55)) gain = gain.times(1.666)
+																							if	(hasUpgrade('uf', 62)) gain = gain.times(22.4591577184)
+																								if	(hasUpgrade('uf', 65)) gain = gain.times(8.333)
+																									if	(hasUpgrade('uf', 66)) gain = gain.times(2)
+																										if	(hasUpgrade('uf', 67)) gain = gain.times(3)
+												if	(hasUpgrade('uf', 12)) gain = gain.times(1e20)
+													if	(hasUpgrade('uf', 16)) gain = gain.times(5)
+														if	(hasUpgrade('uf', 33)) gain = gain.times(6)
+															if	(hasUpgrade('uf', 71)) gain = gain.times(6)
+																		if	(hasUpgrade('uf', 75)) gain = gain.times(100)
+																			if	(hasUpgrade('uf', 91)) gain = gain.times(50000)
+																						if	(hasUpgrade('uf', 147)) gain = gain.times(2)
+													if	(hasUpgrade('uf', 14)) gain = gain.times(upgradeEffect('uf', 14))	
+														if	(hasUpgrade('uf', 76)) gain = gain.times(upgradeEffect('uf', 76))	
+																		if	(hasUpgrade('uf', 123)) gain = gain.times(upgradeEffect('uf', 123))	
+																				if	(hasUpgrade('uf', 127)) gain = gain.times(upgradeEffect('uf', 127))	
+																							if	(hasUpgrade('uf', 143)) gain = gain.times(upgradeEffect('uf', 143))	
+																					if	(hasUpgrade('uf', 136)) gain = gain.times(upgradeEffect('uf', 136))	
+																										if	(hasUpgrade('uf', 152)) gain = gain.times(upgradeEffect('uf', 152))	
+																												if	(hasUpgrade('uf', 153)) gain = gain.times(9.0909)	
+																														if	(hasUpgrade('uf', 157)) gain = gain.times(19.999)	
+														if	(hasUpgrade('uf', 52)) gain = gain.times(upgradeEffect('uf', 52))	
+															if	(hasUpgrade('uf', 55)) gain = gain.times(upgradeEffect('uf', 55))	
+												if (inChallenge("gb", 14)) gain = gain.pow(0.85)
+													if (inChallenge("gb", 21)) gain = gain.times(1.5)
+														if (inChallenge("gb", 22)) gain = gain.times(3)
+														if	(inChallenge("gb", 31)) gain = gain.times(15)
+													if (inChallenge("gb", 15)) gain = gain.pow(0.55)
+														gain = gain.times(buyableEffect('gb', 11))
+												if (inChallenge("gb", 13)) gain = gain.div(1e6)
+													if (inChallenge("gb", 16)) gain = gain.sqrt().sqrt()
+												if (hasChallenge("gb", 11)) gain = gain.times(1.5e1)	
+													if (hasChallenge("gb", 14)) gain = gain.pow(1.08)
+														if (hasChallenge("gb", 16)) gain = gain.times(400)
+														if (hasChallenge("gb", 15)) gain = gain.pow(2)
+													if (hasUpgrade('gb', 17)) gain = gain.times(upgradeEffect('gb', 17))	
+														if (hasUpgrade('gb', 31)) gain = gain.pow(upgradeEffect('gb', 31))	
+																	if (hasUpgrade('jp', 35)) gain = gain.times(upgradeEffect('jp', 35))	
+																				if (hasUpgrade('jp', 37)) gain = gain.times(upgradeEffect('jp', 37))	
+																								if (hasUpgrade('jp', 61)) gain = gain.times(upgradeEffect('jp', 61))	
+															gain = gain.times(buyableEffect('uf', 11))
+															gain = gain.pow(buyableEffect('jp', 11))
+												gain = gain.times(buyableEffect('uf', 12))
+												gain = gain.times(buyableEffect('e', 11))
+												  if (hasUpgrade('uf', 101)) gain = gain.times(250000)
+													if (hasUpgrade('jp', 11)) gain = gain.pow(1.25)
+														if (hasUpgrade('jp', 31)) gain = gain.pow(1.01)
+													 if (hasUpgrade('uf', 117)) gain = gain.pow(1.001)
+																		 if (hasUpgrade('uf', 132)) gain = gain.pow(1.1)
+														  if (hasUpgrade('uf', 115)) gain = gain.times(8)
+															 if (hasUpgrade('uf', 121)) gain = gain.times(12)
+    if (hasUpgrade('uf', 102)) gain = gain.times(1e7)
+    if (hasUpgrade('uf', 103)) gain = gain.times(1e8)
+    if (hasUpgrade('uf', 104)) gain = gain.times(1e12)
+    if (hasUpgrade('uf', 105)) gain = gain.times(1e15)
+    if (hasUpgrade('uf', 106)) gain = gain.times(1e20)
+    if (hasUpgrade('uf', 107)) gain = gain.times(1e25)
+															
+	return gain
+}
+
+
+// You can add non-layer related variables that should to into "player" and be saved here, along with default values
+function addedPlayerData() { return {
+}}
+
+// Display extra things at the top of the page
+var displayThings = [
+]
+
+// Determines when the game "ends"
+function isEndgame() {
+	return (hasUpgrade('jp', 25))
+}
+
+
+
+// Less important things beyond this point!
+
+// Style for the background, can be a function
+var backgroundStyle = {
+
+}
+
+// You can change this if you have things that can be messed up by long tick lengths
+function maxTickLength() {
+	return(3600) // Default is 1 hour which is just arbitrarily large
+}
+
+// Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
+// you can cap their current resources with this.
+function fixOldSave(oldVersion){
+}
