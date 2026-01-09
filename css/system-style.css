@@ -353,3 +353,18 @@ button > * {
     50%  { transform: scale(1.08); box-shadow: 0 0 25px #3abaff; }
     100% { transform: scale(1); box-shadow: 0 0 10px #3abaff; }
 }
+
+.hide-tmt-ui #treeTab,
+.hide-tmt-ui #tree,
+.hide-tmt-ui .tab,
+.hide-tmt-ui .layer-tab,
+.hide-tmt-ui .side-layer,
+.hide-tmt-ui .overlay {
+    visibility: hidden !important;
+}
+
+@keyframes keyGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}

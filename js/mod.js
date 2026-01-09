@@ -12,22 +12,22 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.115",
-	name: "The Jumpify Era, Part 1",
+	num: "1.2",
+	name: "Jumpernova",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
 	<h3>v1.15</h3><br>
 
-		- Added upgrades from #181 to #211
-		<br>- Added "Jumpify" 
-		<br>- Added More Acheivements for both Normal and Secret
-		<br>- Text font changed
-		<br>- Added Music hell yeah
-		<br>- New Server Link
+		- Added upgrades from #151 To #221
+		<br>- Added Jumpernova reset layer.
+		<br>- Added Corrosion reset layer.
+		<br>- Added More Achievements.
+		<br>- Added Function, Split.
+		
 		.`
 
-let winText = `Congratulations! You have reached the end and beaten this game, but for now... as V1.15`
+let winText = `Congratulations! You have reached the end and beaten this game, but for now... `
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -156,7 +156,7 @@ if (hasUpgrade('uf', 11)) gain = gain.times(4)
 		if (hasUpgrade('uf', 44)) gain = gain.times(2)
 		if (hasUpgrade('uf', 45)) gain = gain.times(1.25)
 
-	if (hasUpgrade('uf', 52)) gain = gain.times(2.5)
+	if (hasUpgrade('uf', 52)) gain = gain.times(25)
 
  if (inChallenge("r", 11)) {
         let comps = challengeCompletions("r", 11)
@@ -179,28 +179,50 @@ if (inChallenge("r", 11) & (hasUpgrade('uf', 77))) gain = gain.times(10)
 												if (hasUpgrade('uf', 92)) gain = gain.times(upgradeEffect('uf', 92))
 															if (hasUpgrade('uf', 93)) gain = gain.times(upgradeEffect('uf', 93))
 																if (hasUpgrade('uf', 94)) gain = gain.times(3)
+																	if (hasUpgrade('uf', 96)) gain = gain.times(4)
 																
 		if (hasMilestone('p', 1)) gain = gain.times(3)
 		if (hasMilestone('p', 2)) gain = gain.times(1.5)
 			 if (hasMilestone('p', 4)) gain = gain.times(new Decimal(player.p.milestones.length).pow(1.5).max(1))
 		if (hasChallenge("r", 12)) gain = gain.times(4)
-
+ if (hasMilestone('e', 2)) gain = gain.times(player.e.points.div(100).pow(0.175).add(1))
 																		if (inChallenge("p", 11)) gain = gain.times(1.5)
 																			if (inChallenge("p", 12)) gain = gain.times(2)
 																									if (inChallenge("r", 12)) gain = gain.pow(0.8)
 																												if (inChallenge("r", 14)) gain = gain.pow(0.08)
 																													if (inChallenge("r", 14)) gain = gain.times(5)
+
 			gain = gain.times(buyableEffect('p', 11))
+  if (hasUpgrade("uf", 105)) gain = gain.mul(tmp.uf.ufBoost)
+if (hasUpgrade('uf', 125)) gain = gain.times(6)
+	if (hasUpgrade('uf', 126)) gain = gain.times(6)
+	if (hasUpgrade('uf', 131)) gain = gain.times(6)
+if (hasUpgrade('uf', 132)) gain = gain.times(100)
+  if (hasUpgrade("uf", 133)) {
+        gain = gain.mul(tmp.fu.skillBoost)
+    }
+		if (hasUpgrade('uf', 151)) gain = gain.times(8)
+gain = gain.times(buyableEffect('jp', 11))
+	if (hasUpgrade('jp', 11)) gain = gain.times(100)
+if (hasUpgrade('jp', 12)) gain = gain.times(25)
+if (hasUpgrade('jp', 13)) gain = gain.times(upgradeEffect('jp', 13))
+if (hasUpgrade('jp', 17)) gain = gain.times(upgradeEffect('jp', 17))
+if (hasUpgrade('jp', 31)) gain = gain.times(5)
+if (hasUpgrade('jp', 33)) gain = gain.pow(1.01)
+	if (hasUpgrade('jp', 42)) gain = gain.times(4)
+
+if (hasUpgrade('jp', 43)) gain = gain.times(15)
+if (hasUpgrade('jp', 61)) gain = gain.times(1e15)
 
 
 
 
 
-
+if (inChallenge("r", 15)) gain = player.mul.points
 	return gain
 }
 
-const realmLayers = ["as", "e", "fu"];
+const realmLayers = ["as", "e", "fu", "sp", "o",];
 
 function getRealmPointGen() {
     let gain = new Decimal(0.15);
@@ -253,7 +275,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return (hasUpgrade('p', 63))
+	return (hasUpgrade('jp', 63))
 }
 
 

@@ -19,7 +19,7 @@ addLayer("p", {
        player.p.points = player.points
     },
     
-   
+   autoUpgrade() {if (hasUpgrade('uf', 117))  return true; else return false},
 
    doReset(resettingLayer) {
         let keep = [];
@@ -2284,7 +2284,7 @@ challenges: {
             content: [
                 "main-display",
                 "blank",
-                ["display-text", () => `<h3>Welcome to ADUT:R where you can explore many difficulties. and this game is now balanced. </h3>`],
+                ["display-text", () => `<h3>Welcome to TDUT:R where you can explore many difficulties. and this game is now balanced. </h3>`],
                  "blank",
                   ["display-text", () => `<h3>You currently exactly have... <span style="color:#c1ff9fff">${format(player.p.points)}</span> Skill!</h3>`],
                 "blank",
@@ -2386,6 +2386,9 @@ addLayer("c", {
                                    if (hasUpgrade("p", 73)) cash = cash.times(upgradeEffect('p', 73))
                                      if (hasUpgrade("uf", 51)) cash = cash.times(buyableEffect('p', 11).pow(0.25).add(1))
                                     			if (inChallenge("p", 12)) cash = cash.times(1.1)
+                                                    if (hasMilestone("e", 3)) cash = cash.times(player.e.points.div(1e4).pow(0.2).add(1))  
+                                                        cash = cash.times(buyableEffect('jp', 12))
+                                                     if (hasUpgrade("jp", 14)) cash = cash.times(upgradeEffect("jp", 14))  
             let gain = new Decimal(cash).times(diff); // 0.01 por segundo
             player.c.points = player.c.points.add(gain);
         }
@@ -2446,16 +2449,21 @@ addLayer("mul", {
                                       if (hasUpgrade("uf", 37)) cash = cash.times(1.8)
                                                  if (hasUpgrade("uf", 46)) cash = cash.times(1.5)  
                                                            if (hasUpgrade("uf", 42)) cash = cash.times(upgradeEffect("uf", 42))
-                                                              if (hasUpgrade("uf", 81)) cash = cash.times(3.5)                                                  
+                                                              if (hasUpgrade("uf", 81)) cash = cash.times(3.5)     
+                                                                       if (hasUpgrade("uf", 97)) cash = cash.times(10)         
+                                                                         if (hasMilestone("e", 4)) cash = cash.times(player.e.points.div(1e4).pow(0.2).add(1))    
+                                                                                if (hasUpgrade("uf", 123)) cash = cash.times(150)  
+                                                                                       cash = cash.times(buyableEffect('jp', 13))     
+                                                                                     if (hasUpgrade("jp", 15)) cash = cash.times(upgradeEffect("jp", 15))                                  
             let gain = new Decimal(cash).times(diff); // 0.01 por segundo
             player.mul.points = player.mul.points.add(gain);
         }
     },
 
     
-   
+     
 
-   
+  
    layerShown() { return layerVisible(this.layer) },
     
      
@@ -2487,8 +2495,13 @@ addLayer("uf", {
         unlocked: false,
 		points: new Decimal(0),
 
+         ufexperience: new Decimal(0),
+    ufexperiencegain: new Decimal(1), // base 1/tick
+    uflevel: new Decimal(0),
+
 
     }},
+     passiveGeneration() {if ((hasUpgrade("uf", 133))) return 0.01; else return 0},
        layerShown() { return layerVisible(this.layer) },
     color: "#b96effff",
   onPrestige() {
@@ -2547,12 +2560,86 @@ addLayer("uf", {
                     mult = new Decimal(1)
               if (hasMilestone('p', 2)) mult = mult.times(new Decimal(player.p.milestones.length).pow(0.5).max(1))
        if (hasUpgrade('uf', 82)) mult = mult.times(1.5)
+         if (hasUpgrade('uf', 102)) mult = mult.times(1.5)
+              if (hasUpgrade('uf', 134)) mult = mult.times(8)
+        mult = mult.times(buyableEffect('jp', 14))
+     if (hasUpgrade('jp', 32)) mult = mult.times(3)
                     return mult
                 },
                 gainExp() { // Calculate the exponent on main currency from bonuses
                     return new Decimal(1)
                 },
+              ufXPReq() {
+    let level = this.ufLevel()
 
+    // base: 100 * (level + 1)^2
+    let baseReq = new Decimal(10).mul(level.add(1).pow(2))
+
+    // cada 10 niveles duplica el requisito
+    let tier = level.div(10).floor()
+    let multiplier = new Decimal(2).pow(tier)
+
+    return baseReq.mul(multiplier)
+},
+
+ufLevel() {
+    let lvl = player.uf.uflevel
+
+    // aquí puedes boostear el nivel si quieres
+    // ejemplo:
+    // if (hasUpgrade("uf", 120)) lvl = lvl.add(5)
+
+    return lvl
+},
+
+ufXPBoost() {
+    let gain = player.uf.ufexperiencegain
+
+   if (hasUpgrade("uf", 106)) gain = gain.mul(4)
+     if (hasUpgrade("uf", 107)) gain = gain.mul(5)
+         if (hasUpgrade("uf", 112)) gain = gain.mul(upgradeEffect('uf', 112))
+               if (hasUpgrade("uf", 113)) gain = gain.mul(upgradeEffect('uf', 113))
+                if (hasUpgrade("uf", 114)) gain = gain.mul(7)
+                    	if (hasChallenge("r", 15)) gain = gain.times(10)
+                           gain = gain.pow(buyableEffect('jp', 15).add(1))
+                            if (hasUpgrade("jp", 12)) gain = gain.times(2)
+                                if (hasUpgrade("jp", 32)) gain = gain.times(2)
+                             gain = gain.mul(tmp.jp.jpXPBoost)
+                   
+gain = gain.times(buyableEffect('as', 13))
+ if (hasUpgrade("uf", 145)) gain = gain.pow(1.1)
+    return gain
+},
+update(diff) {
+    if (!hasUpgrade("uf", 105)) return
+
+    // ganar experiencia
+    player.uf.ufexperience = player.uf.ufexperience.add(
+        this.ufXPBoost().mul(diff)
+    )
+
+    // subir niveles automáticamente
+    while (player.uf.ufexperience.gte(this.ufXPReq())) {
+        player.uf.ufexperience = player.uf.ufexperience.sub(this.ufXPReq())
+        player.uf.uflevel = player.uf.uflevel.add(1)
+    }
+},
+ufAbnormalBoost() {
+    if (!hasUpgrade("uf", 105)) return new Decimal(1)
+        let base = 1.09
+        if (hasUpgrade("uf", 124)) base = 1.10
+    return new Decimal(base).pow(this.ufLevel())
+},
+ufBoost() {
+    if (!hasUpgrade("uf", 115)) return new Decimal(1)
+        let num = 1
+   if (hasUpgrade("uf", 137)) num = 2
+    return (this.ufLevel()).add(1).pow(num)
+},
+FBoost() {
+    if (!tmp.uf.ufLevel.gte(180)) return new Decimal(1)
+    return new Decimal(1.01).pow(this.ufLevel()-180)
+},
     
    
 upgrades: {
@@ -3395,7 +3482,9 @@ fullDisplay() {
     title: "#143: Vintage 4",
     description: "Skill Boosts Research Power!",
      effect() {
-                return player.points.div(1e60).pow(0.1).add(1).max(1)
+        let hi = 1
+        if (hasUpgrade("uf", 103)) hi = 2
+                return player.points.div(1e60).pow(0.1).add(1).pow(hi).max(1)
             },
    effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
      cost: new Decimal(2.9e71),
@@ -3558,6 +3647,946 @@ fullDisplay() {
                         
                         },
 },
+96: {
+    title: "#151: Just Air 6",
+    description: "4x Skill.",
+     cost: new Decimal(1.5e5),
+   currencyDisplayName: "Abnormal Skill",
+   currencyInternalName: "points",
+     currencyLayer: "as",
+    onPurchase() {
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5;
+        audio.play();
+    },
+
+   
+       unlocked() {
+                            return hasUpgrade("uf", 95)
+                        
+                        },
+},
+97: {
+    title: "#152: Just Air 7",
+    description: "Add a 1 OoM (aka 10x) boost to mulitplier.",
+     cost: new Decimal(2.5e81),
+    currencyDisplayName: "Skill",
+   currencyInternalName: "points",
+    onPurchase() {
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5;
+        audio.play();
+    },
+
+   
+       unlocked() {
+                            return hasUpgrade("uf", 96)
+                        
+                        },
+},
+101: {
+    title: "#153: Happylike 1",
+    description: "Research gain is squared.",
+     cost: new Decimal(8.9e81),
+    currencyDisplayName: "Skill",
+   currencyInternalName: "points",
+    onPurchase() {
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5;
+        audio.play();
+    },
+
+   
+       unlocked() {
+                            return hasUpgrade("uf", 97)
+                        
+                        },
+},
+102: {
+    title: "#153: Happylike 2",
+    description: "Upgrade UF multiplier to 1.5x.",
+     cost: new Decimal(7.5e83),
+    currencyDisplayName: "Skill",
+   currencyInternalName: "points",
+    onPurchase() {
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5;
+        audio.play();
+    },
+
+   
+       unlocked() {
+                            return hasUpgrade("uf", 101)
+                        
+                        },
+},
+103: {
+    title: "#154: Happylike 3",
+    description: "#143's effect is now squared.",
+     cost: new Decimal(400),
+    
+    onPurchase() {
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5;
+        audio.play();
+    },
+
+   
+       unlocked() {
+                            return hasUpgrade("uf", 102)
+                        
+                        },
+},
+104:{
+            title: "#155: Happylike 4",
+            description: "Cash Boosts Abnormal Skill, Caps at 100Tx.",
+            cost: new Decimal(1.25e86),
+     effect() {
+                                   
+                return player.c.points.pow(0.01).add(1).min(1e14)
+            },
+             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 103)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+        
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        }, 
+        105:{
+            title: "#156: Happylike 5",
+            description: "Unlock UF Leveling.",
+            cost: new Decimal(5e86),
+     
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 104)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+        
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        },
+         106:{
+            title: "#157: Happylike 6",
+            description: "4x UF Experience.",
+            cost: new Decimal(1.5e87),
+     
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 105)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+        
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        },
+         107:{
+            title: "#158: Happylike 7",
+            description: "5x UF Experience.",
+            cost: new Decimal(1.5e87),
+     
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 106)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+        
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        },
+        111:{
+            title: "#159: Locomotion 1",
+            description: "Unlocks a New Buyable on Abnormal Skill Upgrade Board.",
+            cost: new Decimal(3.5e87),
+     
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 107)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+        
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        },
+            112:{
+            title: "#160: Locomotion 2",
+            description: "Skill Boosts UF XP gain.",
+            cost: new Decimal(1e88),
+        effect() {
+                                   
+                return player.points.div(1e88).pow(0.2).add(1).max(1)
+            },
+             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 111)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+        
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        },
+          113:{
+            title: "#161: Locomotion 3",
+            description: "Abnormal Skill Boosts UF XP gain.",
+            cost: new Decimal(2.5e88),
+        effect() {
+                                   
+                return player.as.points.div(1e6).pow(0.2).add(1).max(1)
+            },
+             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 112)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+        
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        },
+     114:{
+            title: "#162: Locomotion 4",
+            description: "7x UF XP.",
+            cost: new Decimal(5.5e88),
+       
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 113)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+        
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        },   
+         115:{
+            title: "#163: Locomotion 5",
+            description: "Unfailability Level now boosts Skill.",
+            cost: new Decimal(1.5e89),
+       
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 114)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+        
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        }, 
+        116:{
+            title: "#164: Locomotion 6",
+            description: "1,000x Research Power ",
+            cost: new Decimal(2.5e91),
+       
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 115)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+        
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        },
+        117:{
+            title: "#165: Locomotion 7",
+            description: "Automates Skill Upgrades",
+            cost: new Decimal(1e92),
+       
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 116)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+        
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        }, 
+    121:{
+            title: "#166: Walktrough 1",
+            description: "Unlock More Electricity Milestones.",
+            cost: new Decimal(1e93),
+       
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 117)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+        
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        }, 
+        122:{
+            title: "#167: Walktrough 2",
+            description: "Unlock Friendliness Research.",
+            cost: new Decimal(3e93),
+       
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 121)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+        
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        }, 
+        123:{
+            title: "#168: Walktrough 3",
+            description: "150x Multiplier",
+            cost: new Decimal(8e93),
+       
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 122)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+       
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        }, 
+        124:{
+            title: "#169: Walktrough 4",
+            description: "Add a +0.01 to UF XP's Abnormal Skill Boost Formula Base",
+            cost: new Decimal(1e95),
+       
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 123)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+       
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        }, 
+          125:{
+            title: "#170: Walktrough 5",
+            description: "6x Skill.",
+            cost: new Decimal(1e96),
+       
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 124)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+       
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        },
+        126:{
+            title: "#171: Walktrough 6",
+            description: "6x Skill... Again..",
+            cost: new Decimal(1.5e97),
+       
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 125)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+       
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        },
+  127: {
+    title: "#172: Walktrough 7",
+    description: "Every achievement multiplies Skill by ×1.1 (compounding).",
+    cost: new Decimal(2.5e98),
+ currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+    unlocked() {
+        return hasUpgrade("uf", 126)
+    },
+
+    effect() {
+        // Contar logros del layer 'a' (solo los obtenidos)
+        let totalAch = 0
+        if (player.a && player.a.achievements) {
+            totalAch = player.a.achievements.length
+        }
+
+        // Efecto: 1.5^totalAch
+        return Decimal.pow(1.1, totalAch)
+    },
+
+    effectDisplay() { 
+        return format(upgradeEffect(this.layer, this.id)) + "x" 
+    },
+
+        onPurchase() {
+        // Reproduce un sonido al comprar
+       
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+},     
+  131:{
+            title: "#173: Automatic Joyful 1",
+            description: "6x Skill... Again.. And Again..",
+            cost: new Decimal(8e97),
+       
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 127)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+       
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        }, 
+ 132:{
+            title: "#174: Automatic Joyful 2",
+            description: "100x Skill before your next Deccelerated stat.",
+            cost: new Decimal(4.5e98),
+       
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 131)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+       
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        }, 
+     133:{
+            title: "#175: Automatic Joyful 3",
+            description: "Unlock The Function and Passive UF (1%)",
+            cost: new Decimal(1e100),
+       
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 132)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+       
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        }, 
+134:{
+            title: "#176: Automatic Joyful 4",
+            description: "8x UF",
+            cost: new Decimal(250),
+       
+          
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 133)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+       
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        },
+  135:{
+            title: "#177: Automatic Joyful 5",
+            description: "10x Function Gain.",
+            cost: new Decimal(2750),
+       
+          
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 134)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+       
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        }, 
+        136:{
+            title: "#178: Automatic Joyful 6",
+            description: "Unlock a Function Multi UF XP Boost.",
+            cost: new Decimal(5000),
+       
+          
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 135)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+       
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        },   
+        137:{
+            title: "#179: Automatic Joyful 7",
+            description: "The UF Level Skill Boost is now Exponential.",
+            cost: new Decimal(5e102),
+       
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+          
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 136)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+       
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        }, 
+        141:{
+            title: "#180: Unlosable 1",
+            description: "Get More x depending of your Skill.",
+            cost: new Decimal(1e105),
+       
+effect() {
+     
+    
+return player.points.div(1e105).max(1).pow(0.5).add(1)
+
+
+
+    },
+
+    effectDisplay() { 
+        return format(upgradeEffect(this.layer, this.id)) + "+" 
+    },
+
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+          
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 137)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+       
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        }, 
+  142:{
+            title: "#181: Unlosable 2",
+            description: "Get More y depending of your Skill.",
+            cost: new Decimal(2.5e105),
+       
+effect() {
+     
+    
+return player.points.div(1e105).max(1).pow(0.45).add(1)
+
+
+
+    },
+
+    effectDisplay() { 
+        return format(upgradeEffect(this.layer, this.id)) + "+" 
+    },
+
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+          
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 141)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+       
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        },   
+    143:{
+            title: "#182: Unlosable 3",
+            description: "Get More z depending of your Skill.",
+            cost: new Decimal(1e106),
+       
+effect() {
+     
+    
+return player.points.div(1e106).max(1).pow(0.2).add(1).min(8)
+
+
+
+    },
+
+    effectDisplay() { 
+        return format(upgradeEffect(this.layer, this.id)) + "x" 
+    },
+
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+          
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 142)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+       
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        }, 
+  144:{
+            title: "#183: Unlosable 4",
+            description: "Get More w depending of your Skill.",
+            cost: new Decimal(5e106),
+       
+effect() {
+     
+    
+return player.points.div(5e106).max(1).pow(0.35).log10().add(1).min(2.25)
+
+
+
+    },
+
+    effectDisplay() { 
+        return format(upgradeEffect(this.layer, this.id)) + "x" 
+    },
+
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+          
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 143)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+       
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        },  
+        
+        
+        145:{
+            title: "#184: Unlosable 5",
+            description: "^1.1 UF XP. OP?!?!?",
+            cost: new Decimal(2e107),
+    
+
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+          
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 144)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+       
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        }, 
+      146:{
+            title: "#185: Unlosable 6",
+            description: "i dont know :c",
+            cost: new Decimal(3.5e108),
+    
+
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+          
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 145)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+       
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        }, 
+    147:{
+            title: "#186: Unlosable 7",
+            description: "i dont know 2x :c",
+            cost: new Decimal(5e108),
+    
+
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+          
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 146)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+       
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        },
+  151:{
+            title: "#187: Frivolous 1",
+            description: "Unlocks the Splittify Reset.",
+            cost: new Decimal(1e109),
+    
+
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+          
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 147)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+       
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        },       
+    161:{
+            title: "#188: Automatic 1",
+            description: "8x Skill.. bye",
+            cost: new Decimal(1e110),
+    
+
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+          
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 151)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+       
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        },  
+     162:{
+            title: "#189: Automatic 2",
+            description: "1.00000000000005x UF XP.",
+            cost: new Decimal(1e111),
+    
+
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+          
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 161)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+       
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        },       
+     171:{
+            title: "#190: Spontaneous 1",
+            description: "Have luck in Jumpernova!",
+            cost: new Decimal(1e111),
+    
+
+          currencyInternalName: "points",
+                     currencyDisplayName: "Skill",
+          
+                    
+                   unlocked() {
+                            return hasUpgrade("uf", 162)
+                        
+                        },
+                  
+               onPurchase() {
+        // Reproduce un sonido al comprar
+       
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+        },     
 },
 
 
@@ -3579,11 +4608,66 @@ fullDisplay() {
       layerShown() { return layerVisible(this.layer) },
     
      
-   
+   bars: {
+    ufLevelBar: {
+        direction: RIGHT,
+        width: 300,
+        height: 25,
+        progress() {
+            if (!hasUpgrade("uf", 105)) return 0
+            return player.uf.ufexperience.div(tmp.uf.ufXPReq).min(1)
+        },
+        display() {
+            if (!hasUpgrade("uf", 105)) return "Leveling Locked"
+            return `
+            UF XP: ${format(player.uf.ufexperience)} / ${format(tmp.uf.ufXPReq)}
+            `
+        },
+        fillStyle: { backgroundColor: "#b96eff" },
+        borderStyle: { borderColor: "#ffffff" },
+    },
+},
       
      tabFormat: {
         "Main": {
+           
             content: [
+ ["row", [
+    ["bar", "ufLevelBar"],
+    ["display-text", () => `
+        <div style="
+            width:70px;
+            height:40px;
+            margin-left:10px;
+            border:3px solid white;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:20px;
+            font-weight:bold;
+            background:#2b1a3d;
+        ">
+            Lv ${formatWhole(player.uf.uflevel)}
+        </div>
+    `],
+]],
+["display-text", () => hasUpgrade("uf", 105)
+    ? `Boosts Abnormal Skill by ${format(tmp.uf.ufAbnormalBoost)}x`
+    : ""
+],
+"blank",
+["display-text", () => hasUpgrade("uf", 115)
+    ? `Boosts Skill by ${format(tmp.uf.ufBoost)}x`
+    : "Unlocked in UP115"
+],
+"blank",
+["display-text", () => hasUpgrade("uf", 136)
+    ? `Boosts Function Multiplier by ${format(tmp.uf.FBoost)}x`
+    : "Unlocked in UP136"
+],
+"blank",
+
+  "blank",
                 "main-display",
                 "blank",
                  "prestige-button",
@@ -3601,6 +4685,1263 @@ fullDisplay() {
      }, 
 
     })
+addLayer("jp", {
+    name: "Jumpernova",
+    symbol: "JP",
+    row: 2,
+    position: 1,
+    color: "#d0ff00",
+
+    startData() {
+        return {
+            unlocked: false,
+            points: new Decimal(0), // Jump Power
+            resetAnim: true,
+            resetAnimAutoDisabled: false,
+            jgexperience: new Decimal(0),
+    jgexperiencegain: new Decimal(1), // base 1/tick
+    jglevel: new Decimal(0),
+        }
+    },
+
+    resetsNothing: true,
+
+
+    resource: "Jump Power",
+    baseResource: "Skill",
+    baseAmount() { return player.points },
+
+    requires: new Decimal("1e111"),
+    type: "normal",
+    
+
+  gainMult() { 
+    let mult = new Decimal(10) // base 10
+ if (hasMilestone("sp", 5)) mult = mult.add(5)
+    if (player.points.gte("1e114")) {
+        let extra = player.points
+            .div("1e114")
+            .log10()
+            .add(1)
+            .pow(4)
+
+        mult = mult.mul(extra)
+
+    }
+
+    // 🔻 SOFTCAP en 1e18
+    let softcap = new Decimal("1e18")
+    if (mult.gte(softcap)) {
+        mult = softcap.mul(
+            mult.div(softcap).pow(0.25) // fuerza del softcap
+        )
+    }
+ if (hasUpgrade('jp', 34)) mult = mult.times(2)
+    if (hasUpgrade('jp', 36)) mult = mult.times(1.5)
+        if (hasMilestone("sp", 5)) mult = mult.times(new Decimal(10).pow(player.sp.points.sub(9)))
+                if (hasUpgrade('as', 31)) mult = mult.times(100)
+    return mult
+},
+jpLevel() {
+    let lvl = player.jp.jglevel
+
+    // aquí puedes boostear el nivel si quieres
+    // ejemplo:
+    // if (hasUpgrade("uf", 120)) lvl = lvl.add(5)
+
+    return lvl
+},
+
+jpXPReq() {
+    let level = this.jpLevel()
+
+    // base: 100 * (level + 1)^2
+    let baseReq = new Decimal(20).mul(level.add(1).pow(2))
+
+    // cada 10 niveles duplica el requisito
+    let tier = level.div(4).floor()
+    let multiplier = new Decimal(4).pow(tier)
+
+    return baseReq.mul(multiplier)
+},
+
+
+
+jpXPBoost() {
+    let gain = player.jp.jgexperiencegain
+  if (hasUpgrade("jp", 45)) gain = gain.times(10)
+    if (hasUpgrade("jp", 46)) gain = gain.times(1000)
+                            if (hasUpgrade("jp", 47)) gain = gain.times(1000)  
+                                 if (hasUpgrade("jp", 53)) gain = gain.times(1e9)  
+                                              if (hasUpgrade("jp", 62)) gain = gain.times(1e33)  
+                   
+
+    return gain
+},
+update(diff) {
+    if (!hasUpgrade("jp", 43)) return
+
+    // ganar experiencia
+    player.jp.jgexperience = player.jp.jgexperience.add(
+        this.jpXPBoost().mul(diff)
+    )
+
+    // subir niveles automáticamente
+    while (player.jp.jgexperience.gte(this.jpXPReq())) {
+        player.jp.jgexperience = player.jp.jgexperience.sub(this.jpXPReq())
+        player.jp.jglevel = player.jp.jglevel.add(1)
+    }
+},
+jpxpBoost() {
+    if (!hasUpgrade("jp", 43)) return new Decimal(1)
+        let base = 2
+      
+    return new Decimal(base).pow(this.jpLevel())
+},
+
+
+
+    gainExp() {
+        return new Decimal(1)
+    },
+
+    onPrestige(gain) {
+
+        if (!player.jp.resetAnim) return
+
+        document.body.classList.add("hide-tmt-ui")
+
+        const overlay = document.createElement("div")
+        overlay.style.position = "fixed"
+        overlay.style.left = "0"
+        overlay.style.top = "0"
+        overlay.style.width = "100%"
+        overlay.style.height = "100%"
+        overlay.style.background = "black"
+        overlay.style.opacity = "0"
+        overlay.style.transition = "opacity 3s"
+        overlay.style.zIndex = "99999"
+        document.body.appendChild(overlay)
+
+        setTimeout(() => overlay.style.opacity = "1", 20)
+
+        function showText(text, delay) {
+            setTimeout(() => {
+                const t = document.createElement("div")
+                t.textContent = text
+                t.style.position = "fixed"
+                t.style.top = "50%"
+                t.style.left = "50%"
+                t.style.transform = "translate(-50%, -50%)"
+                t.style.color = "#d0ff00"
+                t.style.fontSize = "32px"
+                t.style.opacity = "0"
+                t.style.transition = "opacity 2s"
+                t.style.zIndex = "100000"
+                document.body.appendChild(t)
+
+                setTimeout(() => t.style.opacity = "1", 50)
+                setTimeout(() => t.style.opacity = "0", 2000)
+                setTimeout(() => t.remove(), 4000)
+            }, delay)
+        }
+
+        showText("After hours of grinding you got this.", 3000)
+        showText(`You earned ${format(gain)} Jump Power.. GG..`, 8000)
+
+        setTimeout(() => {
+            overlay.style.opacity = "0"
+            setTimeout(() => {
+                overlay.remove()
+                document.body.classList.remove("hide-tmt-ui")
+            }, 3000)
+        }, 12000)
+    },
+
+    clickables: {
+        11: {
+            title: "Reset Animation",
+            canClick() { return true },
+            onClick() {
+                player.jp.resetAnim = !player.jp.resetAnim
+            },
+            display() {
+                let auto = player.jp.resetAnimAutoDisabled
+                    ? "<br><small>Auto-disabled at 1e9 JP</small>"
+                    : ""
+
+                return `
+<b>Reset Animation</b><br>
+${player.jp.resetAnim ? "🟢 ENABLED" : "🔴 DISABLED"}
+${auto}
+`
+            },
+            style: {
+                width: "200px",
+                height: "80px",
+                background: () => player.jp.resetAnim ? "#2aff00" : "#ff4040",
+                color: "#000",
+                fontWeight: "bold",
+            },
+        },
+    },
+bars: {
+    ufLevelBar: {
+        direction: RIGHT,
+        width: 300,
+        height: 25,
+        progress() {
+            if (!hasUpgrade("jp", 43)) return 0
+            return player.jp.jgexperience.div(tmp.jp.jpXPReq).min(1)
+        },
+        display() {
+            if (!hasUpgrade("jp", 43)) return "Gravity Locked"
+            return `
+            Jump Gravity XP: ${format(player.jp.jgexperience)} / ${format(tmp.jp.jpXPReq)}
+            `
+        },
+        fillStyle: { backgroundColor: "#fff06b8e" },
+        borderStyle: { borderColor: "#ffffff" },
+    },
+},
+    tabFormat: {
+        "Main": {
+            content: [
+                 ["row", [
+    ["bar", "ufLevelBar"],
+    ["display-text", () => `
+        <div style="
+            width:70px;
+            height:40px;
+            margin-left:10px;
+            border:3px solid white;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:15px;
+            font-weight:bold;
+            background:#ffe159a1;
+        ">
+            Jump Grav: ${formatWhole(player.jp.jglevel)}
+        </div>
+    `],
+]],
+
+["display-text", () => hasUpgrade("jp", 43)
+    ? `Boosts Unfailability XP by ${format(tmp.jp.jpxpBoost)}x`
+    : ""
+],
+   "blank",
+                "main-display",
+                         "blank",
+                "prestige-button",
+            ]
+        },
+
+        "Jump-Upg Board": {
+            content: [
+["row", [
+    ["bar", "ufLevelBar"],
+    ["display-text", () => `
+        <div style="
+            width:70px;
+            height:40px;
+            margin-left:10px;
+            border:3px solid white;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:15px;
+            font-weight:bold;
+            background:#ffe159a1;
+        ">
+            Jump Grav: ${formatWhole(player.jp.jglevel)}
+        </div>
+    `],
+]],
+
+["display-text", () => hasUpgrade("jp", 43)
+    ? `Boosts Unfailability XP by ${format(tmp.jp.jpxpBoost)}x`
+    : ""
+],
+   "blank",
+                 "main-display",
+                          "blank",
+                 "prestige-button",
+                  "blank",
+                "buyables",
+                  
+            ]
+        },
+          "Upgrades": {
+            content: [
+                ["row", [
+    ["bar", "ufLevelBar"],
+    ["display-text", () => `
+        <div style="
+            width:70px;
+            height:40px;
+            margin-left:10px;
+            border:3px solid white;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:15px;
+            font-weight:bold;
+            background:#ffe159a1;
+        ">
+            Jump Grav: ${formatWhole(player.jp.jglevel)}
+        </div>
+    `],
+]],
+
+["display-text", () => hasUpgrade("jp", 43)
+    ? `Boosts Unfailability XP by ${format(tmp.jp.jpxpBoost)}x`
+    : ""
+],
+   "blank",
+                 "main-display",
+                          "blank",
+                 "prestige-button",
+                          "blank",
+                "upgrades",
+                  
+            ]
+        },
+         "Settings": {
+            content: [
+                ["row", [
+    ["bar", "ufLevelBar"],
+    ["display-text", () => `
+        <div style="
+            width:70px;
+            height:40px;
+            margin-left:10px;
+            border:3px solid white;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:15px;
+            font-weight:bold;
+            background:#ffe159a1;
+        ">
+            Jump Grav: ${formatWhole(player.jp.jglevel)}
+        </div>
+    `],
+]],
+
+["display-text", () => hasUpgrade("jp", 43)
+    ? `Boosts Unfailability XP by ${format(tmp.jp.jpxpBoost)}x`
+    : ""
+],
+   "blank",
+                 "main-display",
+                          "blank",
+                 "prestige-button",
+                          "blank",
+                "clickables",
+                  
+            ]
+        }
+    },
+
+    buyables: {
+        rows: 1,
+        cols: 7,
+
+        // 11 — Skill & Abnormal Skill
+        11: {
+            title: "Jump Powered Skill",
+            purchaseLimit() { return 250 },
+            cost(x) {
+                return new Decimal(1)
+                    .mul(Decimal.add(1, Decimal.mul(0.3, x)))
+                    .mul(Decimal.pow(3, x))
+            },
+            effect(x) {
+                let boost = 1
+                if (hasUpgrade('jp', 35)) boost = 1.2
+                return Decimal.pow(2.5, x)
+                    .mul(Decimal.add(1, x).pow(3).pow(boost))
+
+            },
+            display() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+                let boost = buyableEffect(this.layer, this.id)
+                return `
+Boosts Skill & Abnormal Skill<br>
+<b>Boost:</b> ×${format(boost)}<br>
+<b>Level:</b> ${lvl}/250<br>
+<b>Cost:</b> ${format(this.cost())} Jump Power
+`
+            },
+            canAfford() { return player.jp.points.gte(this.cost()) },
+            buy() {
+                player.jp.points = player.jp.points.sub(this.cost())
+                setBuyableAmount(this.layer, this.id,
+                    getBuyableAmount(this.layer, this.id).add(1))
+            },
+        },
+
+        // 12 — Cash
+        12: {
+            title: "Jump Powered Cash",
+            purchaseLimit() { return 250 },
+            cost(x) {
+                return new Decimal(1)
+                    .mul(Decimal.add(1, Decimal.mul(0.3, x)))
+                    .mul(Decimal.pow(3, x))
+            },
+            effect(x) {
+                let boost = 1
+                if (hasUpgrade('jp', 35)) boost = 1.2
+                return Decimal.pow(2.5, x)
+                    .mul(Decimal.add(1, x).pow(3).pow(boost))
+
+            },
+            display() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+                let boost = buyableEffect(this.layer, this.id)
+                return `
+Boosts Cash<br>
+<b>Boost:</b> ×${format(boost)}<br>
+<b>Level:</b> ${lvl}/250<br>
+<b>Cost:</b> ${format(this.cost())} Jump Power
+`
+            },
+            canAfford() { return player.jp.points.gte(this.cost()) },
+            buy() {
+                player.jp.points = player.jp.points.sub(this.cost())
+                setBuyableAmount(this.layer, this.id,
+                    getBuyableAmount(this.layer, this.id).add(1))
+            },
+        },
+
+        // 13 — Multiplier
+        13: {
+            title: "Jump Powered Multiplier",
+            purchaseLimit() { return 250 },
+            cost(x) {
+                return new Decimal(1)
+                    .mul(Decimal.add(1, Decimal.mul(0.3, x)))
+                    .mul(Decimal.pow(3, x))
+            },
+           effect(x) {
+                let boost = 1
+                if (hasUpgrade('jp', 35)) boost = 1.2
+                return Decimal.pow(2.5, x)
+                    .mul(Decimal.add(1, x).pow(3).pow(boost))
+
+            },
+            display() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+                let boost = buyableEffect(this.layer, this.id)
+                return `
+Boosts Multiplier<br>
+<b>Boost:</b> ×${format(boost)}<br>
+<b>Level:</b> ${lvl}/250<br>
+<b>Cost:</b> ${format(this.cost())} Jump Power
+`
+            },
+            canAfford() { return player.jp.points.gte(this.cost()) },
+            buy() {
+                player.jp.points = player.jp.points.sub(this.cost())
+                setBuyableAmount(this.layer, this.id,
+                    getBuyableAmount(this.layer, this.id).add(1))
+            },
+        },
+
+        // 14 — UF Gain
+        14: {
+            title: "Jump Powered UF",
+            purchaseLimit() { return 20 },
+            cost(x) {
+                return new Decimal(2)
+                    .mul(Decimal.add(1, Decimal.mul(0.3, x)))
+                    .mul(Decimal.pow(3, x))
+            },
+            effect(x) {
+                 let boost = 1
+                if (hasUpgrade('jp', 35)) boost = 1.2
+                return Decimal.pow(3, x).pow(boost)
+
+            },
+            
+            display() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+                let boost = buyableEffect(this.layer, this.id)
+                return `
+Boosts UF Gain<br>
+<b>Boost:</b> ×${format(boost)}<br>
+<b>Level:</b> ${lvl}/20<br>
+<b>Cost:</b> ${format(this.cost())} Jump Power
+`
+            },
+            canAfford() { return player.jp.points.gte(this.cost()) },
+            buy() {
+                player.jp.points = player.jp.points.sub(this.cost())
+                setBuyableAmount(this.layer, this.id,
+                    getBuyableAmount(this.layer, this.id).add(1))
+            },
+        },
+
+        // 15 — UF XP
+        15: {
+            title: "Jump Powered UF XP",
+            purchaseLimit() { return 10 },
+            cost(x) {
+                return new Decimal(2)
+                    .mul(Decimal.add(1, Decimal.mul(0.3, x)))
+                    .mul(Decimal.pow(3, x))
+            },
+            effect(x) {
+                return Decimal.mul(0.1, x)
+            },
+            display() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+                let boost = buyableEffect(this.layer, this.id)
+                return `
+Boosts UF XP Exponent<br>
+<b>Boost:</b> +^${format(boost)}<br>
+<b>Level:</b> ${lvl}/10<br>
+<b>Cost:</b> ${format(this.cost())} Jump Power
+`
+            },
+            canAfford() { return player.jp.points.gte(this.cost()) },
+            buy() {
+                player.jp.points = player.jp.points.sub(this.cost())
+                setBuyableAmount(this.layer, this.id,
+                    getBuyableAmount(this.layer, this.id).add(1))
+            },
+        },
+        16: {
+            title: "Jump Powered Function",
+            unlocked() { return hasUpgrade("jp", 41) },
+            purchaseLimit() { return 25 },
+            cost(x) {
+                return new Decimal(1e10)
+                    .mul(Decimal.add(1, Decimal.mul(0.2, x)))
+                    .mul(Decimal.pow(2, x))
+            },
+            effect(x) {
+          let boost = 1
+                if (hasUpgrade('jp', 51)) boost = 1.6
+                
+                return Decimal.mul(0.15, x).pow(boost)
+
+            },
+            
+            display() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+                let boost = buyableEffect(this.layer, this.id)
+                return `
+Boosts Function Variable "w"<br>
+<b>Boost:</b> +${format(boost)}<br>
+<b>Level:</b> ${lvl}/25<br>
+<b>Cost:</b> ${format(this.cost())} Jump Power
+`
+            },
+            canAfford() { return player.jp.points.gte(this.cost()) },
+            buy() {
+                player.jp.points = player.jp.points.sub(this.cost())
+                setBuyableAmount(this.layer, this.id,
+                    getBuyableAmount(this.layer, this.id).add(1))
+            },
+        },
+
+    },
+    upgrades: {
+
+    11: {
+        title: "#191: Joyful 1",
+        description: "Boosts Skill by 100x.",
+        cost: new Decimal(50),
+       
+        onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+    },
+
+    12: {
+        title: "#192: Joyful 2",
+        description: "Boosts Skill by 25x.",
+        cost: new Decimal(1500),
+        unlocked() { return hasUpgrade("jp", 11) },
+        
+        onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+    },
+
+    13: {
+        title: "#193: Joyful 3",
+        description: "Skill gain is boosted based on Jump Power.",
+        cost: new Decimal(8000),
+        unlocked() { return hasUpgrade("jp", 12) },
+        effect() {
+            return player.jp.points.add(1).log10().add(1)
+        },
+        effectDisplay() {
+            return "x" + format(this.effect())
+        },
+        onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+    },
+
+    14: {
+        title: "#194: Joyful 4",
+        description: "Boosts Cash gain based on Jump Power.",
+        cost: new Decimal(35000),
+        unlocked() { return hasUpgrade("jp", 13) },
+        effect() {
+            return player.jp.points.add(1).pow(0.25)
+        },
+        effectDisplay() {
+            return "x" + format(this.effect())
+        },
+        onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+    },
+
+    15: {
+        title: "#195: Joyful 5",
+        description: "Boosts Multiplier gain based on Jump Power.",
+        cost: new Decimal(1.5e5),
+        unlocked() { return hasUpgrade("jp", 14) },
+        effect() {
+            return player.jp.points.add(1).pow(0.2)
+        },
+        effectDisplay() {
+            return "x" + format(this.effect())
+        },
+        onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+    },
+
+    16: {
+        title: "#196 :Joyful 6",
+        description: "Boosts UF gain by 3x.",
+        cost: new Decimal(5e5),
+        unlocked() { return hasUpgrade("jp", 15) },
+      
+        onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+    },
+
+    17: {
+        title: "#197: Joyful 7",
+        description: "Boosts Skill based on total Jumpernova upgrades.",
+        cost: new Decimal(1e6),
+        unlocked() { return hasUpgrade("jp", 16) },
+        effect() {
+            let count = Object.keys(player.jp.upgrades || {}).length
+            return Decimal.pow(1.15, count)
+        },
+        effectDisplay() {
+            return "x" + format(this.effect())
+        },
+        onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+    },
+21: {
+        title: "#198: Do Something 1",
+        description: "Unlocks Auto-Split",
+        cost: new Decimal(1e7),
+        unlocked() { return hasUpgrade("jp", 17) },
+        
+        onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+    },
+    31: {
+        title: "#199: Placid 1",
+        description: "×5 Skill and ×5 Abnormal Skill.",
+        cost: new Decimal(5e7),
+        unlocked() { return hasUpgrade("jp", 21) },
+        onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+    },
+
+    32: {
+        title: "#200: Placid 2",
+        description: "×3 UF gain and ×1.5 UF XP gain.",
+        cost: new Decimal(1e8),
+        unlocked() { return hasUpgrade("jp", 31) },
+        onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+    },
+
+    33: {
+        title: "#201: Placid 3",
+        description: "+0.01 Skill and Abnormal Skill exponent.",
+        cost: new Decimal(2e8),
+        unlocked() { return hasUpgrade("jp", 32) },
+        onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+    },
+
+    34: {
+        title: "#202: Placid 4",
+        description: "×2 Jumpernova gain.",
+        cost: new Decimal(5e8),
+        unlocked() { return hasUpgrade("jp", 33) },
+        onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+    },
+
+    35: {
+        title: "#203: Placid 5",
+        description: "First 4 JP Buyables are 20% stronger. (EXCLUDING UF XP)",
+        cost: new Decimal(1e9),
+        unlocked() { return hasUpgrade("jp", 34) },
+        onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+    },
+
+    36: {
+        title: "#204: Placid 6",
+        description: "UF is preserved on Jumpernova and UF gain +50%.",
+        cost: new Decimal(2e9),
+        unlocked() { return hasUpgrade("jp", 35) },
+        onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+    },
+
+    37: {
+        title: "#206: Placid 7",
+        description: "Unlocks Keys.",
+        cost: new Decimal(5e9),
+        unlocked() { return hasUpgrade("jp", 36) },
+        onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+            player.k.unlocked = true
+        },
+    },
+    41: {
+            title: "#207: Press A Key 1",
+            description: "We aint pressing keys now. Unlock More J-UB buyables.",
+            cost: new Decimal(15),
+        unlocked() { return hasUpgrade("jp", 37) },
+           currencyInternalName: "points",
+                        currencyDisplayName: "Keys",
+                        currencyLayer: "k",
+                         onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+        },
+      42: {
+            title: "#208: Press A Key 2",
+            description: "4x Skill.",
+            cost: new Decimal(1.5e13),
+        unlocked() { return hasUpgrade("jp", 41) },
+         
+                         onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+        }, 
+        43: {
+            title: "#209: Press A Key 3",
+            description: "15x Skill, x1.02 Func Mult",
+            cost: new Decimal(1e236),
+                       currencyInternalName: "points",
+                        currencyDisplayName: "Skill",
+        unlocked() { return hasUpgrade("jp", 42) },
+         
+                         onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+        }, 
+        44: {
+            title: "#210: Press A Key 3",
+            description: "Unlock Jump Gravity",
+            cost: new Decimal(1e240),
+                       currencyInternalName: "points",
+                        currencyDisplayName: "Skill",
+        unlocked() { return hasUpgrade("jp", 43) },
+         
+                         onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+        }, 
+        45: {
+            title: "#211: Press A Key 5",
+            description: "10x Jump Gravity XP.",
+            cost: new Decimal(5e240),
+                       currencyInternalName: "points",
+                        currencyDisplayName: "Skill",
+        unlocked() { return hasUpgrade("jp", 44) },
+         
+                         onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+        }, 
+        46: {
+            title: "#212: Press A Key 6",
+            description: "1,000x Jump Gravity XP.",
+            cost: new Decimal(2.5e241),
+                       currencyInternalName: "points",
+                        currencyDisplayName: "Skill",
+        unlocked() { return hasUpgrade("jp", 45) },
+         
+                         onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+        }, 
+        47: {
+            title: "#213: Press a Key 7",
+            description: "1,000x Jump Gravity XP, yet again",
+            cost: new Decimal(1e242),
+                       currencyInternalName: "points",
+                        currencyDisplayName: "Skill",
+        unlocked() { return hasUpgrade("jp", 46) },
+         
+                         onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+        }, 
+        51: {
+            title: "#214: Climb A Truss 1",
+            description: "#203 Now affects ''Jump Powered Function'' at the rate of ^1.6",
+            cost: new Decimal(1e244),
+                       currencyInternalName: "points",
+                        currencyDisplayName: "Skill",
+        unlocked() { return hasUpgrade("jp", 47) },
+         
+                         onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+        }, 
+         52: {
+            title: "#215: Climb A Truss 3",
+            description: "Abnormal Skill and Splittify is kept on Jumpernova + UF.",
+            cost: new Decimal(1e246),
+                       currencyInternalName: "points",
+                        currencyDisplayName: "Skill",
+        unlocked() { return hasUpgrade("jp", 51) },
+         
+                         onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+        }, 
+53: {
+            title: "#215: Climb A Truss 2",
+            description: "1,000,000,000x Jump Gravity XP.",
+            cost: new Decimal(5e247),
+
+                       currencyInternalName: "points",
+                        currencyDisplayName: "Skill",
+
+
+
+          
+                        
+        
+        unlocked() { return hasUpgrade("jp", 52) },
+         
+                         onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+        }, 
+54: {
+            title: "#216: Climb A Truss 4",
+            description: "Centralize Keys :D",
+            cost: new Decimal(1e248),
+
+                       currencyInternalName: "points",
+                        currencyDisplayName: "Skill",
+
+
+
+          
+                        
+        
+        unlocked() { return hasUpgrade("jp", 53) },
+         
+                         onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+        },         
+55: {
+            title: "#217: Climb A Truss 5",
+            description: "Add 10 to w value.",
+            cost: new Decimal(5e248),
+
+                       currencyInternalName: "points",
+                        currencyDisplayName: "Skill",
+
+
+
+          
+                        
+        
+        unlocked() { return hasUpgrade("jp", 54) },
+         
+                         onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+        },
+    56: {
+            title: "#218: Climb A Truss 6",
+            description: "I am Mr Filler, i stole your 2.000DOg Skill.",
+            cost: new Decimal(2e249),
+
+                       currencyInternalName: "points",
+                        currencyDisplayName: "Skill",
+
+
+
+          
+                        
+        
+        unlocked() { return hasUpgrade("jp", 55) },
+         
+                         onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+        }, 
+     57: {
+            title: "#219: Climb A Truss 7",
+            description: "I am Mr Filler again, i stole your 5.000DOg Skill.",
+            cost: new Decimal(5e249),
+
+                       currencyInternalName: "points",
+                        currencyDisplayName: "Skill",
+
+
+
+          
+                        
+        
+        unlocked() { return hasUpgrade("jp", 56) },
+         
+                         onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+        },   
+        61: {
+            title: "#219: Jumpless 1",
+            description: "Woah. 1Qdx Skill, to recover",
+            cost: new Decimal(1),
+
+                     currencyInternalName: "points",
+                        currencyDisplayName: "Corrosion",
+                        currencyLayer: "cr",
+
+
+
+          
+                        
+        
+        unlocked() { return hasUpgrade("jp", 57) },
+         
+                         onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+        }, 
+         62: {
+            title: "#220: Jumpless 2",
+            description: "1Dex Jump Gravity XP",
+            cost: new Decimal(2),
+
+                     currencyInternalName: "points",
+                        currencyDisplayName: "Corrosion",
+                        currencyLayer: "cr",
+
+
+
+          
+                        
+        
+        unlocked() { return hasUpgrade("jp", 61) },
+         
+                         onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+        },    
+         63: {
+            title: "#221: Jumpless 3",
+            description: "You beat the game :D",
+            cost: new Decimal(1e283),
+
+                     currencyInternalName: "points",
+                        currencyDisplayName: "Skill",
+                      
+
+
+
+          
+                        
+        
+        unlocked() { return hasUpgrade("jp", 61) },
+         
+                         onPurchase() {
+            const audio = new Audio("sounds/clock.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+        },         
+}
+
+})
+
+addLayer("k", {
+    name: "Keys",
+    symbol: "K",
+    position: 1,
+    row: 2,
+    color: "#ffffff",
+
+    startData() {
+        return {
+            unlocked: false,
+            points: new Decimal(0),
+        }
+    },
+
+    layerShown() {
+        return hasUpgrade("jp", 37) & (hasUpgrade("jp", 54) == false)
+    },
+
+    type: "none",
+
+    // 🔁 GANANCIA PASIVA (SIEMPRE)
+    update(diff) {
+        if (!player.k.unlocked) return
+
+        // base pasiva (PC y móvil)
+        let gain = new Decimal(1).mul(diff)
+
+        // bonus pequeño si presiona teclas (PC)
+        if (player.k._keyBonus && player.k._keyBonus.gt(0)) {
+            gain = gain.mul(player.k._keyBonus)
+            player.k._keyBonus = new Decimal(1)
+        }
+
+        player.k.points = player.k.points.add(gain)
+    },
+
+    // 🎮 BONUS POR TECLA (OPCIONAL)
+    onKeyDown() {
+        if (!player.k.unlocked) return
+
+        // bonus temporal x1.1 solo para el siguiente tick
+        player.k._keyBonus = new Decimal(1.5)
+    },
+
+    // 🔑 EFECTO
+    effect() {
+       
+        let ef = Decimal.times(player.k.points).add(1)
+      
+    
+        return ef
+    },
+
+    effectDescription() {
+        return `Boosts Skill by ×${format(this.effect())}`
+    },
+
+    nodeStyle() {
+        return {
+            background: "linear-gradient(270deg, #ffffff, #808080ff, #ffffff)",
+            backgroundSize: "400% 400%",
+            animation: "keyGradient 6s ease infinite",
+            border: "3px solid #d6d6d6ff",
+            color: "#000",
+        }
+    },
+
+    tabFormat: {
+        "Main": {
+            content: [
+                "main-display",
+                "blank",
+                ["display-text", () => `
+<b>Keys</b> are generated <b>passively</b>.<br>
+Pressing keys gives a <i>small temporary bonus</i>.<br><br>
+<b>Skill Boost:</b> ×${format(layers.k.effect())}
+                `],
+            ],
+        },
+    },
+})
+addLayer("cr", {
+    name: "Corrosion",
+    symbol: "CR",
+    position: 1, // mismo row que jp
+    row: 2,
+
+    color: "#8b6f47",
+
+    nodeStyle() {
+        return {
+            "background": "linear-gradient(135deg, #6b4e2e, #3a2a1a)",
+            "border": "3px solid #4a3723",
+            "color": "#ffffff",
+        }
+    },
+
+    startData() {
+        return {
+            unlocked: false,
+            points: new Decimal(0),
+        }
+    },
+
+    layerShown() {
+        return hasMilestone("sp", 11) // milestone 11 de sp
+    },
+
+    resource: "Corrosion",
+    baseResource: "Skill",
+    baseAmount() { return player.points },
+
+    requires: new Decimal("1e200"),
+    type: "normal",
+    exponent: 0.000000000000000000000000000000001,
+
+    /* ───────────────
+       GAIN LOGIC
+       ─────────────── */
+    gainMult() {
+        let mult = new Decimal(1)
+
+        if (player.points.gte("1e273")) {
+            let extra = player.points
+                .div("1e273")
+                .log10()
+                .add(1)
+                .pow(0.4)
+
+            mult = mult.mul(extra)
+        }
+
+        return mult
+    },
+
+    gainExp() {
+        return new Decimal(1)
+    },
+
+    /* ───────────────
+       RESET EFFECTS
+       ─────────────── */
+    onPrestige() {
+        // Jump Power se borra
+        if (player.jp) {
+            player.jp.points = new Decimal(0)
+        }
+         if (player.jp.buyables) {
+                for (let id in player.jp.buyables) {
+                    player.jp.buyables[id] = new Decimal(0)
+                }
+            }
+    },
+
+    /* ───────────────
+       RESET BEHAVIOR
+       ─────────────── */
+    resetsNothing() {
+        return false
+    },
+
+    /* ───────────────
+       TAB
+       ─────────────── */
+    tabFormat: {
+        "Main": {
+            content: [
+                "blank",
+                "main-display",
+                "blank",
+                ["display-text", () =>
+                    `<h3>Corrosion eats progress.</h3>
+<i>A deeper reset than Jumpernova.</i>`
+                ],
+                "blank",
+                "prestige-button",
+                "blank",
+                ["display-text", () =>
+                    `Gain starts scaling at <b>1e273 Skill</b><br>
+Jump Power is completely wiped on reset.`
+                ],
+            ],
+        },
+    },
+})
 
 
 addLayer("r", {
@@ -3642,6 +5983,8 @@ addLayer("r", {
 if (hasUpgrade("uf", 85)) cash = cash.times(upgradeEffect("uf" , 85))    
     if (hasUpgrade("uf", 91)) cash = cash.times(15)    
 
+    if (hasUpgrade("uf", 101)) cash = cash.pow(2)
+            if (hasUpgrade("uf", 116)) cash = cash.times(1000)    
             let gain = new Decimal(cash).times(diff); // 0.01 por segundo
             player.r.points = player.r.points.add(gain);
         }
@@ -3700,14 +6043,21 @@ if (hasUpgrade("uf", 85)) cash = cash.times(upgradeEffect("uf" , 85))
                 unlocked() { return (hasUpgrade("uf", 83)) },
             },
 14: {
-                name: "Unimpssible (Research)",
+                name: "Unimpossible (Research)",
                 challengeDescription: "Raise Skill by ^0.08. but at the same time boost skill by 5x",
                 goalDescription: "10K Skill",
                 rewardDescription: "5x Abnormal Skill.",
                 canComplete: function() {return player.points.gte(1e4)},
                 unlocked() { return (hasUpgrade("as", 23)) },
             },
-        
+        15: {
+                name: "Friendliness (Research)",
+                challengeDescription: "Skill is now equivalent to Multiplier.",
+                goalDescription: "1M Skill",
+                rewardDescription: "10x UF XP.",
+                canComplete: function() {return player.points.gte(1e6)},
+                unlocked() { return (hasUpgrade("uf", 122)) },
+            },
  },
 
    
@@ -3826,6 +6176,7 @@ updateMusicState();
         }
     },
 })
+
 addLayer("as", {
     name: "Abnormal Skill", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "αS", // This appears on the layer's node. Default is the id with the first letter capitalized
@@ -3839,12 +6190,13 @@ addLayer("as", {
     resource: "Abnormal Skill", // Name of prestige currency
     type: "none",
      row: 0, // Row the layer is in on the tree (0 is the first row)
-     doReset(resettingLayer) {
+      doReset(resettingLayer) {
         let keep = [];
-        if (hasUpgrade("p", 11) && resettingLayer=="uf") keep.push("upgrades")
-         
-
-        if (layers[resettingLayer].row > this.row) layerDataReset("p", keep)
+       
+        if (hasUpgrade("uf", 11) && resettingLayer==1) keep.push("buyables")
+             if (hasUpgrade("jp", 52) && resettingLayer=="jp") keep.push("upgrades")
+if (hasUpgrade("jp", 52) && resettingLayer=="uf") keep.push("upgrades")
+        if (layers[resettingLayer].row > this.row) layerDataReset("as", keep)
     },
  update(diff) {
         // “Riesgo controlado”: solo ejecuta si player.b existe
@@ -3863,6 +6215,15 @@ addLayer("as", {
                                                                                         		if (hasChallenge("r", 15)) cash = cash.times(5)
                                                                                                         if (hasUpgrade("as", 21)) cash = cash.times(upgradeEffect('as', 21))     
 if (hasUpgrade("as", 24)) cash = cash.times(8)      
+if (hasMilestone("e", 1)) cash = cash.times(player.e.points.div(10).pow(0.2).add(1))  
+     if (hasUpgrade("uf", 104)) cash = cash.times(upgradeEffect("uf", 104)) 
+cash = cash.times(buyableEffect('as', 11))
+                                              if (hasUpgrade("uf", 105)) cash = cash.mul(tmp.uf.ufAbnormalBoost)
+                                                
+                                             if (hasUpgrade("jp", 33)) cash = cash.pow(1.01)    
+
+if (hasMilestone("sp", 1)) cash = cash.times(5) 
+   cash = cash.times(buyableEffect('jp', 11))   
   
             let gain = new Decimal(cash).times(diff); // 0.01 por segundo
             player.as.points = player.as.points.add(gain);
@@ -4041,7 +6402,71 @@ unlocked() {
     description: "8x Abnormal Skill",
     cost: new Decimal(500),
 unlocked() {
-                            return hasUpgrade("as", 22)
+                            return hasUpgrade("as", 23)
+                        
+       },
+
+    onPurchase() {
+        const audio = new Audio("sounds/clock.mp3");
+        audio.volume = 0.5;
+        audio.play();
+    },
+ 
+},
+25: {
+    title: "α12 - Abnormal Skill 12",
+    description: "Unlock Electricity.",
+    cost: new Decimal(8500),
+unlocked() {
+                            return hasUpgrade("as", 24)
+                        
+       },
+
+    onPurchase() {
+        const audio = new Audio("sounds/clock.mp3");
+        audio.volume = 0.5;
+        audio.play();
+    },
+ 
+},
+26: {
+    title: "α13 - Abnormal Skill 13",
+    description: "2.5x Voltage.",
+    cost: new Decimal(35000),
+unlocked() {
+                            return hasUpgrade("as", 25)
+                        
+       },
+
+    onPurchase() {
+        const audio = new Audio("sounds/clock.mp3");
+        audio.volume = 0.5;
+        audio.play();
+    },
+ 
+},
+27: {
+    title: "α14 - Abnormal Skill 14",
+    description: "3x Abnormal Skill. and Unlock The Abnormal Skill Upgrade board.",
+    cost: new Decimal(95000),
+unlocked() {
+                            return hasUpgrade("as", 26)
+                        
+       },
+
+    onPurchase() {
+        const audio = new Audio("sounds/clock.mp3");
+        audio.volume = 0.5;
+        audio.play();
+    },
+ 
+},
+31: {
+    title: "α15 - Abnormal Skill 15",
+    description: "100x Jump Power.",
+    cost: new Decimal("1e303"),
+unlocked() {
+                            return hasUpgrade("jp", 52)
                         
        },
 
@@ -4054,7 +6479,153 @@ unlocked() {
 },
   }, 
 
-   
+   buyables: {
+ 11: {
+                    title: "Strange Abnormal Skill",
+                    unlocked() { return (hasUpgrade("as", 27))},
+                    purchaseLimit() {
+let limit = 500
+
+                        return purchaseLimit = limit
+                    },
+                   
+                    
+                    cost(x) {
+                        let exp2 = 1.05
+                      
+
+                        return new Decimal(1e5).mul(Decimal.pow(1.2, x)).mul(Decimal.mul(x , Decimal.pow(exp2 , x))).floor()
+                       
+                    },
+                   display() {
+    return `
+    Cost: ${format(tmp[this.layer].buyables[this.id].cost)} Abnormal Skill<br>
+    Bought: ${getBuyableAmount(this.layer, this.id)}/${purchaseLimit}<br>
+    Effect: Abnormal Skill Gain is multiplied by ${format(buyableEffect(this.layer, this.id))}x<br>
+    <br>
+    +15% Abnormal Skill per level<br>
+    Every 15 levels increases effect by 15%
+    `
+},
+                     
+                    canAfford() {
+                        return player.as.points.gte(this.cost())
+                    },
+                    buy() {
+                        let cost = new Decimal (1)
+                        player.as.points = player.as.points.sub(this.cost().mul(cost))
+                        setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+                    },
+                  effect(x) {
+    // +10% por nivel (lineal)
+    let perLevel = new Decimal(1).add(x.mul(0.15))
+
+    // +15% cada 25 compras (multiplicativo)
+    let milestones = x.div(15).floor()
+    let milestoneBonus = new Decimal(1.15).pow(milestones)
+
+    return perLevel.mul(milestoneBonus)
+}
+
+                }, 
+ 12: {
+                    title: "Strange Voltage",
+                    unlocked() { return (hasUpgrade("as", 27))},
+                    purchaseLimit() {
+let limit = 500
+
+                        return purchaseLimit = limit
+                    },
+                   
+                    
+                    cost(x) {
+                        let exp2 = 1.05
+                      
+
+                        return new Decimal(2e5).mul(Decimal.pow(1.2, x)).mul(Decimal.mul(x , Decimal.pow(exp2 , x))).floor()
+                       
+                    },
+                   display() {
+    return `
+    Cost: ${format(tmp[this.layer].buyables[this.id].cost)} Abnormal Skill<br>
+    Bought: ${getBuyableAmount(this.layer, this.id)}/${purchaseLimit}<br>
+    Effect: Voltage Gain is multiplied by ${format(buyableEffect(this.layer, this.id))}x<br>
+    <br>
+    +10% Voltage per level<br>
+    Every 25 levels increases effect by 15%
+    `
+},
+                     
+                    canAfford() {
+                        return player.as.points.gte(this.cost())
+                    },
+                    buy() {
+                        let cost = new Decimal (1)
+                        player.as.points = player.as.points.sub(this.cost().mul(cost))
+                        setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+                    },
+                  effect(x) {
+    // +10% por nivel (lineal)
+    let perLevel = new Decimal(1).add(x.mul(0.10))
+
+    // +15% cada 25 compras (multiplicativo)
+    let milestones = x.div(25).floor()
+    let milestoneBonus = new Decimal(1.15).pow(milestones)
+
+    return perLevel.mul(milestoneBonus)
+}
+
+                },  
+  13: {
+                    title: "Strange UF XP",
+                    unlocked() { return (hasUpgrade("uf", 101))},
+                    purchaseLimit() {
+let limit = 500
+
+                        return purchaseLimit = limit
+                    },
+                   
+                    
+                    cost(x) {
+                        let exp2 = 1.06
+                      
+
+                        return new Decimal(1e2).mul(Decimal.pow(1.2, x)).mul(Decimal.mul(x , Decimal.pow(exp2 , x))).floor()
+                       
+                    },
+                   display() {
+    return `
+    Cost: ${format(tmp[this.layer].buyables[this.id].cost)} Abnormal Skill<br>
+    Bought: ${getBuyableAmount(this.layer, this.id)}/${purchaseLimit}<br>
+    Effect: UF XP Gain is multiplied by ${format(buyableEffect(this.layer, this.id))}x<br>
+    <br>
+    +25% UF XP per level<br>
+    Every 25 levels increases effect by 15%
+    `
+},
+                     
+                    canAfford() {
+                        return player.as.points.gte(this.cost())
+                    },
+                    buy() {
+                        let cost = new Decimal (1)
+                        player.as.points = player.as.points.sub(this.cost().mul(cost))
+                        setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+                    },
+                  effect(x) {
+    // +10% por nivel (lineal)
+    let perLevel = new Decimal(1).add(x.mul(0.25))
+
+    // +15% cada 25 compras (multiplicativo)
+    let milestones = x.div(25).floor()
+    let milestoneBonus = new Decimal(1.15).pow(milestones)
+
+    return perLevel.mul(milestoneBonus)
+}
+
+                },                                
+                }, 
+
    layerShown() { return layerVisible(this.layer) },
     
      
@@ -4073,9 +6644,686 @@ unlocked() {
                 "upgrades",
             ],
         },
+         "Upgrade Board": {
+            unlocked() {
+                            return hasUpgrade("as", 27)
+                        
+       },
+            content: [
+                "main-display",
+                "blank",
+                ["display-text", () => `<h3>Welcome to the Decelerated realm! this is now skill now.</h3>`],
+                        "blank",
+                 "blank",
+                  ["display-text", () => `<h3>You currently exactly have... <span style="color:#cf6fecff">${format(player.as.points)}</span> Abnormal Skill!</h3>`],
+                   "blank",
+                "buyables",
+            ],
+        },
      }, 
 
     })
+addLayer("e", {
+    name: "Electricity", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "E", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: true,
+		points: new Decimal(0),
+    }},
+    color: "#ffd549ff",
+  
+    resource: "Voltage", // Name of prestige currency
+    type: "none",
+     row: 0, // Row the layer is in on the tree (0 is the first row)
+    
+ update(diff) {
+        // “Riesgo controlado”: solo ejecuta si player.b existe
+        if (!player.as) return;
+
+        // Genera Alpha pasivamente si tienes la mejora 11
+        if  (hasUpgrade("as", 25)){
+            let cash = new Decimal(1)
+                                          if (hasUpgrade("as", 26)) cash = cash.times(2.5)          
+                      cash = cash.times(buyableEffect('as', 12))                           
+if (hasMilestone("sp", 2)) {
+    
+    let fact = 3
+    if (hasMilestone("sp", 7)) fact = 4
+    
+    
+ cash = cash.times(new Decimal(fact).pow(player.sp.points.sub(1)).max(1)) 
+
+}
+  
+            let gain = new Decimal(cash).times(diff); // 0.01 por segundo
+            player.e.points = player.e.points.add(gain);
+        }
+    },
+doReset(resettingLayer) {
+        let keep = [];
+       
+        if (hasUpgrade("uf", 11) && resettingLayer==1) keep.push("buyables")
+
+        if (layers[resettingLayer].row > this.row) layerDataReset("e", keep)
+    },
+    
+  milestones: {
+            1: {
+                requirementDescription: "10 Voltage ",
+                effectDescription: "Boosts Abnormal Skill depending of your (Electricity/10^0.2)",
+                done() { return player.e.points.gte(10) },
+                unlocked() {
+                    return hasUpgrade("as", 25)
+                
+                },
+            },
+                     2: {
+                requirementDescription: "100 Voltage ",
+                effectDescription: "Boosts Skill depending of your (Electricity/100^0.175)",
+                done() { return player.e.points.gte(100) },
+                unlocked() {
+                    return hasUpgrade("as", 25)
+                
+                },
+            },
+               3: {
+                requirementDescription: "10K Voltage ",
+                effectDescription: "Boosts Cash depending of your (Electricity/10000^0.175)",
+                done() { return player.e.points.gte(10000) },
+                unlocked() {
+                    return hasUpgrade("as", 25)
+                
+                },
+            },
+            4: {
+                requirementDescription: "100K Voltage ",
+                effectDescription: "Boosts Multiplier depending of your (Electricity/100K^0.075)",
+                done() { return player.e.points.gte(100000) },
+                unlocked() {
+                    return hasUpgrade("uf", 121)
+                
+                },
+            },
+          
+             },
+   
+   layerShown() { return layerVisible(this.layer) & (hasUpgrade("as", 25))},
+    
+     
+   
+      
+     tabFormat: {
+        "Main": {
+            
+            content: [
+                
+                "main-display",
+                "blank",
+                ["display-text", () => `<h3>More elecricity = more boosts</h3>`],
+                        "blank",
+               ["display-text", () => `<h3>Upgrade your voltage production to progress!</h3>`],
+                        "blank",
+                   "blank",
+                "milestones",
+            ],
+        },
+     }, 
+
+    })
+
+addLayer("fu", {
+    name: "Function",
+    symbol: "f(x)",
+    position: 2,
+    row: 0,
+    color: "#dbf5ffff",
+
+    startData() { return {
+        unlocked: true,
+        points: new Decimal(0),
+    }},
+
+    resource: "f(x)",
+    type: "none",
+
+    // =========================
+    // UPDATE
+    // =========================
+    update(diff) {
+        if (!hasUpgrade("uf", 133)) return
+
+        let gain = tmp.fu.functionResult.mul(diff)
+          
+        player.fu.points = player.fu.points.add(gain)
+    },
+
+    // =========================
+    // VARIABLES
+    // =========================
+    xValue() {
+        let xboost =  (upgradeEffect('uf', 141))      
+        return new Decimal(1).add(getBuyableAmount("fu", 11)).add(xboost)
+    },
+    yValue() {
+          let yboost =  (upgradeEffect('uf', 142))      
+        return new Decimal(getBuyableAmount("fu", 12)).add(yboost)
+    },
+    zValue() {
+             let zboost =  (upgradeEffect('uf', 143)) 
+        return new Decimal(1).add(getBuyableAmount("fu", 13)).times(zboost)
+    },
+    wValue() {
+        let wboost =  (upgradeEffect('uf', 144)) 
+        if (hasMilestone("sp", 3)) wboost = wboost.add(0.25) 
+            if (hasUpgrade("jp", 55)) wboost = wboost.add(10)
+               wboost = wboost.add(buyableEffect('jp', 16))   
+        return new Decimal(1).add(getBuyableAmount("fu", 14).mul(0.01)).times(wboost)
+        
+    },
+ mulValue() {
+        let cash =  new Decimal(1)
+         if (hasUpgrade("uf", 135)) cash = cash.times(10)   
+             if (hasMilestone("sp", 4)) cash = cash.times(5)
+             if (hasUpgrade("uf", 136)) cash = cash.mul(tmp.uf.FBoost)
+            return cash
+    },
+    functionResult() {
+        let x = this.xValue()
+        let y = this.yValue()
+        let z = this.zValue()
+        let w = this.wValue()
+        let mul = this.mulValue()
+        
+        return x.add(y).mul(z).pow(w).mul(mul)
+    },
+
+    // =========================
+    // BOOST A SKILL (BALANCEADO)
+    // =========================
+    skillBoost() {
+        if (!hasUpgrade("uf", 133)) return new Decimal(1)
+
+        let gain = tmp.fu.functionResult
+        return gain.pow(0.25).div(10).add(1).min(1e63)
+    },
+
+
+
+      
+    // =========================
+    // BUYABLES
+    // =========================
+    buyables: {
+        // x — Abnormal Skill
+        11: {
+            title: "x",
+            cost(x) {
+                return new Decimal("1e15").mul(Decimal.pow(1.5, x))
+            },
+            canAfford() {
+                return player.as.points.gte(this.cost())
+            },
+            buy() {
+                player.as.points = player.as.points.sub(this.cost())
+                setBuyableAmount("fu", 11, getBuyableAmount("fu", 11).add(1))
+            },
+            display() {
+                return `x = ${format(tmp.fu.xValue)}<br>
+                Cost: ${format(this.cost())} Abnormal Skill`
+            },
+            style: { width: "110px", height: "110px" }
+        },
+
+        // y — Voltage
+        12: {
+            title: "y",
+            cost(x) {
+                return new Decimal("1e5").mul(Decimal.pow(1.6, x))
+            },
+            canAfford() {
+                return player.e.points.gte(this.cost())
+            },
+            buy() {
+                player.e.points = player.e.points.sub(this.cost())
+                setBuyableAmount("fu", 12, getBuyableAmount("fu", 12).add(1))
+            },
+            display() {
+                return `y = ${format(tmp.fu.yValue)}<br>
+                Cost: ${format(this.cost())} Voltage`
+            },
+            style: { width: "110px", height: "110px" }
+        },
+
+        // z — Skill (ESCALA RÁPIDO)
+        13: {
+            title: "z",
+            cost(x) {
+                return new Decimal("1e100")
+                    .mul(Decimal.pow(3, x))
+                    .mul(x.add(1).pow(2))
+            },
+            canAfford() {
+                return player.points.gte(this.cost())
+            },
+            buy() {
+                player.points = player.points.sub(this.cost())
+                setBuyableAmount("fu", 13, getBuyableAmount("fu", 13).add(1))
+            },
+            display() {
+                return `z = ${format(tmp.fu.zValue)}<br>
+                Cost: ${format(this.cost())} Skill`
+            },
+            style: { width: "110px", height: "110px" }
+        },
+
+        // w — Cash (ESCALA MUY RÁPIDO)
+        14: {
+            title: "w",
+              purchaseLimit() { return 60 },
+            cost(x) {
+                return new Decimal("1e40")
+                    .mul(Decimal.pow(5, x))
+                    .mul(x.add(1).pow(3))
+            },
+            canAfford() {
+                return player.c.points.gte(this.cost())
+            },
+            buy() {
+                player.c.points = player.c.points.sub(this.cost())
+                setBuyableAmount("fu", 14, getBuyableAmount("fu", 14).add(1))
+            },
+            display() {
+                  let lvl = getBuyableAmount(this.layer, this.id)
+                return `w = ${format(tmp.fu.wValue)}<br>
+                +0.01 per purchase<br>
+                <b>Level:</b> ${lvl}/60<br>
+                Cost: ${format(this.cost())} Cash`
+            },
+            style: { width: "110px", height: "110px" }
+        },
+    },
+
+    // =========================
+    // VISIBILIDAD
+    // =========================
+    layerShown() {
+        return layerVisible(this.layer) && hasUpgrade("uf", 133)
+    },
+
+    // =========================
+    // UI
+    // =========================
+    tabFormat: {
+        "Main": {
+            content: [
+                "main-display",
+                "blank",
+                ["display-text", () => `
+                <h3>((x + y) × z)<sup>w</sup></h3>
+                x = ${format(tmp.fu.xValue)} |
+                y = ${format(tmp.fu.yValue)} |
+                z = ${format(tmp.fu.zValue)} |
+                w = ${format(tmp.fu.wValue)} |
+                Multiplier = x${format(tmp.fu.mulValue)}<br><br>
+                <b>Function Gain:</b> ${format(tmp.fu.functionResult)} /s<br>
+                <b>Skill Boost:</b> ×${format(tmp.fu.skillBoost)}
+                `],
+                "blank",
+                "buyables",
+            ],
+        },
+    },
+})
+
+addLayer("sp", {
+    name: "Splittify", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "SP", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 2, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+splitShards: new Decimal(0),
+        
+
+    }},
+     
+       layerShown() { return  (hasUpgrade('uf', 151)) },
+    color: "#1100ffff",
+ 
+    nodeStyle() {
+        return {
+            "background": "linear-gradient(135deg, #001affff, #ff0000ff)",
+            "border": "3px solid #ffcbcbff",
+            "color": "#ffffff",
+        }
+    },
+   
+     row: 1, // Row the layer is in on the tree (0 is the first row)
+
+                requires: new Decimal(1e14),
+              // Can be a function that takes requirement increases into account
+                resource: "SP", // Name of prestige currency
+                baseResource: "f(x)", // Name of resource prestige is based on
+                baseAmount() {return player.fu.points}, // Get the current amount of baseResource
+                type: "static",// normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+                exponent: 3, // Prestige currency exponent
+           
+autoPrestige() {
+            return hasUpgrade("jp", 21)
+        },             
+               
+   resetsNothing( ) {
+            return hasUpgrade("jp", 21)
+        }, 
+
+update(diff) {
+        if (!hasMilestone("sp", 9)) return
+
+        let gain = new Decimal(1).mul(diff)
+        gain = gain.mul(player.sp.points.add(1).log10().pow(3).add(1))
+
+        player.sp.splitShards = player.sp.splitShards.add(gain)
+    },
+doReset(resettingLayer) {
+        let keep = [];
+       
+        
+             if (hasUpgrade("jp", 52) && resettingLayer=="jp") keep
+if (hasUpgrade("jp", 52) && resettingLayer=="uf") keep
+        if (layers[resettingLayer].row > this.row) layerDataReset("sp", keep)
+    },
+
+
+
+
+
+ milestones: {
+            1: {
+                requirementDescription: "1 Split",
+                effectDescription: "5x Abnormal Skill. ",
+                done() { return player.sp.points.gte(1) },
+              
+            }, 
+                 2: {
+                requirementDescription: "2 Split",
+                effectDescription: "3x Voltage Per Voltage Starting from 2",
+                done() { return player.sp.points.gte(2) },
+              
+            },
+              3: {
+                requirementDescription: "5 Split",
+                effectDescription: "+0.25 w value.",
+                done() { return player.sp.points.gte(5) },
+              
+            }, 
+            4: {
+                requirementDescription: "7 Split",
+                effectDescription: "5x Function Multi.",
+                done() { return player.sp.points.gte(7) },
+              
+            }, 
+            5: {
+                requirementDescription: "8 Split",
+                effectDescription: "Unlock Obstructify",
+                done() { return player.sp.points.gte(8) },
+              
+            },
+             6: {
+                requirementDescription: "10 Split",
+                effectDescription: "10x Jump Power per Splittify Compounding starting on 10 SP. Currently",
+                done() { return player.sp.points.gte(10) },
+              
+            },
+               7: {
+                requirementDescription: "11 Split",
+                effectDescription: "Add 1 of the Factor of ''2 Split '' Milestone ",
+                done() { return player.sp.points.gte(11) },
+              
+            },
+            8: {
+                requirementDescription: "13 Split",
+                effectDescription: "+5 Base Jumpernova Gain.",
+                done() { return player.sp.points.gte(13) },
+              
+            },
+            9: {
+            requirementDescription: "14 Split",
+            effectDescription: "Unlock Split Shards.",
+            done() { return player.sp.points.gte(14) },
+        },
+        10: {
+            requirementDescription: "17 Split",
+            effectDescription: "1.002x Skill per every split.",
+            done() { return player.sp.points.gte(17) },
+        },
+        11: {
+            requirementDescription: "20 Split",
+            effectDescription: "Unlock ????????",
+            done() { return player.sp.points.gte(20) },
+        },
+},
+buyables: {
+        rows: 1,
+        cols: 3,
+
+        11: {
+            title: "Shard Compression",
+            cost(x) {
+                return Decimal.pow(2, x).mul(10)
+            },
+            canAfford() {
+                return player.sp.splitShards.gte(this.cost(getBuyableAmount(this.layer, this.id)))
+            },
+            buy() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+                let cost = this.cost(lvl)
+                player.sp.splitShards = player.sp.splitShards.sub(cost)
+                setBuyableAmount(this.layer, this.id, lvl.add(1))
+            },
+            effect(x) {
+                return Decimal.pow(1.2, x)
+            },
+            display() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+                return `
+Boosts Skill<br>
+<b>Level:</b> ${lvl}<br>
+<b>Effect:</b> ×${format(this.effect(lvl))}<br>
+<b>Cost:</b> ${format(this.cost(lvl))} Split Shards
+`
+            },
+        },
+
+        12: {
+            title: "Shard Polishing",
+            cost(x) {
+                return Decimal.pow(3, x).mul(25)
+            },
+            canAfford() {
+                return player.sp.splitShards.gte(this.cost(getBuyableAmount(this.layer, this.id)))
+            },
+            buy() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+                let cost = this.cost(lvl)
+                player.sp.splitShards = player.sp.splitShards.sub(cost)
+                setBuyableAmount(this.layer, this.id, lvl.add(1))
+            },
+            effect(x) {
+                return Decimal.pow(1.15, x)
+            },
+            display() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+                return `
+Boosts UF gain<br>
+<b>Level:</b> ${lvl}<br>
+<b>Effect:</b> ×${format(this.effect(lvl))}<br>
+<b>Cost:</b> ${format(this.cost(lvl))} Split Shards
+`
+            },
+        },
+
+        13: {
+            title: "Shard Refinement",
+            cost(x) {
+                return Decimal.pow(4, x).mul(50)
+            },
+            canAfford() {
+                return player.sp.splitShards.gte(this.cost(getBuyableAmount(this.layer, this.id)))
+            },
+            buy() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+                let cost = this.cost(lvl)
+                player.sp.splitShards = player.sp.splitShards.sub(cost)
+                setBuyableAmount(this.layer, this.id, lvl.add(1))
+            },
+            effect(x) {
+                return Decimal.pow(1.1, x)
+            },
+            display() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+                return `
+Boosts Multiplier<br>
+<b>Level:</b> ${lvl}<br>
+<b>Effect:</b> ×${format(this.effect(lvl))}<br>
+<b>Cost:</b> ${format(this.cost(lvl))} Split Shards
+`
+            },
+        },
+    },
+
+
+
+
+
+   
+
+      layerShown() { return layerVisible(this.layer) },
+    
+     
+   
+      
+     tabFormat: {
+        "Main": {
+           
+            content: [
+ 
+
+
+  "blank",
+                "main-display",
+                "blank",
+                 "prestige-button",
+                  "blank",
+                ["display-text", () => `<h3>Have fun with this... </h3>`],
+                        "blank",
+                   ["display-text", () => `<h3>Reset all Decelerated World Progress, And DO A UF reset.</h3>`],
+                        "blank",
+                          
+                "blank",
+                "milestones",
+            ],
+        },
+    "Split Shards": {
+            unlocked() { return hasMilestone("sp", 9) },
+            content: [
+                ["display-text", () =>
+                    `<h2>Split Shards</h2>
+<b>You have:</b> ${format(player.sp.splitShards)} Split Shards<br>
+<i>Generated passively after reaching 14 Split.</i>`
+                ],
+                "blank",
+                "buyables",
+            ],
+        },
+    },
+})
+addLayer("o", {
+    name: "Obstructify",
+    symbol: "ወ",
+    position: 2,
+    row: 1,
+    color: "#ffd35b",
+    resource: "Obstruction Power",
+
+    startData() {
+        return {
+            unlocked: true,
+            points: new Decimal(0),
+        }
+    },
+
+    type: "none",
+
+    // 🔒 INMUNE A JP
+    doReset(resettingLayer) {
+        if (resettingLayer === "jp") return
+    },
+
+    layerShown() {
+        return layerVisible(this.layer) & hasMilestone("sp", 5)
+    },
+
+    nodeStyle() {
+        return {
+            background: "linear-gradient(135deg, #ffdf52, #ffc56d)",
+            border: "3px solid #fff1b8",
+            color: "#000",
+        }
+    },
+
+    // ⚙️ GENERACIÓN PASIVA
+    update(diff) {
+        if (!hasMilestone("sp", 5)) return
+
+        // +5 OP / segundo
+        player.o.points = player.o.points.add(
+            new Decimal(5).mul(diff)
+        )
+    },
+
+    // 💥 BOOST GLOBAL (SOLO PRE-JP)
+    effect() {
+        // Si ya existe Jumpernova, se apaga
+        if (player.jp?.unlocked) return new Decimal(1)
+
+        let op = player.o.points
+        if (op.lte(0)) return new Decimal(1)
+
+        return Decimal.add(
+            1,
+            op.add(1).log10().pow(1.6)
+        )
+    },
+
+    effectDescription() {
+        if (player.jp?.unlocked) {
+            return "Obstructify is inactive after Jumpernova."
+        }
+
+        return `
+<strong>Pre-Jumpernova Global Boost</strong><br>
+×${format(tmp.o.effect)}
+`
+    },
+
+    tabFormat: {
+        Main: {
+            content: [
+                "main-display",
+                "blank",
+                ["display-text", () => `
+<h3>Obstructify</h3>
+<p>A powerful global boost.</p>
+<p><b>Only active before Jumpernova.</b></p>
+<p>Passive. Permanent. Unbreakable.</p>
+`],
+                "blank",
+                "effect-description",
+            ]
+        }
+    }
+})
 
 
 
@@ -4111,6 +7359,90 @@ unlocked() {
         },
     },
 })
+addLayer("dv", {
+    name: "Decimal Viewer",
+    symbol: "DV",
+    row: "side",
+    position: 0,
+    color: "#aaaaaa",
+
+    startData() {
+        return {
+            unlocked: true,
+            input: "1e1000",
+            clickables: {} // 🔑 FIX REAL
+        }
+    },
+
+    type: "none",
+
+    clickables: {
+        11: {
+            title: "Enter Number",
+            display() {
+                return `Current input:<br>${player.dv.input}`
+            },
+             canClick() {
+            return true
+        },
+            onClick() {
+                let val = prompt(
+                    "Enter a Decimal value (use scientific notation):",
+                    player.dv.input
+                )
+                if (val !== null && val !== "") {
+                    player.dv.input = val
+                }
+            },
+            style: {
+                "width": "200px",
+                "height": "80px",
+                "font-size": "14px",
+            },
+        },
+    },
+
+    tabFormat: {
+        "Viewer": {
+            content: [
+                ["display-text", "<h2>Decimal Notation Viewer</h2>"],
+                "blank",
+                ["clickable", 11],
+                "blank",
+
+                ["display-text", () => {
+                    let txt = player.dv.input
+                    let d
+
+                    try {
+                        d = new Decimal(txt)
+                    } catch {
+                        return `<span style="color:red">Invalid Decimal</span>`
+                    }
+
+                    return `
+<b>Input:</b><br>
+new Decimal("${txt}")<br><br>
+
+<b>Formatted:</b><br>
+${format(d)}<br><br>
+
+<b>log10:</b><br>
+${d.gt(0) ? format(d.log10()) : "N/A"}<br><br>
+
+<b>slog:</b><br>
+${d.gt("1e1000000") ? format(d.slog()) : "—"}
+`
+                }],
+            ]
+        }
+    },
+
+    layerShown() {
+        return true
+    },
+})
+
  addLayer("a", {
         startData() { return {
             unlocked: true,
@@ -4180,6 +7512,85 @@ unlocked() {
                    image: "images/as.png",
                 tooltip: "Unlock the desaccelerator and start gaining Abnormal Skill..",
             },
+             23: {
+                name: "Voltaified",
+                done() { return player.e.points.gt(0) },
+                   image: "images/volt.png",
+                tooltip: "Unlock Electricity.",
+            },
+             24: {
+                name: "IS THAT A GCI N CGI REFERENCE?!??!?!",
+                done() { return player.fu.points.gt(0) },
+                 
+                tooltip: "Unlock Formula",
+            },
+            25: {
+                name: "Split gear",
+                done() { return player.sp.points.gt(0) },
+                 
+                tooltip: "Do a Splittify Reset and Get your first milestone",
+            },
+             26: {
+                name: "For when my abnormal skill goes higher than my current skill?",
+                done() { return player.as.points.gt(player.points) },
+                 
+                tooltip: "Get your Abnormal Skill higher than your current skill.",
+            },
+            27: {
+                name: "HOLY GOD!!!!!!!!!!!!",
+                done() { return player.fu.points.gte(1e33) },
+                 
+                tooltip: "Get 1De F(x)",
+            },
+             31: {
+                name: "LETS JUMP!!!!",
+                done() { return player.jp.points.gt(0) },
+           
+                tooltip: "Do your first Jumpernova Reset.",
+            },
+             32: {
+                name: "And sure. We get a Roblox Reference. Yet again. ",
+                done() { return player.jp.points.gte(50) },
+            
+                tooltip: "Get 50 Jump Power..",
+            },
+              33: {
+                name: "Splitting my shards! ",
+                done() { return player.sp.points.gte(14) },
+            
+                tooltip: "Get the 14 Split milestone.",
+            },
+           
+            34: {
+                name: "Keys keys. me dance. ",
+                done() { return player.k.points.gte(0) },
+            
+                tooltip: "Get a key.",
+            },
+             35: {
+                name: "THATS A LOT!!!",
+                done() { return player.jp.points.gte(1e6) },
+            
+                tooltip: "Get 1 Millon Jump Power",
+            },
+             36: {
+                name: "Your First Infinity!",
+                done() { return player.as.points.gte("1.8e308") },
+            
+                tooltip: "Get 1.79UCe Of Abnormal Skill.",
+            },
+             37: {
+                name: "THATS A REALLY LOT!!!",
+                done() { return player.jp.points.gte(1e15) },
+            
+                tooltip: "Get 1Qd Jump Power",
+            },
+             41: {
+                name: "C.O.R.R.O.S.I.O.N",
+                done() { return player.cr.points.gt(0) },
+            
+                tooltip: "Get ?????",
+            }
             },
         	tabFormat: [
 			"blank", 
