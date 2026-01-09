@@ -4704,7 +4704,7 @@ addLayer("jp", {
         }
     },
 
-    resetsNothing: true,
+
 
 
     resource: "Jump Power",
