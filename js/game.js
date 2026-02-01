@@ -6,7 +6,7 @@ const TMT_VERSION = {
 	tmtNum: "2.7",
 	tmtName: "Δ"
 }
-let bgMusicNormal = new Audio("sounds/icosa.mp3");
+let bgMusicNormal = new Audio("sounds/Candyland.mp3");
 bgMusicNormal.loop = true;
 bgMusicNormal.volume = 0.5;
 

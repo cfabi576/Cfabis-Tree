@@ -213,9 +213,23 @@ if (hasUpgrade('jp', 33)) gain = gain.pow(1.01)
 
 if (hasUpgrade('jp', 43)) gain = gain.times(15)
 if (hasUpgrade('jp', 61)) gain = gain.times(1e15)
+	if (hasUpgrade('jp', 65)) gain = gain.times(buyableEffect('jp', 11).pow(0.5))
+
+
+if (hasUpgrade('loop', 11)) gain = gain.times(1e18)
+
+    gain = gain.mul(buyableEffect("sn", 11))
+
+
+if (hasMilestone("g", 2)) gain = gain.mul(buyableEffect("r", 11))
 
 
 
+
+	if (hasMilestone("sa", 0)) gain = gain.times(1e9)
+if (hasMilestone("g", 0)) gain = gain.pow(1.1)
+	if (hasMilestone("g", 1)) gain = gain.pow(1.055)
+if (hasMilestone("sa", 0)) gain = gain.pow(1.1)
 
 
 if (inChallenge("r", 15)) gain = player.mul.points
@@ -275,7 +289,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return (hasUpgrade('jp', 63))
+	return (hasMilestone("sa", 1))
 }
 
 

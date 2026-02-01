@@ -2501,8 +2501,9 @@ addLayer("uf", {
 
 
     }},
-     passiveGeneration() {if ((hasUpgrade("uf", 133))) return 0.01; else return 0},
+     passiveGeneration() {if ((hasUpgrade("uf", 133)) || (hasUpgrade("loop", 14))) return 1; else return 0},
        layerShown() { return layerVisible(this.layer) },
+       resetsNothing() {return hasMilestone("sa", 0)},
     color: "#b96effff",
   onPrestige() {
    
@@ -4265,10 +4266,9 @@ fullDisplay() {
         137:{
             title: "#179: Automatic Joyful 7",
             description: "The UF Level Skill Boost is now Exponential.",
-            cost: new Decimal(5e102),
+            cost: new Decimal(500),
        
-          currencyInternalName: "points",
-                     currencyDisplayName: "Skill",
+          
           
                     
                    unlocked() {
@@ -4322,7 +4322,7 @@ return player.points.div(1e105).max(1).pow(0.5).add(1)
   142:{
             title: "#181: Unlosable 2",
             description: "Get More y depending of your Skill.",
-            cost: new Decimal(2.5e105),
+            cost: new Decimal(10000),
        
 effect() {
      
@@ -4337,8 +4337,7 @@ return player.points.div(1e105).max(1).pow(0.45).add(1)
         return format(upgradeEffect(this.layer, this.id)) + "+" 
     },
 
-          currencyInternalName: "points",
-                     currencyDisplayName: "Skill",
+        
           
                     
                    unlocked() {
@@ -4521,11 +4520,10 @@ return player.points.div(5e106).max(1).pow(0.35).log10().add(1).min(2.25)
     161:{
             title: "#188: Automatic 1",
             description: "8x Skill.. bye",
-            cost: new Decimal(1e110),
+            cost: new Decimal(1),
     
 
-          currencyInternalName: "points",
-                     currencyDisplayName: "Skill",
+        
           
                     
                    unlocked() {
@@ -4544,11 +4542,10 @@ return player.points.div(5e106).max(1).pow(0.35).log10().add(1).min(2.25)
      162:{
             title: "#189: Automatic 2",
             description: "1.00000000000005x UF XP.",
-            cost: new Decimal(1e111),
+            cost: new Decimal(1e6),
     
 
-          currencyInternalName: "points",
-                     currencyDisplayName: "Skill",
+          
           
                     
                    unlocked() {
@@ -4567,11 +4564,9 @@ return player.points.div(5e106).max(1).pow(0.35).log10().add(1).min(2.25)
      171:{
             title: "#190: Spontaneous 1",
             description: "Have luck in Jumpernova!",
-            cost: new Decimal(1e111),
+            cost: new Decimal(1e6),
     
 
-          currencyInternalName: "points",
-                     currencyDisplayName: "Skill",
           
                     
                    unlocked() {
@@ -4704,8 +4699,8 @@ addLayer("jp", {
         }
     },
 
-
-
+passiveGeneration() {if ((hasUpgrade("loop", 21))) return 1; else return 0},
+      resetsNothing() {return hasMilestone("sa", 0)},
 
     resource: "Jump Power",
     baseResource: "Skill",
@@ -4740,6 +4735,7 @@ addLayer("jp", {
     if (hasUpgrade('jp', 36)) mult = mult.times(1.5)
         if (hasMilestone("sp", 5)) mult = mult.times(new Decimal(10).pow(player.sp.points.sub(9)))
                 if (hasUpgrade('as', 31)) mult = mult.times(100)
+                    if (hasMilestone("g", 0)) mult = mult.times(0.8)
     return mult
 },
 jpLevel() {
@@ -5054,8 +5050,10 @@ bars: {
             title: "Jump Powered Skill",
             purchaseLimit() { return 250 },
             cost(x) {
+                let miski = 0.3
+                    if (hasUpgrade('jp', 36)) miski = 0.2
                 return new Decimal(1)
-                    .mul(Decimal.add(1, Decimal.mul(0.3, x)))
+                    .mul(Decimal.add(1, Decimal.mul(miski, x)))
                     .mul(Decimal.pow(3, x))
             },
             effect(x) {
@@ -5455,7 +5453,7 @@ Boosts Function Variable "w"<br>
             const audio = new Audio("sounds/clock.mp3")
             audio.volume = 0.5
             audio.play()
-            player.k.unlocked = true
+           
         },
     },
     41: {
@@ -5463,9 +5461,7 @@ Boosts Function Variable "w"<br>
             description: "We aint pressing keys now. Unlock More J-UB buyables.",
             cost: new Decimal(15),
         unlocked() { return hasUpgrade("jp", 37) },
-           currencyInternalName: "points",
-                        currencyDisplayName: "Keys",
-                        currencyLayer: "k",
+       
                          onPurchase() {
             const audio = new Audio("sounds/clock.mp3")
             audio.volume = 0.5
@@ -5487,9 +5483,8 @@ Boosts Function Variable "w"<br>
         43: {
             title: "#209: Press A Key 3",
             description: "15x Skill, x1.02 Func Mult",
-            cost: new Decimal(1e236),
-                       currencyInternalName: "points",
-                        currencyDisplayName: "Skill",
+            cost: new Decimal(3.6e13),
+                
         unlocked() { return hasUpgrade("jp", 42) },
          
                          onPurchase() {
@@ -5687,82 +5682,351 @@ Boosts Function Variable "w"<br>
             audio.play()
         },
         },   
-        61: {
-            title: "#219: Jumpless 1",
-            description: "Woah. 1Qdx Skill, to recover",
-            cost: new Decimal(1),
+61: {
+    title: "#219: Jumpless 1",
+    description: "Woah. 1Qdx Skill, to recover.",
+    cost: new Decimal(1),
+    currencyInternalName: "points",
+    currencyDisplayName: "Corrosion",
+    currencyLayer: "cr",
 
-                     currencyInternalName: "points",
-                        currencyDisplayName: "Corrosion",
-                        currencyLayer: "cr",
+    unlocked() { return hasUpgrade("jp", 57) },
+
+    onPurchase() {
+        const audio = new Audio("sounds/clock.mp3")
+        audio.volume = 0.5
+        audio.play()
+    },
+},
+
+62: {
+    title: "#220: Jumpless 2",
+    description: "Gain 1Dex Jump Gravity XP.",
+    cost: new Decimal(2),
+    currencyInternalName: "points",
+    currencyDisplayName: "Corrosion",
+    currencyLayer: "cr",
+
+    unlocked() { return hasUpgrade("jp", 61) },
+
+    onPurchase() {
+        const audio = new Audio("sounds/clock.mp3")
+        audio.volume = 0.5
+        audio.play()
+    },
+},
+
+63: {
+    title: "#221: Jumpless 3",
+    description: ".",
+    cost: new Decimal("1e283"),
+    currencyInternalName: "points",
+    currencyDisplayName: "Skill",
+
+    unlocked() { return hasUpgrade("jp", 62) },
+
+    onPurchase() {
+        const audio = new Audio("sounds/clock.mp3")
+        audio.volume = 0.5
+        audio.play()
+    },
+},
+
+64: {
+    title: "#222: Jumpless 4",
+    description: "loss.",
+    cost: new Decimal("1e286"),
+    currencyInternalName: "points",
+    currencyDisplayName: "Skill",
+
+    unlocked() { return hasUpgrade("jp", 63) },
+
+    onPurchase() {
+        const audio = new Audio("sounds/clock.mp3")
+        audio.volume = 0.5
+        audio.play()
+    },
+},
+
+65: {
+    title: "#223: Jumpless 5",
+    description: "Corrosion gain is multiplied by 3×.",
+    cost: new Decimal("1e289"),
+    currencyInternalName: "points",
+    currencyDisplayName: "Skill",
+
+    unlocked() { return hasUpgrade("jp", 64) },
+
+    onPurchase() {
+        const audio = new Audio("sounds/clock.mp3")
+        audio.volume = 0.5
+        audio.play()
+    },
+},
+
+66: {
+    title: "#224: Jumpless 6",
+    description: "Jumpernova (the skill one) buyables are 50% cheaper (after Corrosion).",
+    cost: new Decimal("1e292"),
+    currencyInternalName: "points",
+    currencyDisplayName: "Skill",
+
+    unlocked() { return hasUpgrade("jp", 65) },
+
+    onPurchase() {
+        const audio = new Audio("sounds/clock.mp3")
+        audio.volume = 0.5
+        audio.play()
+    },
+},
+
+67: {
+    title: "#225: Jumpless 7",
+    description: "unlocks mining",
+    cost: new Decimal("1e295"),
+    currencyInternalName: "points",
+    currencyDisplayName: "Skill",
+
+    unlocked() { return hasUpgrade("jp", 66) },
+
+    onPurchase() {
+        const audio = new Audio("sounds/clock.mp3")
+        audio.volume = 0.5
+        audio.play()
+    },
+},
+71: {
+    title: "#226: Starter 1",
+    description: "Stone gain from mining is doubled.",
+    cost: new Decimal(25),
+
+  
+
+    unlocked() { return hasUpgrade("jp", 67) },
+
+    onPurchase() {
+        const audio = new Audio("sounds/clock.mp3")
+        audio.volume = 0.5
+        audio.play()
+    },
+},
+
+72: {
+    title: "#227: Starter 2",
+    description: "Mining XP gain is doubled.",
+    cost: new Decimal(75),
+
+ 
+
+    unlocked() { return hasUpgrade("jp", 71) },
+
+    onPurchase() {
+        const audio = new Audio("sounds/clock.mp3")
+        audio.volume = 0.5
+        audio.play()
+    },
+},
+
+73: {
+    title: "#228: Starter 3",
+    description: "Mining cooldown is reduced by 20%.",
+    cost: new Decimal(150),
 
 
 
-          
-                        
-        
-        unlocked() { return hasUpgrade("jp", 57) },
-         
-                         onPurchase() {
-            const audio = new Audio("sounds/clock.mp3")
-            audio.volume = 0.5
-            audio.play()
-        },
-        }, 
-         62: {
-            title: "#220: Jumpless 2",
-            description: "1Dex Jump Gravity XP",
-            cost: new Decimal(2),
+    unlocked() { return hasUpgrade("jp", 72) },
 
-                     currencyInternalName: "points",
-                        currencyDisplayName: "Corrosion",
-                        currencyLayer: "cr",
+    onPurchase() {
+        const audio = new Audio("sounds/clock.mp3")
+        audio.volume = 0.5
+        audio.play()
+    },
+},
+
+74: {
+    title: "#229: Starter 4",
+    description: "Increase Mining Luck by 50%.",
+    cost: new Decimal(10),
 
 
 
-          
-                        
-        
-        unlocked() { return hasUpgrade("jp", 61) },
-         
-                         onPurchase() {
-            const audio = new Audio("sounds/clock.mp3")
-            audio.volume = 0.5
-            audio.play()
-        },
-        },    
-         63: {
-            title: "#221: Jumpless 3",
-            description: "You beat the game :D",
-            cost: new Decimal(1e283),
+    unlocked() { return hasUpgrade("jp", 73) },
 
-                     currencyInternalName: "points",
-                        currencyDisplayName: "Skill",
-                      
+    onPurchase() {
+        const audio = new Audio("sounds/clock.mp3")
+        audio.volume = 0.5
+        audio.play()
+    },
+},
+
+75: {
+    title: "#230: Starter 5",
+    description: "Stone gain is multiplied by your Mining Level.",
+    cost: new Decimal(25),
+
+    
+
+    unlocked() { return hasUpgrade("jp", 74) },
+
+    onPurchase() {
+        const audio = new Audio("sounds/clock.mp3")
+        audio.volume = 0.5
+        audio.play()
+    },
+},
+
+76: {
+    title: "#231: Starter 6",
+    description: "Mining XP gain is boosted by Mining Luck.",
+    cost: new Decimal(60),
 
 
 
-          
-                        
-        
-        unlocked() { return hasUpgrade("jp", 61) },
-         
-                         onPurchase() {
-            const audio = new Audio("sounds/clock.mp3")
-            audio.volume = 0.5
-            audio.play()
-        },
-        },         
+    unlocked() { return hasUpgrade("jp", 75) },
+
+    onPurchase() {
+        const audio = new Audio("sounds/clock.mp3")
+        audio.volume = 0.5
+        audio.play()
+    },
+},
+
+77: {
+    title: "#232: Starter 7",
+    description: "Unlocks better early ore chances and smooths Mining scaling.",
+    cost: new Decimal(150),
+
+  
+
+    unlocked() { return hasUpgrade("jp", 76) },
+
+    onPurchase() {
+        const audio = new Audio("sounds/clock.mp3")
+        audio.volume = 0.5
+        audio.play()
+    },
+},
+
+    
 }
 
-})
 
-addLayer("k", {
-    name: "Keys",
-    symbol: "K",
+})
+addLayer("sn", {
+    name: "Supernova",
+    symbol: "★",
     position: 1,
-    row: 2,
-    color: "#ffffff",
+    row: 3,
+
+    color: "#ffcc66",
+    nodeStyle() {
+        return {
+            "background": "linear-gradient(135deg, #ffcc33, #ff8844)",
+            "border": "3px solid white",
+            "color": "black",
+        }
+    },
+
+    startData() {
+        return {
+            unlocked: false,
+            points: new Decimal(0),
+        }
+    },
+      resetsNothing() {return hasMilestone("sa", 0)},
+
+    layerShown() {
+        return player.points.gte("1.79e308")
+    },
+
+    resource: "Supernova Shards",
+    baseResource: "Skill",
+    baseAmount() {
+        return player.points
+    },
+
+    requires: new Decimal("1.79e308"),
+    type: "normal",
+    exponent: 0.10,
+
+    canReset() {
+        return player.points.gte("1.79e308")
+    },
+
+    prestigeButtonText() {
+        return `Collapse Reality for +${formatWhole(tmp.sn.resetGain)} Supernova Shards`
+    },
+
+    buyables: {
+        rows: 1,
+        cols: 1,
+
+        11: {
+            title: "Supernova Core",
+            cap: new Decimal(25),
+
+            cost(x) {
+                return x.add(1) // 1, 2, 3, ...
+            },
+
+            canAfford() {
+                let lvl = getBuyableAmount("sn", 11)
+                return lvl.lt(this.cap) && player.sn.points.gte(this.cost(lvl))
+            },
+
+            buy() {
+                let lvl = getBuyableAmount("sn", 11)
+                if (lvl.gte(this.cap)) return
+
+                let cost = this.cost(lvl)
+                player.sn.points = player.sn.points.sub(cost)
+                setBuyableAmount("sn", 11, lvl.add(1))
+            },
+
+            effect(x) {
+                return Decimal.pow(1000, x)
+            },
+
+            display() {
+                let lvl = getBuyableAmount("sn", 11)
+                let boost = this.effect(lvl)
+
+                return `
+Boosts Skill<br>
+<b>Effect:</b> ×${format(boost)}<br>
+<b>Level:</b> ${lvl}/25<br>
+<b>Cost:</b> ${lvl.lt(25) ? format(this.cost(lvl)) : "MAXED"}
+`
+            },
+        },
+    },
+
+    tabFormat: {
+        "Supernova": {
+            content: [
+                "main-display",
+                "prestige-button",
+                "blank",
+                "buyables",
+            ],
+        },
+    },
+})
+addLayer("g", {
+    name: "Genesis",
+    symbol: "✧",
+    position: 0,
+    row: 4,
+
+    color: "#00ff88",
+    nodeStyle() {
+        return {
+            "background": "linear-gradient(135deg, #00ff88, #00cc66, #66ff99)",
+            "border": "3px solid #00ffaa",
+            "color": "#003322",
+            "animation": "genesisGlow 6s linear infinite",
+        }
+    },
 
     startData() {
         return {
@@ -5772,72 +6036,666 @@ addLayer("k", {
     },
 
     layerShown() {
-        return hasUpgrade("jp", 37) & (hasUpgrade("jp", 54) == false)
+        return player.points.gte("1e400") || player.g.unlocked
     },
 
-    type: "none",
-
-    // 🔁 GANANCIA PASIVA (SIEMPRE)
-    update(diff) {
-        if (!player.k.unlocked) return
-
-        // base pasiva (PC y móvil)
-        let gain = new Decimal(1).mul(diff)
-
-        // bonus pequeño si presiona teclas (PC)
-        if (player.k._keyBonus && player.k._keyBonus.gt(0)) {
-            gain = gain.mul(player.k._keyBonus)
-            player.k._keyBonus = new Decimal(1)
-        }
-
-        player.k.points = player.k.points.add(gain)
+    resource: "Genesis",
+    baseResource: "Skill",
+    baseAmount() {
+        return player.points
     },
 
-    // 🎮 BONUS POR TECLA (OPCIONAL)
-    onKeyDown() {
-        if (!player.k.unlocked) return
+    type: "static",
+  
+    requires() {
+    return Decimal.pow(10, 400 + player.g.points.toNumber() * 50)
+},
 
-        // bonus temporal x1.1 solo para el siguiente tick
-        player.k._keyBonus = new Decimal(1.5)
+
+    canReset() {
+        return player.points.gte(this.requires())
     },
 
-    // 🔑 EFECTO
-    effect() {
+    prestigeButtonText() {
+        return "Begin Genesis (+1)"
+    },
+
+    resetsNothing() {
+        return true
+    },
+
+    milestones: {
+        0: {
+            title: "I",
+            requirementDescription: "1 Genesis",
+            effectDescription: "Skill gain is powered by 1.1, but jumpernova gives now /1.2 jump shards",
+            done() { return player.g.points.gte(1) },
+             style() {
+            return {
+                "background": "linear-gradient(135deg, #33ff99, #00aa66)",
+                "border": "2px solid #ffffff",
+                "border-radius": "12px",
+                "color": "#002211",
+                "box-shadow": "0 0 20px rgba(0,255,200,1)",
+                "font-weight": "bold",
+            }
+        },
+        },
+        1: {
+            title: "II",
+            requirementDescription: "2 Genesis",
+            effectDescription: "Loop persists on Genesis, but ^1.055 Skill.",
+            done() { return player.g.points.gte(2) },
+            style() {
+            return {
+                "background": "linear-gradient(135deg, #33ff99, #00aa66)",
+                "border": "2px solid #ffffff",
+                "border-radius": "12px",
+                "color": "#002211",
+                "box-shadow": "0 0 20px rgba(0,255,200,1)",
+                "font-weight": "bold",
+            }
+        },
+        },
+        2: {
+            title: "III",
+            requirementDescription: "3 Genesis",
+            effectDescription: "Research is converted to Euros, Like on the original game, theres buyables like ever.",
+            done() { return player.g.points.gte(3) },
+            style() {
+            return {
+                "background": "linear-gradient(135deg, #33ff99, #00aa66)",
+                "border": "2px solid #ffffff",
+                "border-radius": "12px",
+                "color": "#002211",
+                "box-shadow": "0 0 20px rgba(0,255,170,1)",
+                "font-weight": "bold",
+            }
+        },
+        },
+        3: {
+            title: "IV",
+            requirementDescription: "4 Genesis",
+            effectDescription: "^5 Function gain. hope you have fun",
+            done() { return player.g.points.gte(4) },
+            style() {
+            return {
+                "background": "linear-gradient(135deg, #33ff99, #00aa66)",
+                "border": "2px solid #ffffff",
+                "border-radius": "12px",
+                "color": "#002211",
+                "box-shadow": "0 0 20px rgba(0,255,170,1)",
+                "font-weight": "bold",
+            }
+        },
+        },
        
-        let ef = Decimal.times(player.k.points).add(1)
-      
-    
-        return ef
-    },
-
-    effectDescription() {
-        return `Boosts Skill by ×${format(this.effect())}`
-    },
-
-    nodeStyle() {
-        return {
-            background: "linear-gradient(270deg, #ffffff, #808080ff, #ffffff)",
-            backgroundSize: "400% 400%",
-            animation: "keyGradient 6s ease infinite",
-            border: "3px solid #d6d6d6ff",
-            color: "#000",
-        }
+        4: {
+            title: "IX",
+            requirementDescription: "9 Genesis",
+            effectDescription: "Unlock Figthing Zone",
+            done() { return player.g.points.gte(9) },
+             style() {
+            return {
+                "background": "linear-gradient(135deg, #33ff99, #00aa66)",
+                "border": "2px solid #ffffff",
+                "border-radius": "12px",
+                "color": "#002211",
+                "box-shadow": "0 0 20px rgba(0,255,170,1)",
+                "font-weight": "bold",
+            }
+        },
+        },
+        
     },
 
     tabFormat: {
-        "Main": {
+        "Genesis": {
             content: [
                 "main-display",
+                "prestige-button",
                 "blank",
-                ["display-text", () => `
-<b>Keys</b> are generated <b>passively</b>.<br>
-Pressing keys gives a <i>small temporary bonus</i>.<br><br>
-<b>Skill Boost:</b> ×${format(layers.k.effect())}
-                `],
+                ["display-text", () =>
+                    `Next Genesis requires: ${format(layers.g.requires())} Skill`
+                ],
+                "blank",
+                "milestones",
             ],
         },
     },
 })
+addLayer("sa", {
+    name: "Star Tier",
+    symbol: "ST",
+    position: 0,
+    row: 5,
+
+    color: "#ffd966",
+
+    nodeStyle() {
+        return {
+            "background": "linear-gradient(135deg, #fff3a0, #ffcc33)",
+            "border": "3px solid #ffffff",
+            "color": "#000000",
+        }
+    },
+
+    startData() {
+        return {
+            unlocked: true,
+            points: new Decimal(0),
+        }
+    },
+
+    layerShown() {
+        return true
+    },
+
+    resource: "Star Tiers",
+    baseResource: "Skill",
+    baseAmount() { return player.points },
+
+    type: "static",
+
+   requires() {
+    return Decimal.pow(10, 750 + player.sa.points.toNumber() * 25)
+},
+
+   
+
+   
+    prestigeButtonText() {
+        return `Ascend to a Star Tier<br>
+        Req: ${format(tmp.sa.requires)} Skill`
+    },
+
+    milestones: {
+        0: {
+           
+            requirementDescription: "1 Star Tier",
+            effectDescription: "^1.1 Skill and 1 billon x skill too, and everything does not reset now. except this layer. obviously.",
+            done() { return player.sa.points.gte(1) },
+            style() {
+                return {
+                    "background": "linear-gradient(135deg, #fff6b0, #ffd966)",
+                    "border": "2px solid #ffffff",
+                    "color": "#000",
+                }
+            },
+        },
+            1: {
+           
+            requirementDescription: "2 Star Tier",
+            effectDescription: "Congragulations you won!",
+            done() { return player.sa.points.gte(2) },
+            style() {
+                return {
+                    "background": "linear-gradient(135deg, #fff6b0, #ffd966)",
+                    "border": "2px solid #ffffff",
+                    "color": "#000",
+                }
+            },
+        },
+      
+    },
+
+ 
+
+    tabFormat: {
+        "Star Tier": {
+            content: [
+                "main-display",
+                "prestige-button",
+                "blank",
+                "milestones",
+                "blank",
+              
+            ],
+        },
+    },
+})
+addLayer("dz", {
+    name: "Dungeon Zone",
+    symbol: "⚔",
+    position: 1,
+    row: 4,
+
+    color: "#5a2d82",
+    nodeStyle() {
+        return {
+            "background": "linear-gradient(135deg, #2b0f3f, #5a2d82)",
+            "border": "3px solid #c9a6ff",
+            "color": "#ffffff",
+        }
+    },
+
+    startData() {
+        return {
+            unlocked: false,
+
+            stage: new Decimal(1),
+
+            // jugador
+            offense: new Decimal(3),
+            defense: new Decimal(50),
+            maxDefense: new Decimal(50),
+            attackSpeed: new Decimal(100),
+
+            // stage
+            stageOffense: new Decimal(1),
+            stageDefense: new Decimal(10),
+
+            // recursos
+            stone: new Decimal(0),
+
+            inCombat: false,
+        }
+    },
+
+    layerShown() {
+        return hasMilestone("g", 4) // Genesis IV
+    },
+
+    // ───────── COMBATE ─────────
+    update(diff) {
+        let p = player.dz
+        if (!p.inCombat) return
+
+        let speed = p.attackSpeed
+        let dt = Decimal.mul(diff, speed)
+
+        let damageToStage = p.offense.times(dt)
+        let damageToPlayer = p.stageOffense.times(diff)
+
+        p.stageDefense = Decimal.max(0, p.stageDefense.sub(damageToStage))
+        p.defense = Decimal.max(0, p.defense.sub(damageToPlayer))
+
+        // jugador muere
+        if (p.defense.lte(0)) {
+            p.inCombat = false
+            p.defense = p.maxDefense
+        }
+
+        // stage derrotado
+        if (p.stageDefense.lte(0)) {
+            p.inCombat = false
+
+            // recompensas
+        
+            p.stone = p.stone.add(p.stage)
+
+            p.stage = p.stage.add(1)
+            layers.dz.setupStage()
+        }
+    },
+
+    setupStage() {
+        let p = player.dz
+        let s = p.stage
+
+        // ESCALADO MÁS FUERTE
+        p.stageOffense = s.pow(0.9).times(1)
+        
+        
+        p.stageDefense = s.pow(s)
+    
+
+        p.defense = p.maxDefense
+    },
+
+    // ───────── CLICKABLE ─────────
+    clickables: {
+        11: {
+            title: "Enter Dungeon",
+           canClick() {
+   return player.dz.offense.gte(player.dz.stageOffense)
+},
+            onClick() {
+             
+                layers.dz.setupStage()
+                player.dz.inCombat = true
+                  
+            },
+            style: {
+                "width": "220px",
+                "height": "80px",
+                "background": "#6b3fa0",
+                "border": "2px solid #d4b3ff",
+                "color": "white",
+                "font-size": "18px",
+            },
+        },
+    },
+
+    // ───────── UPGRADES ─────────
+    upgrades: {
+        rows: 2,
+        cols: 3,
+
+        11: {
+            title: "Sharpened Blade",
+            description: "offense replicates!",
+            cost: new Decimal(1),
+            currencyInternalName: "stone",
+              currencyDisplayName: "Stone",
+            currencyLayer: "dz",
+            effect() { return new Decimal(2) },
+        },
+        12: {
+            title: "Rapid Strikes",
+            description: "Attack Speed ×2",
+            cost: new Decimal(5),
+            currencyInternalName: "stone",
+            currencyDisplayName: "Stone",
+            currencyLayer: "dz",
+            effect() { return new Decimal(2) },
+        },
+        13: {
+            title: "Reinforced Armor",
+            description: "+100 Max Defense",
+            cost: new Decimal(50),
+            currencyInternalName: "stone",
+              currencyDisplayName: "Stone",
+            currencyLayer: "dz",
+        },
+
+        21: {
+            title: "Dungeon Mastery",
+            description: "Offense replicates again!",
+            cost: new Decimal(150),
+            currencyInternalName: "stone",
+              currencyDisplayName: "Stone",
+            currencyLayer: "dz",
+        },
+      
+    },
+
+    // ───────── EFFECTS ─────────
+    effect() {
+        let p = player.dz
+
+        let off = p.offense
+        let spd = p.attackSpeed
+
+        if (hasUpgrade("dz", 11)) off = off.times(1.1)
+       if (hasUpgrade("dz", 21)) off = off.times(2)
+        if (hasUpgrade("dz", 13)) p.maxDefense = new Decimal(150)
+
+        p.offense = off
+        p.attackSpeed = spd
+    },
+
+    // ───────── STAGE MILESTONES ─────────
+    milestones: {
+       
+        0: {
+            requirementDescription: "Stage 100",
+            effectDescription: "Unlock ????",
+            done() { return player.dz.stage.gte(100) },
+        },
+    },
+
+    tabFormat: {
+        "Dungeon": {
+            content: [
+                "main-display",
+                "blank",
+
+                ["display-text", () =>
+                    `<h3>Stage ${formatWhole(player.dz.stage)}</h3>`
+                ],
+
+                ["display-text", () => `
+                    <b>Your Stats</b><br>
+                    Offense: ${format(player.dz.offense)}<br>
+                    Defense: ${format(player.dz.defense)} / ${format(player.dz.maxDefense)}<br>
+                    Attack Speed: ${format(player.dz.attackSpeed)}x
+                `],
+
+                "blank",
+
+                ["display-text", () => `
+                    <b>Stage Stats</b><br>
+                    Offense: ${format(player.dz.stageOffense)}<br>
+                    Defense: ${format(player.dz.stageDefense)}
+                `],
+
+                "blank",
+                "clickables",
+                "blank",
+                "upgrades",
+                "blank",
+                "milestones",
+
+                "blank",
+                ["display-text", () =>
+                    `<b>Stone:</b> ${format(player.dz.stone)}`
+                ],
+            ],
+        },
+    },
+})
+
+
+addLayer("loop", {
+    name: "Loop",
+    symbol: "∞",
+    position: 0,
+    row: 3,
+
+    color: "#ffffff",
+    nodeStyle() {
+        return {
+            "background": "#000000",
+            "border": "3px solid white",
+            "color": "white",
+        }
+    },
+          resetsNothing() {return hasMilestone("sa", 0)},
+automate() {
+    if (!player.loop.unlocked) return
+
+    // ───── SKILL ─────
+    if (hasUpgrade("loop", 11) && player.loop.auto.skill) {
+        for (let id in layers.p.upgrades)
+            if (canBuyUpgrade("p", id)) buyUpgrade("p", id)
+        for (let id in layers.p.buyables)
+            if (canBuyBuyable("p", id)) buyBuyable("p", id)
+    }
+
+    // ───── AS ─────
+    if (hasUpgrade("loop", 12) && player.loop.auto.as) {
+        for (let id in layers.as.upgrades)
+            if (canBuyUpgrade("as", id)) buyUpgrade("as", id)
+        for (let id in layers.as.buyables)
+            if (canBuyBuyable("as", id)) buyBuyable("as", id)
+    }
+
+    // ───── MULTIPLIER ─────
+ 
+
+    // ───── UF ─────
+    if (hasUpgrade("loop", 15) && player.loop.auto.uf) {
+        for (let id in layers.uf.upgrades)
+            if (canBuyUpgrade("uf", id)) buyUpgrade("uf", id)
+    }
+
+    // ───── JUMPERNOVA ─────
+    if (hasUpgrade("loop", 21) && player.loop.auto.jp) {
+        for (let id in layers.jp.upgrades)
+            if (canBuyUpgrade("jp", id)) buyUpgrade("jp", id)
+        for (let id in layers.jp.buyables)
+            if (canBuyBuyable("jp", id)) buyBuyable("jp", id)
+    }
+},
+
+
+    startData() {
+        return {
+            unlocked: false,
+            points: new Decimal(0),
+            total: new Decimal(0),
+
+            robloxUser: "builderman",
+            inCutscene: false,
+            cutsceneTime: 0,
+            auto: {
+            skill: false,
+            as: false,
+            mul: false,
+            uf: true,
+            jp: true,
+        },
+        }
+    },
+
+    layerShown() {
+      return true
+    },
+
+    resource: "Looplets",
+    baseResource: "UF Level",
+   baseAmount() {
+    if (!player.uf || player.uf.uflevel === undefined) return new Decimal(0)
+    return new Decimal(player.uf.uflevel)
+},
+
+
+    requires: new Decimal(10000),
+    type: "normal",
+    exponent: 1,
+
+    gainMult() {
+        let mult = new Decimal(1)
+
+        // cada 4k niveles UF → +1 looplet
+        let extra = player.uf.uflevel
+            .sub(10000)
+            .div(4000)
+            .floor()
+            .max(0)
+
+        mult = mult.add(extra)
+
+        return mult
+    },
+
+    canReset() {
+        return player.uf.uflevel.gte(10000)
+    },
+
+    onPrestige(gain) {
+        player.loop.inCutscene = true
+        player.loop.cutsceneTime = 0
+
+        
+        player.loop.total = player.loop.total.add(gain)
+
+     
+    },
+
+  clickables: {
+    11: {
+        title: "Auto Skill",
+        canClick() { return hasUpgrade("loop", 11) },
+        display() {
+            return player.loop.auto.skill ? "🟢 ON" : "🔴 OFF"
+        },
+        onClick() {
+            player.loop.auto.skill = !player.loop.auto.skill
+        },
+    },
+    12: {
+        title: "Auto AS",
+        canClick() { return hasUpgrade("loop", 12) },
+        display() {
+            return player.loop.auto.as ? "🟢 ON" : "🔴 OFF"
+        },
+        onClick() {
+            player.loop.auto.as = !player.loop.auto.as
+        },
+    },
+    13: {
+        title: "Auto Multiplier",
+        canClick() { return hasUpgrade("loop", 13) },
+        display() {
+            return player.loop.auto.mul ? "🟢 ON" : "🔴 OFF"
+        },
+        onClick() {
+            player.loop.auto.mul = !player.loop.auto.mul
+        },
+    },
+    14: {
+        title: "Auto UF",
+        canClick() { return hasUpgrade("loop", 15) },
+        display() {
+            return player.loop.auto.uf ? "🟢 ON" : "🔴 OFF"
+        },
+        onClick() {
+            player.loop.auto.uf = !player.loop.auto.uf
+        },
+    },
+    15: {
+        title: "Auto Jumpernova",
+        canClick() { return hasUpgrade("loop", 21) },
+        display() {
+            return player.loop.auto.jp ? "🟢 ON" : "🔴 OFF"
+        },
+        onClick() {
+            player.loop.auto.jp = !player.loop.auto.jp
+        },
+    },
+},
+
+
+
+upgrades: {
+    
+
+    11: { title: "Loop Automation I", description: "Automate Skill upgrades.", cost: new Decimal(1) },
+    12: { title: "Loop Automation II", description: "Automate Abnormal Skill upgrades.", cost: new Decimal(1) },
+    13: { title: "Loop Automation III", description: "Automate Function buyables.", cost: new Decimal(1) },
+    14: { title: "Loop Automation IV", description: "Automate UF upgrades.", cost: new Decimal(1) },
+    15: { title: "Loop Automation V", description: "Automate Research.", cost: new Decimal(1) },
+
+    21: { title: "Loop Automation VI", description: "Automate Jumpernova.", cost: new Decimal(1) },
+    22: { title: "Loop Automation VII", description: "Automate Splittify.", cost: new Decimal(1) },
+    23: { title: "Loop Automation VIII", description: "Automate Corrosion.", cost: new Decimal(1) },
+    24: { title: "Loop Automation IX", description: "Automate Mining.", cost: new Decimal(1) },
+
+    25: {
+        title: "Perfect Loop",
+        description: "Loop effect is multiplied by 1.5×. both supernova and loop does not do anything now",
+        cost: new Decimal(1),
+        effect() {
+            return 1.5
+        },
+    },
+},
+
+    tabFormat: {
+        "Loop": {
+            content: [
+                "main-display",
+                "prestige-button",
+                "blank",
+ "milestones",
+  "upgrades",
+    "clickables",
+                
+
+                "blank",
+                ["display-text", () =>
+                    `Global Boost: ×${format(player.loop.total.add(1))}`
+                ],
+            ],
+        },
+    },
+})
+
+
+
+
 addLayer("cr", {
     name: "Corrosion",
     symbol: "CR",
@@ -5853,7 +6711,7 @@ addLayer("cr", {
             "color": "#ffffff",
         }
     },
-
+      resetsNothing() {return hasMilestone("sa", 0)},
     startData() {
         return {
             unlocked: false,
@@ -5878,7 +6736,7 @@ addLayer("cr", {
        ─────────────── */
     gainMult() {
         let mult = new Decimal(1)
-
+    if (hasUpgrade('jp', 65)) mult = mult.times(3)
         if (player.points.gte("1e273")) {
             let extra = player.points
                 .div("1e273")
@@ -5914,9 +6772,7 @@ addLayer("cr", {
     /* ───────────────
        RESET BEHAVIOR
        ─────────────── */
-    resetsNothing() {
-        return false
-    },
+  
 
     /* ───────────────
        TAB
@@ -5945,8 +6801,12 @@ Jump Power is completely wiped on reset.`
 
 
 addLayer("r", {
-    name: "Research", // This is optional, only used in a few places, If absent it just uses the layer id.
-    symbol: "R", // This appears on the layer's node. Default is the id with the first letter capitalized
+    name() {
+    return hasMilestone("g", 2) ? "Euros" : "Research"
+},
+   symbol() {
+    return hasMilestone("g", 2) ? "€" : "R"
+},
     position: 2, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: true,
@@ -5968,7 +6828,10 @@ addLayer("r", {
 
                 exponent: 0.04, // Prestige currency exponent
            
-    resource: "Research Power", // Name of prestige currency
+    resource() {
+    return hasMilestone("g", 2) ? "Euros" : "Research Power"
+},
+      resetsNothing() {return hasMilestone("sa", 0)},
     type: "normal",
      row: 1, // Row the layer is in on the tree (0 is the first row)
  update(diff) {
@@ -5989,6 +6852,61 @@ if (hasUpgrade("uf", 85)) cash = cash.times(upgradeEffect("uf" , 85))
             player.r.points = player.r.points.add(gain);
         }
     },
+buyables: {
+    11: {
+        title() {
+            return hasMilestone("g", 2)
+                ? "Euro Investment"
+                : "???"
+        },
+
+        unlocked() {
+            return hasMilestone("g", 2)
+        },
+
+        cost(x) {
+            // coste base 1e183, sube fuerte pero llega bien a lvl 20
+            return Decimal.pow(10, 183 + x * 1)
+        },
+
+        display() {
+            let lvl = getBuyableAmount("r", 11)
+            return `
+<b>Euro Investment</b><br>
+Level: ${lvl}/25<br>
+Cost: ${format(this.cost(lvl))} Research Power<br>
+Effect: ×${format(this.effect())} Skill
+`
+        },
+
+        canAfford() {
+            return player.r.points.gte(this.cost(getBuyableAmount("r", 11)))
+        },
+
+        buy() {
+            player.r.points = player.r.points.sub(this.cost(getBuyableAmount("r", 11)))
+            setBuyableAmount("r", 11, getBuyableAmount("r", 11).add(1))
+        },
+
+        effect() {
+            let lvl = getBuyableAmount("r", 11)
+
+            // efecto suave pero potente
+            // lvl 20 → ~1e33
+            return Decimal.pow(10, lvl * 1.65)
+        },
+
+        purchaseLimit: 25,
+
+        style: {
+            "background": "linear-gradient(135deg, #98d1ff, #5585dd)",
+            "border": "2px solid #ffffff",
+            "border-radius": "10px",
+            "color": "#083363",
+            "font-weight": "bold",
+        },
+    },
+},
 
   challenges: {
    11: {
@@ -6079,7 +6997,11 @@ if (hasUpgrade("uf", 85)) cash = cash.times(upgradeEffect("uf" , 85))
                     ["display-text", () => `<h3>And Boosts Skill too by: <span style="color:#c1ff9fff">x ${format(player.r.points.pow(0.35).pow(0.88).add(1))}</span> </h3>`],
                  
                 "blank",
+                "buyables",
+
+                "blank",
                 "challenges",
+                
             ],
         },
      }, 
@@ -6224,6 +7146,7 @@ cash = cash.times(buyableEffect('as', 11))
 
 if (hasMilestone("sp", 1)) cash = cash.times(5) 
    cash = cash.times(buyableEffect('jp', 11))   
+if (hasUpgrade('loop', 11)) cash = cash.times(1e18)
   
             let gain = new Decimal(cash).times(diff); // 0.01 por segundo
             player.as.points = player.as.points.add(gain);
@@ -6818,6 +7741,7 @@ addLayer("fu", {
         if (hasMilestone("sp", 3)) wboost = wboost.add(0.25) 
             if (hasUpgrade("jp", 55)) wboost = wboost.add(10)
                wboost = wboost.add(buyableEffect('jp', 16))   
+            if (hasMilestone("g", 3)) wboost = wboost.pow(2)
         return new Decimal(1).add(getBuyableAmount("fu", 14).mul(0.01)).times(wboost)
         
     },
@@ -7010,11 +7934,11 @@ splitShards: new Decimal(0),
                 exponent: 3, // Prestige currency exponent
            
 autoPrestige() {
-            return hasUpgrade("jp", 21)
+            return ((hasUpgrade("jp", 21) || hasUpgrade("loop", 22)) || hasMilestone("sa", 11))
         },             
                
    resetsNothing( ) {
-            return hasUpgrade("jp", 21)
+        return (hasUpgrade("jp", 21) || hasUpgrade("loop", 22)  || hasMilestone("sa", 11))
         }, 
 
 update(diff) {
@@ -7561,12 +8485,7 @@ ${d.gt("1e1000000") ? format(d.slog()) : "—"}
                 tooltip: "Get the 14 Split milestone.",
             },
            
-            34: {
-                name: "Keys keys. me dance. ",
-                done() { return player.k.points.gte(0) },
             
-                tooltip: "Get a key.",
-            },
              35: {
                 name: "THATS A LOT!!!",
                 done() { return player.jp.points.gte(1e6) },
@@ -7585,12 +8504,52 @@ ${d.gt("1e1000000") ? format(d.slog()) : "—"}
             
                 tooltip: "Get 1Qd Jump Power",
             },
-             41: {
-                name: "C.O.R.R.O.S.I.O.N",
+            41: {
+                name: "Corrosioned",
                 done() { return player.cr.points.gt(0) },
             
-                tooltip: "Get ?????",
-            }
+                tooltip: "Get Corrosion.",
+            },
+            42: {
+                name: "Loop loop and loops like ever",
+                done() { return player.loop.points.gt(0) },
+            
+                tooltip: "Loop.",
+            },
+              43: {
+                name: "Infinities Everywhere :c",
+                done() { return player.points.gt("1.8e308") },
+                tooltip: "Get 1.79e308 points.",
+            },
+              44: {
+                name: "Can We STOP PLEASE!!!!",
+                done() { return player.sn.points.gt(0) },
+            
+                tooltip: "Loop.",
+            },
+             45: {
+                name: "Genesis.",
+                done() { return player.g.points.gt(0) },
+            
+                tooltip: "Genesis 1 Time.",
+            },
+             46: {
+                name: "End of the genesis",
+                done() { return player.g.points.gt(8) },
+            
+                tooltip: "Genesis 8 Times.",
+            },
+              47: {
+                name: "Infinities^2",
+                done() { return player.points.gt("3.2e616") },
+                tooltip: "Get 3.24e616 points.",
+            },
+             51: {
+                name: "another gci ref WAIT I HAVE TO RUSH ITS 9PM!!!!!!",
+                done() { return player.sa.points.gt(0) },
+            
+                tooltip: "Do STAR TIER!!! letme publish the mod right now - greg",
+            },
             },
         	tabFormat: [
 			"blank", 

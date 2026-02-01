@@ -226,6 +226,10 @@ button > * {
 #treeTab td button {
     margin: 0 10px;
 }
+@keyframes genesisGlow {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+}
 
 .bg {
 	z-index: -9000;
@@ -367,4 +371,18 @@ button > * {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
+}
+.loop-distort {
+    animation: loopWarp 0.25s infinite alternate;
+}
+
+@keyframes loopWarp {
+    0% {
+        transform: scale(1) rotate(0deg);
+        filter: blur(0px) hue-rotate(0deg);
+    }
+    100% {
+        transform: scale(1.04) rotate(0.5deg);
+        filter: blur(2px) hue-rotate(20deg);
+    }
 }
