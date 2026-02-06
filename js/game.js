@@ -443,6 +443,30 @@ function hardReset(resetOptions) {
 }
 
 var ticking = false
+if (localStorage.getItem("sfxMuted") === null) {
+    localStorage.setItem("sfxMuted", "false")
+}
+
+const _originalAudioPlay = Audio.prototype.play
+
+Audio.prototype.play = function () {
+    const src = (this.src || "").toLowerCase()
+
+    const muted = localStorage.getItem("sfxMuted") === "true"
+
+    const isSFX =
+        src.includes("bell.mp3") ||
+        src.includes("clock.mp3") ||
+        src.includes("explosion.mp3") ||
+        src.includes("uf.mp3")
+
+    if (muted && isSFX) {
+        this.volume = 0
+        return Promise.resolve()
+    }
+
+    return _originalAudioPlay.call(this)
+}
 
 var interval = setInterval(function() {
 	if (player===undefined||tmp===undefined) return;

@@ -8287,7 +8287,28 @@ addLayer("o", {
                 };
             },
         },
+    
+    12: {
+    title() {
+        let muted = localStorage.getItem("sfxMuted") === "true"
+        return muted ? "🔇 SFX: MUTED" : "🔊 SFX: ON"
     },
+    canClick() { return true },
+    onClick() {
+        let muted = localStorage.getItem("sfxMuted") === "true"
+        localStorage.setItem("sfxMuted", muted ? "false" : "true")
+    },
+    style() {
+        let muted = localStorage.getItem("sfxMuted") === "true"
+        return {
+            "background-color": muted ? "#FF6666" : "#90EE90",
+            "color": "black",
+            "font-size": "18px",
+            "border-radius": "10px",
+        }
+    },
+},
+},
 })
 addLayer("dv", {
     name: "Decimal Viewer",
