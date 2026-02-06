@@ -248,12 +248,9 @@ if (player.p.buyables[11].gte(500)) exp2 = exp2+0.015
         },
         22: {
             title: "#9: The Lower Gap 2",
-            description: "More time equals to more boosts! Time played boosts skill slightly",
-            cost: new Decimal(150),
-                   effect() {
-                return (player.timePlayed/3600)+1
-            },
-            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
+            description: "25x skill, sorry for the inconvenience",
+            cost: new Decimal(125),
+                  
           currencyInternalName: "points",
                         currencyDisplayName: "Skill",
                    unlocked() {
@@ -2357,7 +2354,7 @@ addLayer("c", {
 
         // Genera Alpha pasivamente si tienes la mejora 11
         if   ((hasUpgrade("p", 35)) || (hasUpgrade("uf", 11))) {
-            let cash = new Decimal(0.001)
+            let cash = new Decimal(0.15)
           if (hasUpgrade("p", 42)) cash = cash.times(1.5)
                     if (hasUpgrade("p", 63)) cash = cash.times(3)
                              if (hasUpgrade("p", 72)) cash = cash.times(3)
@@ -2545,7 +2542,13 @@ addLayer("uf", {
             "color": "#ffffff",
         }
     },
-   
+     doReset(resettingLayer) {
+        let keep = [];
+        if (hasUpgrade("jp", 36) && resettingLayer=="jp") keep.push("upgrades")
+            
+
+        if (layers[resettingLayer].row > this.row) layerDataReset("p", keep)
+    },
      row: 1, // Row the layer is in on the tree (0 is the first row)
 
                 requires: new Decimal(1e39),
@@ -6226,7 +6229,7 @@ addLayer("sa", {
             1: {
            
             requirementDescription: "2 Star Tier",
-            effectDescription: "Congragulations you won!",
+            effectDescription: "^1.06 Skill, HELL YEAH!!",
             done() { return player.sa.points.gte(2) },
             style() {
                 return {
@@ -6512,7 +6515,10 @@ automate() {
     }
 
     // ───── MULTIPLIER ─────
- 
+   if (hasUpgrade("loop", 13) && player.loop.auto.fu) {
+        for (let id in layers.fu.buyables)
+            if (canBuyUpgrade("as", id)) buyBuyable("fu", id)
+    }
 
     // ───── UF ─────
     if (hasUpgrade("loop", 15) && player.loop.auto.uf) {
@@ -6542,7 +6548,7 @@ automate() {
             auto: {
             skill: false,
             as: false,
-            mul: false,
+            fu: false,
             uf: true,
             jp: true,
         },
@@ -6616,13 +6622,13 @@ automate() {
         },
     },
     13: {
-        title: "Auto Multiplier",
+        title: "Auto Function",
         canClick() { return hasUpgrade("loop", 13) },
         display() {
-            return player.loop.auto.mul ? "🟢 ON" : "🔴 OFF"
+            return player.loop.auto.fu ? "🟢 ON" : "🔴 OFF"
         },
         onClick() {
-            player.loop.auto.mul = !player.loop.auto.mul
+            player.loop.auto.fu = !player.loop.auto.fu
         },
     },
     14: {

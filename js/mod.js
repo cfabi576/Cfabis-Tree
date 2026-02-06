@@ -53,7 +53,7 @@ function getPointGen() {
 					if (hasUpgrade('p', 13)) gain = gain.times(2.5)
 						if (hasUpgrade('p', 14)) gain = gain.times(upgradeEffect('p', 14))
 								if (hasUpgrade('p', 15)) gain = gain.times(upgradeEffect('p', 15))
-										if (hasUpgrade('p', 22)) gain = gain.times(upgradeEffect('p', 22))
+										if (hasUpgrade('p', 22)) gain = gain.times(25)
 												if (hasUpgrade('p', 41)) gain = gain.times(upgradeEffect('p', 41))
 													if (hasUpgrade('p', 46)) gain = gain.times(upgradeEffect('p', 46))
 																if (hasUpgrade('p', 47)) gain = gain.times(upgradeEffect('p', 47))
@@ -217,7 +217,7 @@ if (hasUpgrade('jp', 61)) gain = gain.times(1e15)
 
 
 if (hasUpgrade('loop', 11)) gain = gain.times(1e18)
-
+if (hasUpgrade('loop', 11)) gain = gain.times(player.loop.points)
     gain = gain.mul(buyableEffect("sn", 11))
 
 
@@ -230,7 +230,7 @@ if (hasMilestone("g", 2)) gain = gain.mul(buyableEffect("r", 11))
 if (hasMilestone("g", 0)) gain = gain.pow(1.1)
 	if (hasMilestone("g", 1)) gain = gain.pow(1.055)
 if (hasMilestone("sa", 0)) gain = gain.pow(1.1)
-
+if (hasMilestone("sa", 1)) gain = gain.pow(1.06)
 
 if (inChallenge("r", 15)) gain = player.mul.points
 	return gain
