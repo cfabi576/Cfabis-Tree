@@ -2388,6 +2388,7 @@ addLayer("c", {
                                                      if (hasUpgrade("jp", 14)) cash = cash.times(upgradeEffect("jp", 14))  
             let gain = new Decimal(cash).times(diff); // 0.01 por segundo
             player.c.points = player.c.points.add(gain);
+            
         }
     },
 

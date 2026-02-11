@@ -468,6 +468,7 @@ Audio.prototype.play = function () {
     return _originalAudioPlay.call(this)
 }
 
+
 var interval = setInterval(function() {
 	if (player===undefined||tmp===undefined) return;
 	if (ticking) return;
@@ -501,6 +502,8 @@ var interval = setInterval(function() {
 	updateParticles(trueDiff)
 	ticking = false
 }, 50)
+
+
 setInterval(function() {needCanvasUpdate = true}, 500)
 // ======== Detectar si el jugador abre la consola (versión segura) ========
 // === Sistema de Música ===
