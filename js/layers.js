@@ -6528,12 +6528,7 @@ automate() {
     }
 
     // ───── JUMPERNOVA ─────
-    if (hasUpgrade("loop", 21) && player.loop.auto.jp) {
-        for (let id in layers.jp.upgrades)
-            if (canBuyUpgrade("jp", id)) buyUpgrade("jp", id)
-        for (let id in layers.jp.buyables)
-            if (canBuyBuyable("jp", id)) buyBuyable("jp", id)
-    }
+   
 },
 
 
@@ -6550,8 +6545,8 @@ automate() {
             skill: false,
             as: false,
             fu: false,
-            uf: true,
-            jp: true,
+            uf: false,
+           
         },
         }
     },
@@ -6642,16 +6637,7 @@ automate() {
             player.loop.auto.uf = !player.loop.auto.uf
         },
     },
-    15: {
-        title: "Auto Jumpernova",
-        canClick() { return hasUpgrade("loop", 21) },
-        display() {
-            return player.loop.auto.jp ? "🟢 ON" : "🔴 OFF"
-        },
-        onClick() {
-            player.loop.auto.jp = !player.loop.auto.jp
-        },
-    },
+   
 },
 
 
