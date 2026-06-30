@@ -467,7 +467,30 @@ Audio.prototype.play = function () {
 
     return _originalAudioPlay.call(this)
 }
+const _originalPlay = Audio.prototype.play
 
+Audio.prototype.play = function () {
+
+    const src = (this.src || "").toLowerCase()
+
+    const isTierActive =
+        typeof player !== "undefined" &&
+        player.t &&
+        player.t.points &&
+        player.t.points.gte(1)
+
+    const isTargetSFX =
+        src.includes("bell.mp3") ||
+        src.includes("clock.mp3") ||
+        src.includes("explosion.mp3") ||
+        src.includes("uf.mp3")
+
+    if (isTierActive && isTargetSFX) {
+        return Promise.resolve() // no suena nada
+    }
+
+    return _originalPlay.call(this)
+}
 
 var interval = setInterval(function() {
 	if (player===undefined||tmp===undefined) return;

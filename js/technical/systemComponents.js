@@ -131,6 +131,11 @@ var systemComponents = {
 		<h2  class="overlayThing" id="points">{{format(player.as.points)}}</h2>
 		<span v-if="player.as.points.lt('1e1e6')"  class="overlayThing"> Abnormal Skill</span>
 		<br>
+		<br>
+		<span v-if="player.es.points.lt('1e10000')"  class="overlayThing">You have </span>
+		<h2  class="overlayThing" id="points">{{format(player.es.points)}}</h2>
+		<span v-if="player.es.points.lt('1e1e6')"  class="overlayThing"> EToH Skill</span>
+		<br>
 		
 	</div>
 	`

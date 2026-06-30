@@ -1,3 +1,6 @@
+
+
+
 addLayer("p", {
     name: "Skill", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "S", // This appears on the layer's node. Default is the id with the first letter capitalized
@@ -19,17 +22,11 @@ addLayer("p", {
        player.p.points = player.points
     },
     
-   autoUpgrade() {if (hasUpgrade('uf', 117))  return true; else return false},
+   autoUpgrade() {if ((hasUpgrade('uf', 117)) & ((player.t.points).gt(0) == false))  return true; else return false},
 
-   doReset(resettingLayer) {
-        let keep = [];
-        if (hasUpgrade("uf", 87) && resettingLayer=="uf") keep.push("milestones")
-         
+   
 
-        if (layers[resettingLayer].row > this.row) layerDataReset("p", keep)
-    },
-
-   layerShown() { return layerVisible(this.layer) },
+   layerShown() { return layerVisible(this.layer) & ((player.t.points).gt(0) == false)},
     
       buyables: {
  11: {
@@ -2223,7 +2220,7 @@ challenges: {
             1: {
                 requirementDescription: "Level 1 - Req: 10UVg Skill",
                 effectDescription: "3x Skill.",
-                done() { return player.points.gte(1e67) },
+                done() { return player.points.gte(1e67) & ((player.t.points).gt(0) == false) },
                 unlocked() {
                     return hasUpgrade("uf", 72)
                 
@@ -2232,7 +2229,7 @@ challenges: {
              2: {
                 requirementDescription: "Level 2 - Req: 1TVg Skill",
                 effectDescription: "Multiply UF gain based on per square rooted <span style='color:#c1ff9fff'>Skill Level</span></h3>",
-                done() { return player.points.gte(1e72) },
+                done() { return player.points.gte(1e72) & ((player.t.points).gt(0) == false)},
                 unlocked() {
                     return hasUpgrade("uf", 72)
                 
@@ -2241,7 +2238,7 @@ challenges: {
               3: {
                 requirementDescription: "Level 3 - Req: 1QdVg Skill",
                 effectDescription: "1.5x Skill.",
-                done() { return player.points.gte(1e75) },
+                done() { return player.points.gte(1e75) & ((player.t.points).gt(0) == false)},
                 unlocked() {
                     return hasUpgrade("uf", 72)
                 
@@ -2250,7 +2247,7 @@ challenges: {
              4: {
                 requirementDescription: "Level 4 - Req: 100QdVg Skill",
                 effectDescription: "Multiply Skill gain based on translated ^1.5 <span style='color:#c1ff9fff'>Skill Level</span></h3>",
-                done() { return player.points.gte(1e77) },
+                done() { return player.points.gte(1e77) & ((player.t.points).gt(0) == false)},
                 unlocked() {
                     return hasUpgrade("uf", 72)
                 
@@ -2259,7 +2256,7 @@ challenges: {
               5: {
                 requirementDescription: "Level 5 - Req: 100QnVg Skill",
                 effectDescription: "Nothing.",
-                done() { return player.points.gte(1e80) },
+                done() { return player.points.gte(1e80) & ((player.t.points).gt(0) == false)},
                 unlocked() {
                     return hasUpgrade("uf", 72)
                 
@@ -2268,7 +2265,7 @@ challenges: {
             6: {
                 requirementDescription: "Level 6 - Req: 1SpVg Skill",
                 effectDescription: "No Boosts :c",
-                done() { return player.points.gte(1e84) },
+                done() { return player.points.gte(1e84) & ((player.t.points).gt(0) == false)},
                 unlocked() {
                     return hasUpgrade("uf", 72)
                 
@@ -2397,7 +2394,7 @@ addLayer("c", {
 
    
 
-    layerShown() { return layerVisible(this.layer) },
+    layerShown() { return layerVisible(this.layer) & ((player.t.points).gt(0) == false) },
     
      
    
@@ -2462,7 +2459,7 @@ addLayer("mul", {
      
 
   
-   layerShown() { return layerVisible(this.layer) },
+   layerShown() { return layerVisible(this.layer) & ((player.t.points).gt(0) == false)},
     
      
    
@@ -2500,7 +2497,7 @@ addLayer("uf", {
 
     }},
      passiveGeneration() {if ((hasUpgrade("uf", 133)) || (hasUpgrade("loop", 14))) return 1; else return 0},
-       layerShown() { return layerVisible(this.layer) },
+       layerShown() { return layerVisible(this.layer) & ((player.t.points).gt(0) == false) },
        resetsNothing() {return hasMilestone("sa", 0)},
     color: "#b96effff",
   onPrestige() {
@@ -4604,7 +4601,7 @@ return player.points.div(5e106).max(1).pow(0.35).log10().add(1).min(2.25)
 
    
 
-      layerShown() { return layerVisible(this.layer) },
+      layerShown() { return layerVisible(this.layer) & ((player.t.points).gt(0) == false)},
     
      
    bars: {
@@ -4710,16 +4707,16 @@ passiveGeneration() {if ((hasUpgrade("loop", 21))) return 1; else return 0},
     baseResource: "Skill",
     baseAmount() { return player.points },
 
-    requires: new Decimal("1e111"),
+    requires: new Decimal("1e112"),
     type: "normal",
     
-
+  layerShown() { return ((player.t.points).gt(0) == false)},
   gainMult() { 
     let mult = new Decimal(10) // base 10
  if (hasMilestone("sp", 5)) mult = mult.add(5)
-    if (player.points.gte("1e114")) {
+    if (player.points.gte("1e112")) {
         let extra = player.points
-            .div("1e114")
+            .div("1e112")
             .log10()
             .add(1)
             .pow(4)
@@ -5940,7 +5937,7 @@ addLayer("sn", {
       resetsNothing() {return hasMilestone("sa", 0)},
 
     layerShown() {
-        return player.points.gte("1.79e308")
+        return player.points.gte("1.79e308") & ((player.t.points).gt(0) == false)
     },
 
     resource: "Supernova Shards",
@@ -6016,6 +6013,210 @@ Boosts Skill<br>
         },
     },
 })
+addLayer("sub", {
+    name: "Submittify",
+    symbol: "SUB",
+    position: 0,
+    row: 1,
+
+    color: "#7a7a7a",
+    nodeStyle() {
+        return {
+            "background": "linear-gradient(135deg, #ff1534, #ff1534 , #00ff95, #00ff95)",
+            "border": "3px solid white",
+            "color": "white",
+        }
+    },
+
+    startData() {
+        return {
+            unlocked: false,
+            points: new Decimal(0),
+        }
+    },
+    
+
+    layerShown() {
+        return ((player.t.points).gte(3) == true)
+    },
+
+    resource: "Whitelisted Tower Submissions",
+    baseResource: "EToH Skill",
+    baseAmount() {
+        return player.es.points
+    },
+
+    requires: new Decimal(100),
+    type: "normal",
+    exponent: 0.10,
+
+    
+
+    prestigeButtonText() {
+        return `Submittify a Pass Worthy tower for +${formatWhole(tmp.sub.resetGain)} Whitelisted Tower Submissions, you need 100 EToH Skill`
+    },
+
+    upgrades: {
+
+ 11: {
+            title: "Your first whitelisted masterpiece ",
+            description: "GG! but you are on 2018, so your build will look trash in 2026, for your sanity, there is a big boost of the sanity of the 1.5x boost on EToH Skill, great",
+            cost: new Decimal(1),
+         
+            
+               onPurchase() {
+        // Reproduce un sonido al comprar
+        
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+},
+12: {
+            title: "Collaborate with someone",
+            description: "This is so awesome! you collab with another user, you got it! x1.3 EToH Skill",
+            cost: new Decimal(1),
+          unlocked() {
+                            return hasUpgrade("sub", 11)
+                        
+                        },
+            
+               onPurchase() {
+        // Reproduce un sonido al comprar
+        
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+},
+13: {
+            title: "Cylinders! Wow!",
+            description: "You know how to use cylinders! you are goated! 1.2x EToH Skill",
+            cost: new Decimal(1),
+          unlocked() {
+                            return hasUpgrade("sub", 12)
+                        
+                        },
+            
+               onPurchase() {
+        // Reproduce un sonido al comprar
+        
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+},
+14: {
+            title: "Polled!",
+            description: "Your tower has been get on the game!! good job! EToH Skill boosts itself (xEToH Skill ^ 0.2 + 1)",
+            cost: new Decimal(1),
+          unlocked() {
+                            return hasUpgrade("sub", 13)
+                        
+                        },
+            
+               onPurchase() {
+        // Reproduce un sonido al comprar
+        
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+},
+15: {
+            title: "Boost your imagination",
+            description: "Unlocks Training (Soon)!",
+            cost: new Decimal(1),
+          unlocked() {
+                            return hasUpgrade("sub", 14)
+                        
+                        },
+            
+               onPurchase() {
+        // Reproduce un sonido al comprar
+        
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+},
+    },
+    tabFormat: {
+        "Submission Centre": {
+            content: [
+                "main-display",
+                "prestige-button",
+                "blank",
+                ["display-text", () => `<h3>Welcome, brother ya, you submitted a tower and get pass, just submittify</h3>`],
+                   ["display-text", () => `<h3>If you submit you will get <span style="color:rgb(145, 16, 16)">Builder role</span></h3>`],
+                   "blank",
+                   "blank",
+                   "upgrades",
+                
+            ],
+        },
+    },
+})
+addLayer("es", {
+    name: "EToH Skill", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "EToH", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: true,
+		points: new Decimal(1),
+    }},
+    color: "rgb(117, 255, 151)",
+    nodeStyle() {
+        return {
+            "background": "linear-gradient(135deg, rgb(255, 53, 53), rgb(255, 202, 57), rgb(120, 255, 131), rgb(99, 154, 255))",
+            "border": "3px solid #ffffff",
+            "color": "#ffffff",
+        }
+    },
+    resource: "EToH Skill", // Name of prestige currency
+    type: "none",
+     row: 0, // Row the layer is in on the tree (0 is the first row)
+ update(diff) {
+        // “Riesgo controlado”: solo ejecuta si player.b existe
+        if (!player.es) return;
+
+        // Genera Alpha pasivamente si tienes la mejora 11
+        if   ((player.t.points).gt(0) == true) {
+            let cash = new Decimal(1)
+         if (hasMilestone("t", 1)) cash = cash.times(3.5)  
+            let gain = new Decimal(cash).times(diff); // 0.01 por segundo
+            player.es.points = player.es.points.add(gain);
+             if (hasUpgrade("sub", 11)) cash = cash.times(1.5)  
+                if (hasUpgrade("sub", 12)) cash = cash.times(1.3) 
+                    if (hasUpgrade("sub", 13)) cash = cash.times(1.3) 
+                        if (hasUpgrade("sub", 14)) cash = cash.times(player.es.points.pow(0.2).add(1)) 
+        }
+    },
+
+    
+   
+
+   
+
+    layerShown() { return layerVisible(this.layer) & ((player.t.points).gt(0) == true)},
+    
+     
+   
+      
+     tabFormat: {
+        "Main": {
+            content: [
+                "main-display",
+                "blank",
+                ["display-text", () => `<h3>Earn EToH Skill! </h3>`],
+                  ["display-text", () => `<h3>You currently exactly have... <span style="color:rgb(117, 255, 151)">${format(player.es.points)}</span> EToH Skill!</h3>`],
+                "blank",
+                "upgrades",
+            ],
+        },
+     }, 
+
+    })
 addLayer("g", {
     name: "Genesis",
     symbol: "✧",
@@ -6040,7 +6241,7 @@ addLayer("g", {
     },
 
     layerShown() {
-        return player.points.gte("1e400") || player.g.unlocked
+        return player.points.gte("1e400") || player.g.unlocked & ((player.t.points).gt(0) == false)
     },
 
     resource: "Genesis",
@@ -6192,7 +6393,7 @@ addLayer("sa", {
     },
 
     layerShown() {
-        return true
+        return ((player.t.points).gt(0) == false)
     },
 
     resource: "Star Tiers",
@@ -6240,7 +6441,32 @@ addLayer("sa", {
                 }
             },
         },
-      
+         2: {
+           
+            requirementDescription: "3 Star Tier",
+            effectDescription: "^1.15 Skill, IM DRIVIN IT SO FAST",
+            done() { return player.sa.points.gte(3) },
+            style() {
+                return {
+                    "background": "linear-gradient(135deg, #fff6b0, #ffd966)",
+                    "border": "2px solid #ffffff",
+                    "color": "#000",
+                }
+            },
+        },
+       3: {
+           
+            requirementDescription: "4 Star Tier",
+            effectDescription: "Unlock tiers. goodbye",
+            done() { return player.sa.points.gte(4) },
+            style() {
+                return {
+                    "background": "linear-gradient(135deg, #fff6b0, #ffd966)",
+                    "border": "2px solid #ffffff",
+                    "color": "#000",
+                }
+            },
+        },
     },
 
  
@@ -6255,6 +6481,107 @@ addLayer("sa", {
                 "blank",
               
             ],
+        },
+    },
+})
+addLayer("t", {
+    name: "Tiers",
+    symbol: "T",
+    position: 0,
+    row: 6,
+
+    startData() {
+        return {
+            unlocked: false,
+            points: new Decimal(0),
+        }
+    },
+
+    color: "#ffaa3b",
+nodeStyle() {
+        return {
+            "background": "linear-gradient(135deg, #ff8839, #ffcc33)",
+            "border": "3px solid #ffffff",
+            "color": "#000000",
+        }
+    },
+    requires: new Decimal(1),
+     resource: "Tiers",
+    baseResource: "EToH Skill",
+    baseAmount() { return player.es.points },
+
+    type: "static",
+    exponent: 2.3,
+
+    canBuyMax() { return false },
+doReset(resettingLayer) {
+        if (layers[resettingLayer].row <= this.row) return
+
+        // 🔥 RESET TOTAL
+        for (let layer in player) {
+
+            if (!player[layer]) continue
+
+            // Layers que SI se mantienen
+           
+            // Reset normal
+       
+
+            if (player.loop.auto.skill)
+                player.loop.auto.skill = false
+
+            if (player.loop.auto.uf)
+                player.loop.auto.uf = false
+        }
+
+        // 🔥 RESET SKILL
+     
+    },    layerShown() {
+        return hasMilestone("sa", 3) || ((player.t.points).gt(0) == true)
+    },
+
+    gainMult() {
+        return new Decimal(1)
+    },
+milestones: {
+        0: {
+           
+            requirementDescription: "// Tier 1 //",
+            effectDescription: "Goodbye another layers. start earning EToH skill by 1/s.",
+            done() { return player.t.points.gte(1) },
+            style() {
+                return {
+                    "background": "linear-gradient(135deg, #fff6b0, #ffd966)",
+                    "border": "2px solid #ffffff",
+                    "color": "#000",
+                }
+            },
+        },
+          1: {
+           
+            requirementDescription: "// Tier 2 //",
+            effectDescription: "+350% EToH Skill.",
+            done() { return player.t.points.gte(2) },
+            style() {
+                return {
+                    "background": "linear-gradient(135deg, #fff6b0, #ffd966)",
+                    "border": "2px solid #ffffff",
+                    "color": "#000",
+                }
+            },
+        },
+         2: {
+           
+            requirementDescription: "// Tier 3 //",
+            effectDescription: "Add the Submittify Reset.",
+            done() { return player.t.points.gte(3) },
+            style() {
+                return {
+                    "background": "linear-gradient(135deg, #fff6b0, #ffd966)",
+                    "border": "2px solid #ffffff",
+                    "color": "#000",
+                }
+            },
         },
     },
 })
@@ -6297,7 +6624,7 @@ addLayer("dz", {
     },
 
     layerShown() {
-        return hasMilestone("g", 4) // Genesis IV
+        return hasMilestone("g", 4) & ((player.t.points).gt(0) == false)// Genesis IV
     },
 
     // ───────── COMBATE ─────────
@@ -6552,7 +6879,7 @@ automate() {
     },
 
     layerShown() {
-      return true
+      return  ((player.t.points).gt(0) == false)
     },
 
     resource: "Looplets",
@@ -6596,49 +6923,7 @@ automate() {
      
     },
 
-  clickables: {
-    11: {
-        title: "Auto Skill",
-        canClick() { return hasUpgrade("loop", 11) },
-        display() {
-            return player.loop.auto.skill ? "🟢 ON" : "🔴 OFF"
-        },
-        onClick() {
-            player.loop.auto.skill = !player.loop.auto.skill
-        },
-    },
-    12: {
-        title: "Auto AS",
-        canClick() { return hasUpgrade("loop", 12) },
-        display() {
-            return player.loop.auto.as ? "🟢 ON" : "🔴 OFF"
-        },
-        onClick() {
-            player.loop.auto.as = !player.loop.auto.as
-        },
-    },
-    13: {
-        title: "Auto Function",
-        canClick() { return hasUpgrade("loop", 13) },
-        display() {
-            return player.loop.auto.fu ? "🟢 ON" : "🔴 OFF"
-        },
-        onClick() {
-            player.loop.auto.fu = !player.loop.auto.fu
-        },
-    },
-    14: {
-        title: "Auto UF",
-        canClick() { return hasUpgrade("loop", 15) },
-        display() {
-            return player.loop.auto.uf ? "🟢 ON" : "🔴 OFF"
-        },
-        onClick() {
-            player.loop.auto.uf = !player.loop.auto.uf
-        },
-    },
-   
-},
+  
 
 
 
@@ -6713,7 +6998,7 @@ addLayer("cr", {
     },
 
     layerShown() {
-        return hasMilestone("sp", 11) // milestone 11 de sp
+        return hasMilestone("sp", 11) & ((player.t.points).gt(0) == false)// milestone 11 de sp
     },
 
     resource: "Corrosion",
@@ -6973,7 +7258,7 @@ Effect: ×${format(this.effect())} Skill
 
    
 
-    layerShown(){return hasUpgrade("uf", 53) & layerVisible(this.layer)},
+    layerShown(){return hasUpgrade("uf", 53) & layerVisible(this.layer) & ((player.t.points).gt(0) == false)},
     
        
    
@@ -7045,7 +7330,7 @@ updateMusicState();
         }
     },
 
-    layerShown() { return hasUpgrade("uf", 95) },
+    layerShown() { return hasUpgrade("uf", 95) & ((player.t.points).gt(0) == false) },
 });
 addLayer("rexit", {
     name: "Exit Realm",
@@ -7058,7 +7343,7 @@ addLayer("rexit", {
     }},
 
     // Solo visible dentro del Realm
-    layerShown() { return player.inRealm },
+    layerShown() { return player.inRealm & ((player.t.points).gt(0) == false)},
 
     clickables: {
         11: {
@@ -7140,6 +7425,7 @@ cash = cash.times(buyableEffect('as', 11))
 if (hasMilestone("sp", 1)) cash = cash.times(5) 
    cash = cash.times(buyableEffect('jp', 11))   
 if (hasUpgrade('loop', 11)) cash = cash.times(1e18)
+   if ((player.t.points).gt(0) == true) cash = new Decimal("0")
   
             let gain = new Decimal(cash).times(diff); // 0.01 por segundo
             player.as.points = player.as.points.add(gain);
@@ -7542,7 +7828,7 @@ let limit = 500
                 },                                
                 }, 
 
-   layerShown() { return layerVisible(this.layer) },
+   layerShown() { return layerVisible(this.layer) & ((player.t.points).gt(0) == false)},
     
      
    
@@ -7664,7 +7950,7 @@ doReset(resettingLayer) {
           
              },
    
-   layerShown() { return layerVisible(this.layer) & (hasUpgrade("as", 25))},
+   layerShown() { return layerVisible(this.layer) & (hasUpgrade("as", 25)) & ((player.t.points).gt(0) == false)},
     
      
    
@@ -7865,7 +8151,7 @@ addLayer("fu", {
     // VISIBILIDAD
     // =========================
     layerShown() {
-        return layerVisible(this.layer) && hasUpgrade("uf", 133)
+        return layerVisible(this.layer) && hasUpgrade("uf", 133) & ((player.t.points).gt(0) == false)
     },
 
     // =========================
@@ -8563,6 +8849,24 @@ ${d.gt("1e1000000") ? format(d.slog()) : "—"}
                 done() { return player.sa.points.gt(0) },
             
                 tooltip: "Do STAR TIER!!! letme publish the mod right now - greg",
+            },
+            52: {
+                name: "Another big start",
+                done() { return player.t.points.gt(0) },
+            
+                tooltip: "Do the Tier Reset, it's over. I'm gonna become more serious, just jokin'!!",
+            },
+             53: {
+                name: "More than One",
+                done() { return player.t.points.gt(1) },
+            
+                tooltip: "Wow! you're getting more skilled",
+            },
+              54: {
+                name: "#tower-submissions",
+                done() { return player.sub.points.gt(0) },
+            
+                tooltip: "Submittify.",
             },
             },
         	tabFormat: [

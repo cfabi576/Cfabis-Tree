@@ -12,8 +12,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.14",
-	name: "TMU - Patch IV",
+	num: "1.2",
+	name: "TDUT(TE) - Tiered Obbies",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -231,8 +231,10 @@ if (hasMilestone("g", 0)) gain = gain.pow(1.1)
 	if (hasMilestone("g", 1)) gain = gain.pow(1.055)
 if (hasMilestone("sa", 0)) gain = gain.pow(1.1)
 if (hasMilestone("sa", 1)) gain = gain.pow(1.06)
-
+if (hasMilestone("sa", 2)) gain = gain.pow(1.15)
 if (inChallenge("r", 15)) gain = player.mul.points
+	if (hasMilestone("t", 0)) gain = new Decimal(0)
+
 	return gain
 }
 
@@ -289,7 +291,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return (hasMilestone("sa", 1))
+	return (hasUpgrade("sub", 15))
 }
 
 
