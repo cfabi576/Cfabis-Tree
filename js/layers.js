@@ -6157,6 +6157,101 @@ addLayer("sub", {
         },
     },
 })
+addLayer("tr", {
+    name: "Training",
+    symbol: "TR",
+    position: 0,
+    row: 2,
+
+    color: "#ffb347",
+
+    nodeStyle() {
+        return {
+            "background": "linear-gradient(135deg, #ff9f43, #ffd166)",
+            "border": "3px solid white",
+            "color": "white",
+        }
+    },
+
+    startData() {
+        return {
+            unlocked: true,
+            points: new Decimal(0),
+        }
+    },
+
+    layerShown() {
+        return hasUpgrade("sub", 15)
+    },
+
+    resource: "Training XP",
+    type: "none",
+
+    update(diff) {
+        if (!player.tr.unlocked) return
+
+        let gain = new Decimal(diff)
+
+        if (player.tr.points.gte(50))
+            gain = gain.mul(tmp.tr.effect.training)
+
+        player.tr.points = player.tr.points.add(gain)
+    },
+
+    effect() {
+
+        let skill = player.tr.points.pow(0.17).add(1)
+
+        let training = new Decimal(1)
+
+        if (player.tr.points.gte(50))
+            training = player.tr.points.div(50).pow(0.03).add(1)
+
+        return {
+            skill: skill,
+            training: training,
+        }
+    },
+
+    effectDescription() {
+        let txt = `which are boosting EToH Skill by <h2 style="color:#ffd166">${format(tmp.tr.effect.skill)}x</h2>`
+
+        if (player.tr.points.gte(50))
+            txt += `<br>Training XP Gain: <h2 style="color:#ffd166">${format(tmp.tr.effect.training)}x</h2>`
+
+        return txt
+    },
+
+    tabFormat: {
+        "Training": {
+            content: [
+                "main-display",
+                "blank",
+
+                ["display-text", () =>
+                    `You gain <h2 style="color:#ffd166">${format(player.tr.points.gte(50) ? tmp.tr.effect.training : new Decimal(1))}</h2> Training XP/sec`
+                ],
+
+                "blank",
+
+                ["display-text", () =>
+                    `
+                    <h3>Effects</h3>
+
+                    EToH Skill:
+                    <b>${format(tmp.tr.effect.skill)}x</b>
+
+                    <br><br>
+
+                    ${player.tr.points.gte(50)
+                        ? `Training XP Gain:<br><b>${format(tmp.tr.effect.training)}x</b>`
+                        : `Reach <b>50 Training XP</b> to unlock the second effect.`}
+                    `
+                ],
+            ],
+        },
+    },
+})
 addLayer("es", {
     name: "EToH Skill", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "EToH", // This appears on the layer's node. Default is the id with the first letter capitalized
