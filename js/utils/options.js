@@ -22,7 +22,7 @@ function getStartOptions() {
 	}
 }
 
-let notations = ['Standard']
+let notations = ['Standard','Scientific']
 
 function changeNotation() {
 	player.notation = notations[(notations.indexOf(player.notation) + 1) % notations.length]
