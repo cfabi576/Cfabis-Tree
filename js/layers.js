@@ -47,9 +47,12 @@ if (player.p.buyables[11].gte(500)) exp2 = exp2+0.015
                         return new Decimal(costini).mul(Decimal.pow(1.2, x)).mul(Decimal.mul(x , Decimal.pow(exp2 , x))).floor()
                        
                     },
-                    display() {
-                        return "This thing costs...  " + format(tmp[this.layer].buyables[this.id].cost) + " Skill " + "<br>Bought: " + getBuyableAmount(this.layer, this.id) + "/" + purchaseLimit + "<br>Effect: Skill Gain is multiplied by " + format(buyableEffect(this.layer, this.id) + "x")
-                    },
+                   display() {
+    return "This thing costs... " + format(tmp[this.layer].buyables[this.id].cost) +
+        " Skill" +
+        "<br>Bought: " + getBuyableAmount(this.layer, this.id) + "/" + this.purchaseLimit() +
+        "<br>Effect: Skill Gain is multiplied by " + format(buyableEffect(this.layer, this.id)) + "x"
+},
                       onPurchase() {
         // Reproduce un sonido al comprar
         
@@ -76,21 +79,23 @@ if (player.p.buyables[11].gte(500)) exp2 = exp2+0.015
                 }, 
     upgrades: {
          
-        11: {
-            title: "#1: The First Difficulty 1 ",
-            description: "Welcome to this good journey! 1.5x Skill gain! Woohoo! your first upgrade!",
-            cost: new Decimal(0.2),
-         
-            currencyInternalName: "points",
-                        currencyDisplayName: "Skill",
-               onPurchase() {
-        // Reproduce un sonido al comprar
-        
+      11: {
+    title: "#1: The First Difficulty 1 ",
+    description: "Welcome to this good journey! 1.5x Skill gain! Woohoo! your first upgrade!",
+    cost: new Decimal(0.2),
+    currencyInternalName: "points",
+    currencyDisplayName: "Skill",
+
+    unlocked() {
+        return !inChallenge("r", 13)
+    },
+
+    onPurchase() {
         const audio = new Audio("sounds/bell.mp3");
-        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.volume = 0.5;
         audio.play();
-    },  
-        },
+    },
+},
         12: {
             title: "#2: The First Difficulty 2 ",
             description: "Another! x1.3 Skill gain.",
@@ -245,9 +250,13 @@ if (player.p.buyables[11].gte(500)) exp2 = exp2+0.015
         },
         22: {
             title: "#9: The Lower Gap 2",
-            description: "25x skill, sorry for the inconvenience",
+            description: "We are back! Your time played is gonna multiply skill gain!",
             cost: new Decimal(125),
-                  
+                   effect() {
+                               let time = player.timePlayed
+                return new Decimal(time).pow(0.2).add(1.25)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
           currencyInternalName: "points",
                         currencyDisplayName: "Skill",
                    unlocked() {
@@ -2549,7 +2558,7 @@ addLayer("uf", {
     },
      row: 1, // Row the layer is in on the tree (0 is the first row)
 
-                requires: new Decimal(1e39),
+                requires: new Decimal(1e40),
               // Can be a function that takes requirement increases into account
                 resource: "UF", // Name of prestige currency
                 baseResource: "Skill", // Name of resource prestige is based on
@@ -3210,7 +3219,8 @@ fullDisplay() {
     description: "2x Skill. ",
      cost: new Decimal(0),
 canAfford() {
-return (player.points.gte(4.5e63) & hasChallenge("r", 11))
+    return player.points.gte(4.5e63) &&
+        challengeCompletions("r", 11) >= 1
 },
    
     onPurchase() {
@@ -3227,7 +3237,7 @@ fullDisplay() {
             <br>
             ${this.description}
             <br><br>
-            Cost: 4.5Vg Skill, TFiRD research completed. 
+            Cost: 4.5Vg Skill, TFiRD research completed ONCE (level 1). 
         `
     },
    
@@ -5447,7 +5457,7 @@ Boosts Function Variable "w"<br>
 
     37: {
         title: "#206: Placid 7",
-        description: "Unlocks Keys.",
+        description: "No keys thanks.",
         cost: new Decimal(5e9),
         unlocked() { return hasUpgrade("jp", 36) },
         onPurchase() {
@@ -6037,7 +6047,7 @@ addLayer("sub", {
     
 
     layerShown() {
-        return ((player.t.points).gte(3) == true)
+        return ((player.t.points).gte(3) == true) && (inChallenge("tc", 11) == false) 
     },
 
     resource: "Whitelisted Tower Submissions",
@@ -6046,16 +6056,31 @@ addLayer("sub", {
         return player.es.points
     },
 
-    requires: new Decimal(100),
+    requires() {
+    if (hasMilestone("t", 3))
+        return new Decimal(10000)
+
+    return new Decimal(100)
+},
     type: "normal",
     exponent: 0.10,
 
     
-
-    prestigeButtonText() {
-        return `Submittify a Pass Worthy tower for +${formatWhole(tmp.sub.resetGain)} Whitelisted Tower Submissions, you need 100 EToH Skill`
+  gainMult() {
+        let mult = new Decimal(1)
+   mult = mult.times(buyableEffect('tr', 12).add(1))
+  mult = mult.times(buyableEffect('i', 12))   
+  if (hasMilestone("t", 8)) mult = mult.times(1.75)
+        return mult
     },
 
+  prestigeButtonText() {
+    let req = hasMilestone("t", 3)
+        ? "10,000"
+        : "100"
+
+    return `Submittify a Pass Worthy tower for +${formatWhole(tmp.sub.resetGain)} Whitelisted Tower Submissions, you need ${req} EToH Skill`
+},
     upgrades: {
 
  11: {
@@ -6125,7 +6150,47 @@ addLayer("sub", {
 },
 15: {
             title: "Boost your imagination",
-            description: "Unlocks Training (Soon)!",
+            description: "Unlocks Training!",
+            cost: new Decimal(1),
+          unlocked() {
+                            return hasUpgrade("sub", 14)
+                        
+                        },
+            
+               onPurchase() {
+        // Reproduce un sonido al comprar
+        
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+},
+16: {
+            title: "Buy 2 profit",
+            description: "+20% EToH Skill gain every Submission upgrades you bought",
+         effect() {
+    let upgrades = player.sub.upgrades.length
+
+    return new Decimal(upgrades).mul(20)
+},
+            effectDisplay() { return "+" + format(upgradeEffect(this.layer, this.id)) + "%" },
+            cost: new Decimal(1),
+          unlocked() {
+                            return hasUpgrade("sub", 15)
+                        
+                        },
+            
+               onPurchase() {
+        // Reproduce un sonido al comprar
+        
+        const audio = new Audio("sounds/bell.mp3");
+        audio.volume = 0.5; // volumen entre 0.0 y 1.0
+        audio.play();
+    },  
+},
+17: {
+            title: "Submission Multiplier real",
+            description: "Unlocks The Submission Training Button",
             cost: new Decimal(1),
           unlocked() {
                             return hasUpgrade("sub", 14)
@@ -6157,17 +6222,380 @@ addLayer("sub", {
         },
     },
 })
+addLayer("tw", {
+    name: "Towerify",
+    symbol: "T",
+    position: 1,
+    row: 1,
+
+    startData() {
+        return {
+            unlocked: false,
+            points: new Decimal(0),
+        }
+    },
+
+    color: "#8f8f8f",
+ nodeStyle() {
+        return {
+            "background": "linear-gradient(135deg, #fefdff, #8b8b8b)",
+            "border": "3px solid white",
+            "color": "white",
+        }
+    },
+
+    nodeStyle() {
+        return {
+            "background": "linear-gradient(135deg, #d9d9d9, #8c8c8c)",
+            "border": "3px solid white",
+            "color": "black",
+        }
+    },
+
+    layerShown() {
+        return hasMilestone("t", 5) && (inChallenge("tc", 11) == false) 
+    },
+
+    resource: "Tower Completions",
+    type: "none",
+
+    update(diff) {
+        if (!player.tw.unlocked)
+            player.tw.unlocked = hasMilestone("t", 5)
+
+        if (player.tw.unlocked)
+            player.tw.points = player.tw.points.add(new Decimal(diff).div(60))
+    },
+
+    effect() {
+        return player.tw.points.add(1).log10().add(1)
+    },
+
+    resetsNothing() {
+        return true
+    },
+
+    tabFormat: {
+        "Towerify": {
+            content: [
+                "main-display",
+                "blank",
+
+                ["display-text", () =>
+                    `<h3>You automatically complete <b>1 Tower</b> every <b>60 seconds</b>.</h3>`
+                ],
+
+                "blank",
+
+                ["display-text", () =>
+                    `<h3>EToH Skill Boost: <span style="color:#00ff99">×${format(tmp.tw.effect)}</span></h3>`
+                ],
+            ]
+        }
+    },
+})
+addLayer("i", {
+    name: "Insanity",
+    symbol: "I",
+    position: 0,
+    row: 2,
+
+   startData() {
+    return {
+        unlocked: false,
+        points: new Decimal(0),
+        xp: new Decimal(0),
+        level: new Decimal(1),
+        started: false,
+    }
+},
+
+   color: "#0000ff",
+
+nodeStyle() {
+    return {
+        "background": "linear-gradient(135deg,#0044aa,#0000ff,#0000ff)",
+        "border": "3px solid white",
+        "color": "white",
+    }
+},
+
+    resource: "Insanity Tokens",
+    baseResource: "EToH Skill",
+    baseAmount() {
+        return player.es.points
+    },
+
+    requires: new Decimal("1e6"),
+    type: "normal",
+    exponent: 0.08,
+
+    layerShown() {
+       return hasMilestone("t", 7) && (inChallenge("tc", 11) == false)
+},
+    
+
+    gainMult() {
+        return new Decimal(5)
+    },
+
+
+
+   effect() {
+
+    let base = 1.03
+
+    if (hasMilestone("t",8))
+        base = 1.02
+
+    return Decimal.pow(base, player.i.level).recip()
+},
+
+   update(diff) {
+
+    if (!player.i.unlocked && hasMilestone("t", 7))
+        player.i.unlocked = true
+
+    if (player.i.points.gt(0))
+        player.i.started = true
+
+    if (!player.i.started) return
+
+ let gain = player.es.points.max(1).pow(0.1).add(1)
+
+if (player.i.level.gte(10))
+    gain = gain.mul(Decimal.pow(1.2, player.i.level.sub(10)))
+
+if (hasMilestone("t",8))
+    gain = gain.div(2)
+
+
+   if (!player.offTime)
+    player.i.xp = player.i.xp.add(gain.mul(diff))
+
+    while (player.i.xp.gte(tmp.i.nextLevelReq)) {
+        player.i.xp = player.i.xp.sub(tmp.i.nextLevelReq)
+        player.i.level = player.i.level.add(1)
+    }
+},
+
+    nextLevelReq() {
+        return new Decimal(75).mul(
+            Decimal.pow(1.26, player.i.level.sub(1))
+        )
+    },
+
+    prestigeButtonText() {
+        return `Dive into Insanity for +${formatWhole(tmp.i.resetGain)} Insanity Tokens`
+    },
+
+    buyables: {
+
+        11: {
+            title: "Insane EToH Skill",
+
+            purchaseLimit() { return 10 },
+
+            cost(x) {
+                return new Decimal(2)
+                    .mul(Decimal.pow(1.35, x))
+                    .ceil()
+            },
+
+            effect(x) {
+                return Decimal.pow(1.6, x)
+            },
+
+            display() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+
+                return `
+Boosts EToH Skill<br><br>
+
+Boost: ×${format(buyableEffect(this.layer, this.id))}<br>
+Level: ${lvl}/10<br>
+Cost: ${format(this.cost(lvl))} Insanity Tokens
+`
+            },
+
+            canAfford() {
+                return player.i.points.gte(this.cost(getBuyableAmount(this.layer, this.id))) &&
+                    getBuyableAmount(this.layer, this.id).lt(50)
+            },
+
+            buy() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+                player.i.points = player.i.points.sub(this.cost(lvl))
+                addBuyables(this.layer, this.id, 1)
+            },
+        },
+
+        12: {
+            title: "Insane Submissions",
+
+            purchaseLimit() { return 10 },
+
+            cost(x) {
+                return new Decimal(2)
+                    .mul(Decimal.pow(1.35, x))
+                    .ceil()
+            },
+
+            effect(x) {
+                return Decimal.pow(1.5, x)
+            },
+
+            display() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+
+                return `
+Boosts Submission Gain<br><br>
+
+Boost: ×${format(buyableEffect(this.layer, this.id))}<br>
+Level: ${lvl}/10<br>
+Cost: ${format(this.cost(lvl))} Insanity Tokens
+`
+            },
+
+            canAfford() {
+                return player.i.points.gte(this.cost(getBuyableAmount(this.layer, this.id))) &&
+                    getBuyableAmount(this.layer, this.id).lt(50)
+            },
+
+            buy() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+                player.i.points = player.i.points.sub(this.cost(lvl))
+                addBuyables(this.layer, this.id, 1)
+            },
+        },
+
+        13: {
+            title: "Insane Training Boost",
+
+            purchaseLimit() { return 2 },
+
+            cost(x) {
+                return new Decimal(5)
+                    .mul(Decimal.pow(6, x))
+            },
+
+            display() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+
+                let txt = ""
+
+                if (lvl.eq(0))
+                    txt = "Next: +10% base effect to Insane EToH Skill"
+
+                if (lvl.eq(1))
+                    txt = "Next: +10% base effect to Insane Submissions"
+
+                if (lvl.gte(2))
+                    txt = "MAXED"
+
+                return `
+${txt}<br><br>
+
+Level: ${lvl}/2<br>
+Cost: ${format(this.cost(lvl))} Insanity Tokens
+`
+            },
+
+            canAfford() {
+                return player.i.points.gte(this.cost(getBuyableAmount(this.layer, this.id))) &&
+                    getBuyableAmount(this.layer, this.id).lt(2)
+            },
+
+            buy() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+                player.i.points = player.i.points.sub(this.cost(lvl))
+                addBuyables(this.layer, this.id, 1)
+            },
+        },
+    },
+bars: {
+    insanityBar: {
+        direction: RIGHT,
+        width: 300,
+        height: 25,
+
+        progress() {
+            if (!player.i.started) return 0
+            return player.i.xp.div(tmp.i.nextLevelReq).min(1)
+        },
+
+        display() {
+            if (!player.i.started) return "Insanity Locked"
+
+            return `
+            Insanity XP: ${format(player.i.xp)} / ${format(tmp.i.nextLevelReq)}
+            `
+        },
+
+       fillStyle: {
+    background: "linear-gradient(90deg,#001c99,#0000ff,#003cff)"
+},
+        borderStyle: {
+            borderColor: "#ffffff",
+        },
+    },
+},
+   tabFormat: {
+    "Insanity": {
+        content: [
+
+["row",[
+    ["bar","insanityBar"],
+
+    ["display-text",()=>`
+<div style="
+width:70px;
+height:40px;
+margin-left:10px;
+border:3px solid white;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:20px;
+font-weight:bold;
+background:#001a66;
+">
+Lv ${player.i.started ? formatWhole(player.i.level) : "?"}
+</div>
+`],
+]],
+
+"blank",
+
+["display-text",()=>
+player.i.started
+?`Current Debuff: <span style="color:#0000ff">×${format(tmp.i.effect)}</span> EToH Skill (doesn't get affected by offline prod, your level wont grow as hell.)`
+:"Insanity Level is locked."
+],
+
+"blank",
+
+"main-display",
+"blank",
+"prestige-button",
+"blank",
+"buyables",
+
+        ]
+    }
+},
+})
 addLayer("tr", {
     name: "Training",
     symbol: "TR",
     position: 0,
-    row: 2,
+    row: 1,
 
-    color: "#ffb347",
+    color: "#b84dff",
 
     nodeStyle() {
         return {
-            "background": "linear-gradient(135deg, #ff9f43, #ffd166)",
+            "background": "linear-gradient(135deg, #b84dff, #7d2cff)",
             "border": "3px solid white",
             "color": "white",
         }
@@ -6175,79 +6603,949 @@ addLayer("tr", {
 
     startData() {
         return {
-            unlocked: true,
-            points: new Decimal(0),
-        }
+    unlocked: false,
+    points: new Decimal(0), // Disponibles
+    total: new Decimal(0),  // Total obtenidos
+}
     },
 
     layerShown() {
-        return hasUpgrade("sub", 15)
+        return hasUpgrade("sub", 15) && (inChallenge("tc", 11) == false)
     },
 
-    resource: "Training XP",
+    resource: "Training Shards",
     type: "none",
 
     update(diff) {
-        if (!player.tr.unlocked) return
+   let target = player.es.points.max(1e3).log10().sub(3).div(2).floor().add(1)
 
-        let gain = new Decimal(diff)
+if (target.gt(player.tr.total)) {
+    let gain = target.sub(player.tr.total)
 
-        if (player.tr.points.gte(50))
-            gain = gain.mul(tmp.tr.effect.training)
+    player.tr.total = target
+    player.tr.points = player.tr.points.add(gain)
+}
+    },
 
-        player.tr.points = player.tr.points.add(gain)
+    buyables: {
+        11: {
+            purchaseLimit: 100,
+
+            cost() {
+                return new Decimal(1)
+            },
+
+            canAfford() {
+                return player.tr.points.gte(1) &&
+                    getBuyableAmount(this.layer, this.id).lt(this.purchaseLimit)
+            },
+
+            buy() {
+                player.tr.points = player.tr.points.sub(1)
+                addBuyables(this.layer, this.id, 1)
+            },
+
+           effect() {
+    let base = 0.5
+
+    if (getBuyableAmount("i", 13).gte(1))
+        base += 0.1
+
+    return getBuyableAmount(this.layer, this.id).mul(base).add(1)
+},
+display() {
+
+    let bonus = 50
+
+    if (getBuyableAmount("i", 13).gte(1))
+        bonus += 10
+
+    return `
+    <h3>Skill Domination</h3>
+    <b>+${bonus}% EToH Skill / Shard</b>
+    Effect: +${formatWhole(getBuyableAmount(this.layer, this.id).mul(bonus))}%
+    Inserted: ${formatWhole(getBuyableAmount(this.layer, this.id))}/100
+
+    `
+},
+
+           style() {
+    let affordable = player.tr.points.gte(1) &&
+        getBuyableAmount(this.layer, this.id).lt(this.purchaseLimit)
+
+    return {
+        "width": "500px",
+        "height": "130px",
+        "background": affordable
+            ? "linear-gradient(135deg,#b84dff,#7d2cff)"
+            : "linear-gradient(135deg,#666666,#444444)",
+        "border": "3px solid white",
+        "border-radius": "10px",
+        "color": "white",
+        "font-size": "15px",
+        "opacity": affordable ? "1" : "0.7",
+    }
+},
+
+},
+12: {
+    purchaseLimit: 100,
+
+    unlocked() {
+        return true
+    },
+
+    cost() {
+        return new Decimal(1)
+    },
+
+    canAfford() {
+        return hasUpgrade("sub", 17) &&
+            player.tr.points.gte(1) &&
+            getBuyableAmount(this.layer, this.id).lt(this.purchaseLimit)
+    },
+
+    buy() {
+        player.tr.points = player.tr.points.sub(1)
+        addBuyables(this.layer, this.id, 1)
     },
 
     effect() {
+        return getBuyableAmount(this.layer, this.id).mul(0.25).add(1)
+    },
 
-        let skill = player.tr.points.pow(0.17).add(1)
+    display() {
+        if (!hasUpgrade("sub", 17)) {
+            return `
+            `
+        }
 
-        let training = new Decimal(1)
+        return `
+        <h3>Submission Mastery</h3>
+        <b>+25% Submission Gain / Shard</b>
+        Effect: +${formatWhole(getBuyableAmount(this.layer, this.id).mul(25))}%
+        Inserted: ${formatWhole(getBuyableAmount(this.layer, this.id))}/100
 
-        if (player.tr.points.gte(50))
-            training = player.tr.points.div(50).pow(0.03).add(1)
+        `
+    },
+
+    style() {
+        if (!hasUpgrade("sub", 17)) {
+            return {
+                "width": "500px",
+                "height": "130px",
+                "background": "#000000",
+                "border": "3px solid white",
+                "border-radius": "10px",
+                "color": "white",
+                "font-size": "25px",
+            }
+        }
+
+        let affordable = player.tr.points.gte(1) &&
+            getBuyableAmount(this.layer, this.id).lt(this.purchaseLimit)
 
         return {
-            skill: skill,
-            training: training,
+            "width": "500px",
+            "height": "130px",
+            "background": affordable
+                ? "linear-gradient(135deg,#b84dff,#7d2cff)"
+                : "linear-gradient(135deg,#666666,#444444)",
+            "border": "3px solid white",
+            "border-radius": "10px",
+            "color": "white",
+            "font-size": "15px",
+            "opacity": affordable ? "1" : "0.7",
         }
     },
-
-    effectDescription() {
-        let txt = `which are boosting EToH Skill by <h2 style="color:#ffd166">${format(tmp.tr.effect.skill)}x</h2>`
-
-        if (player.tr.points.gte(50))
-            txt += `<br>Training XP Gain: <h2 style="color:#ffd166">${format(tmp.tr.effect.training)}x</h2>`
-
-        return txt
-    },
-
+},
+      },
     tabFormat: {
         "Training": {
             content: [
                 "main-display",
                 "blank",
 
-                ["display-text", () =>
-                    `You gain <h2 style="color:#ffd166">${format(player.tr.points.gte(50) ? tmp.tr.effect.training : new Decimal(1))}</h2> Training XP/sec`
-                ],
+               
 
                 "blank",
 
+                "buyables",
+            ],
+        },
+    },
+})
+addLayer("nc", {
+    name: "Nerve Control",
+    symbol: "N",
+    position: 1,
+    row: 2,
+
+    startData() {
+        return {
+            unlocked: false,
+            points: new Decimal(0),
+        }
+    },
+
+    color: "#00c8ff",
+
+    nodeStyle() {
+        return {
+            "background": "linear-gradient(135deg,#0066aa,#00c8ff)",
+            "border": "3px solid white",
+            "color": "white",
+        }
+    },
+
+    resource: "Neurons",
+
+    type: "none",
+
+    layerShown() {
+        return hasMilestone("t", 10) && (inChallenge("tc", 11) == false)
+    },
+
+    update(diff) {
+        if (!player.nc.unlocked && hasMilestone("t", 10))
+            player.nc.unlocked = true
+
+        if (player.nc.unlocked)
+            player.nc.points = player.nc.points.add(diff)
+    },
+
+    resetsNothing() {
+        return true
+    },
+
+    buyables: {
+
+        11: {
+            title: "Not Perfect Mind",
+
+            purchaseLimit() {
+                return 30
+            },
+
+            cost(x) {
+                return new Decimal(25)
+                    .mul(Decimal.pow(1.05, x))
+                    .round()
+            },
+
+            effect(x) {
+                return x.mul(0.2).add(1)
+            },
+
+            display() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+
+                return `
+             
+                Boosts Neurons by +20% per level.<br>
+                <b>Boost:</b> ×${format(buyableEffect(this.layer, this.id))}<br>
+                <b>Level:</b> ${formatWhole(lvl)}/30<br>
+                <b>Cost:</b> ${format(this.cost(lvl))} Neurons
+                `
+            },
+
+            canAfford() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+
+                return player.nc.points.gte(this.cost(lvl)) &&
+                    lvl.lt(this.purchaseLimit())
+            },
+
+            buy() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+
+                player.nc.points = player.nc.points.sub(this.cost(lvl))
+                addBuyables(this.layer, this.id, 1)
+            },
+        },
+
+        12: {
+            title: "Handling Myself",
+
+            purchaseLimit() {
+                return 50
+            },
+
+            cost(x) {
+                return new Decimal(30)
+                    .mul(Decimal.pow(1.07, x))
+                    .round()
+            },
+
+            effect(x) {
+                return x.mul(0.1).add(1)
+            },
+
+            display() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+
+                return `
+             
+                Boosts EToH Skill by +10% per level.<br>
+                <b>Boost:</b> ×${format(buyableEffect(this.layer, this.id))}<br>
+                <b>Level:</b> ${formatWhole(lvl)}/50<br>
+                <b>Cost:</b> ${format(this.cost(lvl))} Neurons
+                `
+            },
+
+            canAfford() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+
+                return player.nc.points.gte(this.cost(lvl)) &&
+                    lvl.lt(this.purchaseLimit())
+            },
+
+            buy() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+
+                player.nc.points = player.nc.points.sub(this.cost(lvl))
+                addBuyables(this.layer, this.id, 1)
+            },
+        },
+
+        13: {
+            title: "Submit my mind",
+
+            purchaseLimit() {
+                return 50
+            },
+
+            cost(x) {
+                return new Decimal(40)
+                    .mul(Decimal.pow(1.08, x))
+                    .round()
+            },
+
+            effect(x) {
+                return x.mul(0.1).add(1)
+            },
+
+            display() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+
+                return `
+               
+                Boosts Submittify gain by +10% per level.<br>
+                <b>Boost:</b> ×${format(buyableEffect(this.layer, this.id))}<br>
+                <b>Level:</b> ${formatWhole(lvl)}/50<br>
+                <b>Cost:</b> ${format(this.cost(lvl))} Neurons
+                `
+            },
+
+            canAfford() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+
+                return player.nc.points.gte(this.cost(lvl)) &&
+                    lvl.lt(this.purchaseLimit())
+            },
+
+            buy() {
+                let lvl = getBuyableAmount(this.layer, this.id)
+
+                player.nc.points = player.nc.points.sub(this.cost(lvl))
+                addBuyables(this.layer, this.id, 1)
+            },
+        },
+    },
+upgrades: {
+
+    11: {
+        title: "Double EToH Skill",
+        description: "Doubles EToH Skill gain.",
+
+        cost: new Decimal(500),
+
+        currencyInternalName: "points",
+        currencyLayer: "nc",
+        currencyDisplayName: "Neurons",
+
+        effect() {
+            return new Decimal(2)
+        },
+
+        onPurchase() {
+            const audio = new Audio("sounds/bell.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+    },
+
+    12: {
+        title: 'The "Skill Comeback"',
+        description: "Unlocks Timeline Challenges.",
+
+        cost: new Decimal(2500),
+
+        currencyInternalName: "points",
+        currencyLayer: "nc",
+        currencyDisplayName: "Neurons",
+
+        onPurchase() {
+            const audio = new Audio("sounds/bell.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+    },
+
+},
+    tabFormat: {
+        "Nerve Control": {
+            content: [
+                "main-display",
+                "blank",
+
                 ["display-text", () =>
-                    `
-                    <h3>Effects</h3>
+    `<h3>You are currently gaining: +${format(buyableEffect("nc", 11))} Neurons/s</h3>`
+],
 
-                    EToH Skill:
-                    <b>${format(tmp.tr.effect.skill)}x</b>
+                "blank",
 
-                    <br><br>
+                "buyables",
+            ],
+        },
+         "Upgrades": {
+            content: [
+                "main-display",
+                "blank",
 
-                    ${player.tr.points.gte(50)
-                        ? `Training XP Gain:<br><b>${format(tmp.tr.effect.training)}x</b>`
-                        : `Reach <b>50 Training XP</b> to unlock the second effect.`}
-                    `
-                ],
+                ["display-text", () =>
+    `<h3>You are currently gaining: +${format(buyableEffect("nc", 11))} Neurons/s</h3>`
+],
+
+                "blank",
+
+                "upgrades",
+            ],
+        },
+    },
+})
+addLayer("rs", {
+    name: "Recovered Skill",
+    symbol: "RS",
+    position: 0,
+    row: 0,
+
+    startData() {
+        return {
+            unlocked: false,
+            points: new Decimal(0),
+        }
+    },
+
+    color: "#75ff97",
+
+    nodeStyle() {
+        return {
+            "background": "linear-gradient(135deg, #75ff97, #ffffff)",
+            "border": "3px solid #ffffff",
+            "color": "#000000",
+        }
+    },
+
+    resource: "Recovered Skill",
+    type: "none",
+
+    layerShown() {
+        return player.rs.unlocked && inChallenge("tc", 11)
+    },
+
+    update(diff) {
+        if (!player.rs.unlocked)
+            return
+
+        if (inChallenge("tc", 11)) {
+            let gain = new Decimal(1)
+
+            // TC1 Level Debuff
+            gain = gain.times(
+                Decimal.pow(1.1, player.tc.level).recip()
+            )
+            if (hasUpgrade("rs", 11)) gain = gain.times(1.4)
+                  if (hasUpgrade("rs", 12)) gain = gain.times(1.25)
+                         if (hasUpgrade("rs", 13)) gain = gain.times(1.8)
+                                if (hasUpgrade("rs", 15)) gain = gain.times(3)
+                                    if (hasUpgrade("rs", 17))
+    gain = gain.times(buyableEffect("rs", 11))
+
+if (hasUpgrade("rs", 17))
+    gain = gain.times(buyableEffect("rs", 12))
+if (hasUpgrade("rs", 16))
+    gain = gain.times(upgradeEffect("rs", 16))
+            player.rs.points = player.rs.points.add(
+                gain.mul(diff)
+            )
+        }
+    },
+
+    resetsNothing() {
+        return true
+    },
+    buyables: {
+
+    11: {
+        title: "Quantity over Risk",
+
+        purchaseLimit() {
+            return 5
+        },
+
+        cost(x) {
+            return new Decimal(1000).mul(Decimal.pow(2, x)
+            )
+        },
+
+        effect(x) {
+            return x.mul(0.75).add(1)
+        },
+
+        display() {
+            let lvl = getBuyableAmount(this.layer, this.id)
+
+            return `
+ 
+            Increases Recovered Skill by +75% per level,
+            but decreases the Level gap by 0.02.<br><br>
+
+            <b>Boost:</b> ×${format(buyableEffect(this.layer, this.id))}<br>
+            <b>Level:</b> ${formatWhole(lvl)}/5<br>
+            <b>Cost:</b> ${format(this.cost(lvl))} Recovered Skill
+            `
+        },
+
+        unlocked() {
+            return hasUpgrade("rs", 17)
+        },
+
+        canAfford() {
+            let lvl = getBuyableAmount(this.layer, this.id)
+
+            return player.rs.points.gte(this.cost(lvl)) &&
+                lvl.lt(this.purchaseLimit())
+        },
+
+        buy() {
+            let lvl = getBuyableAmount(this.layer, this.id)
+
+            player.rs.points = player.rs.points.sub(this.cost(lvl))
+            addBuyables(this.layer, this.id, 1)
+        },
+    },
+
+    12: {
+        title: "The Ultimate Hell",
+
+        purchaseLimit() {
+            return 1
+        },
+
+        cost(x) {
+            return new Decimal(10000)
+        },
+
+        effect(x) {
+            return new Decimal(5).pow(x)
+        },
+
+        display() {
+            let lvl = getBuyableAmount(this.layer, this.id)
+
+            return `
+         
+            Increases Recovered Skill by +400%,
+            but Level scaling is reduced to 1.05.<br><br>
+
+            <b>Boost:</b> ×${format(buyableEffect(this.layer, this.id))}<br>
+            <b>Level:</b> ${formatWhole(lvl)}/1<br>
+            <b>Cost:</b> 10,000 Recovered Skill
+            `
+        },
+
+        unlocked() {
+            return hasUpgrade("rs", 17)
+        },
+
+        canAfford() {
+            let lvl = getBuyableAmount(this.layer, this.id)
+
+            return player.rs.points.gte(this.cost(lvl)) &&
+                lvl.lt(this.purchaseLimit())
+        },
+
+        buy() {
+            let lvl = getBuyableAmount(this.layer, this.id)
+
+            player.rs.points = player.rs.points.sub(this.cost(lvl))
+            addBuyables(this.layer, this.id, 1)
+        },
+    },
+},
+    upgrades: {
+11: {
+        title: "#R1: The First Recovered Difficulty 1",
+        description: "Ehh.. Hello again i guess? This is Recovered Skill, Skill but it's recovered after the Tier collapse. Start with a 1.4x Recovered Skill boost.",
+        cost: new Decimal(10),
+
+        onPurchase() {
+            const audio = new Audio("sounds/bell.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+    },
+
+    12: {
+        title: "#R2: The First Recovered Difficulty 2",
+        description: "Ehh again? I'm aware. 1.25x Recovered Skill.",
+        cost: new Decimal(25),
+        
+
+
+        unlocked() {
+            return hasUpgrade("rs", 11)
+        },
+
+        onPurchase() {
+            const audio = new Audio("sounds/bell.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+    },
+ 13: {
+        title: "#R3: The First Recovered Difficulty 3",
+        description: "Despite the fact that you are in a challenge, you can still get Recovered Skill, 1.8x Recovered Skill, thats a misery for me",
+        cost: new Decimal(40),
+        
+
+
+        unlocked() {
+            return hasUpgrade("rs", 12)
+        },
+
+        onPurchase() {
+            const audio = new Audio("sounds/bell.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+    },
+14: {
+        title: "#R4: The First Recovered Difficulty 4",
+        description: "Are you crazy, increase the level gap is increased by 15%, so you will need more xp to level up, thats good, so you will not lose all of your RS Gain and fail",
+        cost: new Decimal(60),
+        
+
+
+        unlocked() {
+            return hasUpgrade("rs", 13)
+        },
+
+        onPurchase() {
+            const audio = new Audio("sounds/bell.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+    },
+15: {
+        title: "#R5: The First Recovered Difficulty 5",
+        description: "3x Recovered Skill, this is a big boost, so you will not lose all of your RS Gain and fail",
+        cost: new Decimal(125),
+        
+
+
+        unlocked() {
+            return hasUpgrade("rs", 14)
+        },
+
+        onPurchase() {
+            const audio = new Audio("sounds/bell.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+    },
+16: {
+    title: "#R6: The First Recovered Difficulty 6",
+    description: "+50% Recovered Skill compounding per every RS upgrade bought starting from 6",
+    cost: new Decimal(450),
+
+    unlocked() {
+        return hasUpgrade("rs", 15)
+    },
+
+    effect() {
+        let upgrades = Math.max(0, player.rs.upgrades.length - 5)
+        return new Decimal(1.5).pow(upgrades)
+    },
+
+    effectDisplay() {
+        return format(upgradeEffect(this.layer, this.id)) + "x"
+    },
+
+    onPurchase() {
+        const audio = new Audio("sounds/bell.mp3")
+        audio.volume = 0.5
+        audio.play()
+    },
+}, 
+17: {
+        title: "#R7: The First Recovered Difficulty 7",
+        description: "Final upgrade, unlock the risky buyables, this will increase your profit in cost that you may notice that your level will be go up faster, as a additional bonus, there is 3x RS gain.",
+        cost: new Decimal(650),
+        
+
+
+        unlocked() {
+            return hasUpgrade("rs", 16)
+        },
+
+        onPurchase() {
+            const audio = new Audio("sounds/bell.mp3")
+            audio.volume = 0.5
+            audio.play()
+        },
+    },
+    },
+    tabFormat: {
+        "Main": {
+            content: [
+                "main-display",
+                "blank",
+
+           
+                ["display-text", () => `
+                  Recovered Skill is the new currency that you gain passively in Timeline Challenges, in one challenge, XP will be your enemy, you will sadly need to be quick!
+                `],
+
+                "blank",
+                "upgrades",
+                   
+            ],
+        },
+"Buyables": {
+            content: [
+                "main-display",
+                "blank",
+
+           
+               
+                "blank",
+                "buyables",
+                   
+            ],
+        },
+    },
+})
+
+
+addLayer("tc", {
+    name: "Timeline Challenges",
+    symbol: "TC",
+    position: 1,
+    row: 6,
+
+    startData() {
+        return {
+            unlocked: false,
+            active: false,
+
+            xp: new Decimal(0),
+            level: new Decimal(0),
+        }
+    },
+
+    color: "#7b68ee",
+
+    nodeStyle() {
+        return {
+            "background": "linear-gradient(135deg,#332277,#7b68ee,#a98cff)",
+            "border": "3px solid #ffffff",
+            "color": "#ffffff",
+        }
+    },
+
+    resource: "Timeline Challenges",
+    type: "none",
+
+    layerShown() {
+        return player.tc.unlocked || player.tc.active
+    },
+
+   resetsNothing() {
+        return false
+    },
+nextLevelReq() {
+    let base = new Decimal(1.2)
+
+    if (hasUpgrade("rs", 14))
+        base = base.mul(1.15)
+
+    if (hasUpgrade("rs", 17)) {
+        let lvl = getBuyableAmount("rs", 11)
+        base = base.sub(lvl.mul(0.02))
+
+        if (getBuyableAmount("rs", 12).gt(0))
+            base = new Decimal(1.05)
+    }
+
+    return new Decimal(15).mul(
+        base.pow(player.tc.level)
+    )
+},
+
+   update(diff) {
+    if (!player.tc.active)
+        return
+
+    player.tc.xp = player.tc.xp.add(diff)
+
+    while (player.tc.xp.gte(tmp.tc.nextLevelReq)) {
+        player.tc.xp = player.tc.xp.sub(tmp.tc.nextLevelReq)
+        player.tc.level = player.tc.level.add(1)
+
+        // TC11: Level 30 = REAL FAIL
+        if (
+            player.tc.level.gte(30) &&
+            inChallenge("tc", 11)
+        ) {
+            player.tc.level = new Decimal(30)
+            player.tc.xp = new Decimal(0)
+
+            player.tc.active = false
+            player.tc.unlocked = true
+
+            return
+        }
+    }
+},
+
+    bars: {
+        tcLevelBar: {
+            direction: RIGHT,
+            width: 300,
+            height: 25,
+
+            progress() {
+                return player.tc.xp
+                    .div(tmp.tc.nextLevelReq)
+                    .min(1)
+            },
+
+            display() {
+                return `
+                    TC XP: ${format(player.tc.xp)}
+                    /
+                    ${format(tmp.tc.nextLevelReq)}
+                `
+            },
+
+            fillStyle: {
+                backgroundColor: "#7b68ee"
+            },
+
+            borderStyle: {
+                borderColor: "#ffffff"
+            },
+        },
+    },
+
+    challenges: {
+
+        11: {
+            name: "Level is a Antagonism",
+
+            challengeDescription() {
+                return `
+                    Level increases passively and kills your RS production.
+                    Current Debuff:
+                    ×${format(
+                        Decimal.pow(
+                            1.1,
+                            player.tc.level
+                        ).recip()
+                    )}
+                    RS gain
+
+
+
+                `
+            },
+
+           goalDescription: "25,000 Recovered Skill, Reaching Level 30 instantly fails the challenge.",
+
+            rewardDescription: `
+                +200% to EToH Skill gain
+                new Submittify upgrades,
+                and access past Tier 13.
+            `,
+
+            unlocked() {
+                return hasUpgrade("nc", 12)
+            },
+
+            canComplete() {
+                return player.rs.points.gte(25000)
+            },
+
+      onEnter() {
+    player.tc.active = true
+
+    // Reset TC
+    player.tc.xp = new Decimal(0)
+    player.tc.level = new Decimal(0)
+
+    // Reset COMPLETO de Recovered Skill
+    layerDataReset("rs")
+
+    // RS vuelve a estar disponible dentro del challenge
+    player.rs.unlocked = true
+},
+
+            onExit() {
+                player.tc.active = false
+            },
+        },
+    },
+
+    tabFormat: {
+        "Main": {
+            content: [
+
+                ["row", [
+                    ["bar", "tcLevelBar"],
+
+                    ["display-text", () => `
+                        <div style="
+                            width:70px;
+                            height:40px;
+                            margin-left:10px;
+                            border:3px solid white;
+                            display:flex;
+                            align-items:center;
+                            justify-content:center;
+                            font-size:20px;
+                            font-weight:bold;
+                            background:#332277;
+                            color:white;
+                        ">
+                            Lv ${formatWhole(player.tc.level)}
+                        </div>
+                    `],
+                ]],
+
+                "blank",
+
+                ["display-text", () => `
+                    <h3>
+                        
+                        WARNING: THIS WILL BE LONG
+                    </h3>
+                `],
+
+                "blank",
+
+                "challenges",
             ],
         },
     },
@@ -6277,14 +7575,32 @@ addLayer("es", {
 
         // Genera Alpha pasivamente si tienes la mejora 11
         if   ((player.t.points).gt(0) == true) {
-            let cash = new Decimal(1)
-         if (hasMilestone("t", 1)) cash = cash.times(3.5)  
+            let cash = new Decimal(0.1)
             let gain = new Decimal(cash).times(diff); // 0.01 por segundo
-            player.es.points = player.es.points.add(gain);
-             if (hasUpgrade("sub", 11)) cash = cash.times(1.5)  
+             
+         if (hasMilestone("t", 1)) cash = cash.times(4.5)  
+              if (hasMilestone("t", 3)) cash = cash.times(1.75)  
+      if (hasUpgrade("sub", 11)) cash = cash.times(1.5)  
                 if (hasUpgrade("sub", 12)) cash = cash.times(1.3) 
                     if (hasUpgrade("sub", 13)) cash = cash.times(1.3) 
                         if (hasUpgrade("sub", 14)) cash = cash.times(player.es.points.pow(0.2).add(1)) 
+                                     if (hasUpgrade("sub", 16)) cash = cash.mul(player.sub.upgrades.length * 0.2 + 1)
+                                               cash = cash.times(buyableEffect('tr', 11).add(1))
+                                          if (hasMilestone("t", 5)) cash = cash.times(player.tw.points.add(1).log10().add(1))
+                                              if (hasMilestone("t", 6)) cash = cash.times(2)  
+                                                   if (hasMilestone("t", 8)) cash = cash.times(2.50) 
+                                                     if (hasMilestone("t", 9)) cash = cash.times(1.6) 
+                                                      if (hasMilestone("t", 11))
+    cash = cash.times(
+        Decimal.pow(1.2, player.t.points.sub(11).min(9))
+    )
+    if (hasChallenge("tc", 11)) cash = cash.times(3)
+                                                if (player.i.started)
+    cash = cash.times(tmp.i.effect)
+                                                            cash = cash.times(buyableEffect('i', 11))   
+            player.es.points = player.es.points.add(cash);
+            
+                        
         }
     },
 
@@ -6293,7 +7609,7 @@ addLayer("es", {
 
    
 
-    layerShown() { return layerVisible(this.layer) & ((player.t.points).gt(0) == true)},
+    layerShown() { return layerVisible(this.layer) & ((player.t.points).gt(0) == true) && (inChallenge("tc", 11) == false) },
     
      
    
@@ -6312,6 +7628,7 @@ addLayer("es", {
      }, 
 
     })
+    
 addLayer("g", {
     name: "Genesis",
     symbol: "✧",
@@ -6600,13 +7917,44 @@ nodeStyle() {
             "color": "#000000",
         }
     },
-    requires: new Decimal(1),
+ requires() {
+    let tier = player.t.points.toNumber()
+
+    // Tier 13+ requires completing TC11
+    if (tier >= 13 && !hasChallenge("tc", 11))
+        return new Decimal("Infinity")
+
+    switch (tier) {
+        case 0: return new Decimal(1)           // Tier 1
+        case 1: return new Decimal(25)          // Tier 2
+        case 2: return new Decimal(100)         // Tier 3
+        case 3: return new Decimal(2500)        // Tier 4
+        case 4: return new Decimal(12500)       // Tier 5
+        case 5: return new Decimal(33333)       // Tier 6
+        case 6: return new Decimal(125000)      // Tier 7
+        case 7: return new Decimal(300000)      // Tier 8
+
+        case 8:
+            if (!player.i.started)
+                return new Decimal("Infinity")
+            return new Decimal(2000000)         // Tier 9
+
+        case 9: return new Decimal(25000000)    // Tier 10
+        case 10: return new Decimal(50000000)   // Tier 11
+        case 11: return new Decimal(300000000)  // Tier 12
+        case 12: return new Decimal(2e9) // Tier 13
+     case 13: return new Decimal(1.5e10) // Tier 13
+        default:
+            return new Decimal(100000)
+    }
+},
+ resetsNothing() {return hasMilestone("t", 4)},
      resource: "Tiers",
     baseResource: "EToH Skill",
     baseAmount() { return player.es.points },
 
     type: "static",
-    exponent: 2.3,
+    exponent: -999999999999999999,
 
     canBuyMax() { return false },
 doReset(resettingLayer) {
@@ -6642,7 +7990,7 @@ milestones: {
         0: {
            
             requirementDescription: "// Tier 1 //",
-            effectDescription: "Goodbye another layers. start earning EToH skill by 1/s.",
+            effectDescription: "Goodbye another layers. Start earning EToH skill.",
             done() { return player.t.points.gte(1) },
             style() {
                 return {
@@ -6678,6 +8026,135 @@ milestones: {
                 }
             },
         },
+            3:{
+        
+            requirementDescription: "// Tier 4 //",
+            effectDescription: "+75% EToH Skill.",
+            done() { return player.t.points.gte(4) },
+            style() {
+                return {
+                    "background": "linear-gradient(135deg, #fff6b0, #ffd966)",
+                    "border": "2px solid #ffffff",
+                    "color": "#000",
+                }
+            },
+        },
+        4:{
+        
+            requirementDescription: "// Tier 5 //",
+            effectDescription: "Tier no longer resets anything by the way.",
+            done() { return player.t.points.gte(5) },
+            style() {
+                return {
+                    "background": "linear-gradient(135deg, #fff6b0, #ffd966)",
+                    "border": "2px solid #ffffff",
+                    "color": "#000",
+                }
+            },
+        },
+         5:{
+        
+            requirementDescription: "// Tier 6 //",
+            effectDescription: "Unlock Towerify.",
+            done() { return player.t.points.gte(6) },
+            style() {
+                return {
+                    "background": "linear-gradient(135deg, #fff6b0, #ffd966)",
+                    "border": "2px solid #ffffff",
+                    "color": "#000",
+                }
+            },
+        },
+         6:{
+        
+            requirementDescription: "// Tier 7 //",
+            effectDescription: "+100% EToH Skill.",
+            done() { return player.t.points.gte(7) },
+            style() {
+                return {
+                    "background": "linear-gradient(135deg, #fff6b0, #ffd966)",
+                    "border": "2px solid #ffffff",
+                    "color": "#000",
+                }
+            },
+        },
+         7:{
+        
+            requirementDescription: "// Tier 8 //",
+            effectDescription: "Unlocks Insanity, a reset layer that will kill your progress in exchange of various boosts to progress further",
+            done() { return player.t.points.gte(8) },
+            style() {
+                return {
+                    "background": "linear-gradient(135deg, #fff6b0, #ffd966)",
+                    "border": "2px solid #ffffff",
+                    "color": "#000",
+                }
+            },
+        },
+     8: {
+
+    requirementDescription: "// Tier 9 //",
+    effectDescription: "Here's the deal: +150% EToH Skill, +75% Submission Gain, reduce the Insanity debuff, and halve Insanity XP gain.",
+    done() { return player.t.points.gte(9) },
+    style() {
+        return {
+            "background": "linear-gradient(135deg, #fff6b0, #ffd966)",
+            "border": "2px solid #ffffff",
+            "color": "#000",
+        }
+    },
+},
+ 9:{
+        
+            requirementDescription: "// Tier 10 //",
+            effectDescription: "+60% EToH Skill",
+            done() { return player.t.points.gte(10) },
+            style() {
+                return {
+                    "background": "linear-gradient(135deg, #fff6b0, #ffd966)",
+                    "border": "2px solid #ffffff",
+                    "color": "#000",
+                }
+            },
+        },
+         10:{
+        
+            requirementDescription: "// Tier 11 //",
+            effectDescription: "Unlocks Nerve Control ",
+            done() { return player.t.points.gte(11) },
+            style() {
+                return {
+                    "background": "linear-gradient(135deg, #fff6b0, #ffd966)",
+                    "border": "2px solid #ffffff",
+                    "color": "#000",
+                }
+            },
+        },
+        11: {
+    requirementDescription: "// Tier 12 //",
+    effectDescription: "×1.2 EToH Skill per Tier, starting from Tier 12 and ending at Tier 20.",
+    done() { return player.t.points.gte(12) },
+    style() {
+        return {
+            "background": "linear-gradient(135deg, #fff6b0, #ffd966)",
+            "border": "2px solid #ffffff",
+            "color": "#000",
+        }
+    },
+},
+
+12: {
+    requirementDescription: "// Tier 13 //",
+    effectDescription: "×1.3 Neurons per Tier, starting from Tier 13 and ending at Tier 16. Unlocks Neuron Upgrades.",
+    done() { return player.t.points.gte(13) },
+    style() {
+        return {
+            "background": "linear-gradient(135deg, #fff6b0, #ffd966)",
+            "border": "2px solid #ffffff",
+            "color": "#000",
+        }
+    },
+},
     },
 })
 addLayer("dz", {
@@ -6736,17 +8213,16 @@ addLayer("dz", {
         p.stageDefense = Decimal.max(0, p.stageDefense.sub(damageToStage))
         p.defense = Decimal.max(0, p.defense.sub(damageToPlayer))
 
-        // jugador muere
         if (p.defense.lte(0)) {
             p.inCombat = false
             p.defense = p.maxDefense
         }
 
-        // stage derrotado
+  
         if (p.stageDefense.lte(0)) {
             p.inCombat = false
 
-            // recompensas
+          
         
             p.stone = p.stone.add(p.stage)
 
@@ -6759,7 +8235,7 @@ addLayer("dz", {
         let p = player.dz
         let s = p.stage
 
-        // ESCALADO MÁS FUERTE
+   
         p.stageOffense = s.pow(0.9).times(1)
         
         
@@ -7328,9 +8804,9 @@ Effect: ×${format(this.effect())} Skill
             13: {
                 name: " Negativity (Research)",
                 challengeDescription: "No more upgrades tab!! Main Tab is locked. But #36 can be buyable. and the base cost is reduced. ",
-                goalDescription: "10B Skill",
+                goalDescription: "5T Skill",
                 rewardDescription: "Research Power is powered by ^1.5",
-                canComplete: function() {return player.points.gte(1e10)},
+                canComplete: function() {return player.points.gte(5e11)},
                 unlocked() { return (hasUpgrade("uf", 83)) },
             },
 14: {
@@ -7339,7 +8815,7 @@ Effect: ×${format(this.effect())} Skill
                 goalDescription: "10K Skill",
                 rewardDescription: "5x Abnormal Skill.",
                 canComplete: function() {return player.points.gte(1e4)},
-                unlocked() { return (hasUpgrade("as", 23)) },
+                unlocked() { return (hasUpgrade("as", 23))  },
             },
         15: {
                 name: "Friendliness (Research)",
@@ -7485,14 +8961,21 @@ addLayer("as", {
     resource: "Abnormal Skill", // Name of prestige currency
     type: "none",
      row: 0, // Row the layer is in on the tree (0 is the first row)
-      doReset(resettingLayer) {
-        let keep = [];
-       
-        if (hasUpgrade("uf", 11) && resettingLayer==1) keep.push("buyables")
-             if (hasUpgrade("jp", 52) && resettingLayer=="jp") keep.push("upgrades")
-if (hasUpgrade("jp", 52) && resettingLayer=="uf") keep.push("upgrades")
-        if (layers[resettingLayer].row > this.row) layerDataReset("as", keep)
-    },
+     doReset(resettingLayer) {
+    if (layers[resettingLayer].row <= this.row) return
+
+    let keep = []
+
+    if (hasUpgrade("uf", 11))
+        keep.push("buyables")
+    if (hasUpgrade("uf", 11))
+        keep.push("upgrades")
+
+    if (hasUpgrade("jp", 52) && (resettingLayer == "jp" || resettingLayer == "uf"))
+        keep.push("upgrades")
+
+    layerDataReset("as", keep)
+},
  update(diff) {
         // “Riesgo controlado”: solo ejecuta si player.b existe
         if (!player.as) return;
@@ -7680,7 +9163,7 @@ unlocked() {
 },
 23: {
     title: "α10 - Abnormal Skill 10",
-    description: "Unlock Unimpossible research.",
+    description: "Unlock Unimpossible research. (still unlocked if you have 10DVg Skill)",
     cost: new Decimal(350),
 unlocked() {
                             return hasUpgrade("as", 22)
