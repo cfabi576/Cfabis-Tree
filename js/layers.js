@@ -22,7 +22,7 @@ addLayer("p", {
        player.p.points = player.points
     },
     
-   autoUpgrade() {if ((hasUpgrade('uf', 117)) & ((player.t.points).gt(0) == false))  return true; else return false},
+   autoUpgrade() {if ((hasUpgrade('uf', 11)) & ((player.t.points).gt(0) == false))  return true; else return false},
 
    
 
@@ -139,7 +139,7 @@ if (player.p.buyables[11].gte(500)) exp2 = exp2+0.015
             cost: new Decimal(3),
                              effect() {
                                 let pow = new Decimal(1)
-                       if (hasUpgrade("p", 25)) pow = pow.add(0.2)       
+                       if (hasUpgrade("p", 25)) pow = pow.add(0.25)       
                                       if (hasUpgrade("p", 92)) pow = pow.add(0.1)    
                                                       if (hasUpgrade("uf", 14)) pow = pow.add(0.05)  
                                                            if (hasUpgrade("uf", 16)) pow = pow.add(0.1)   
@@ -312,7 +312,7 @@ if (player.p.buyables[11].gte(500)) exp2 = exp2+0.015
 
  25: {
             title: "#12: The Lower Gap 5",
-            description: "Add a +0.2 pow in #4 effect.",
+            description: "Add a +0.25 pow in #4 effect.",
             cost: new Decimal(1000),
            
           currencyInternalName: "points",
@@ -1065,11 +1065,11 @@ if (player.p.buyables[11].gte(500)) exp2 = exp2+0.015
         },  
   74:{
             title: "#47: A 4 ",
-            description: "Skill and Cash Boosts Skill, whaat? Caps at 100T x.",
+            description: "Skill and Cash Boosts Skill, whaat? Caps at 150T x.",
             cost: new Decimal(0.75),
      effect() {
                                    
-                return player.points.pow(0.05).mul(player.c.points.pow(0.5)).div(20).add(1).min(1e14)
+                return player.points.pow(0.05).mul(player.c.points.pow(0.5)).div(20).add(1).min(1.5e14)
             },
              effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
           currencyInternalName: "points",
@@ -2655,7 +2655,7 @@ upgrades: {
          
     11: {
     title: "#101: Millisecondless 1",
-    description: "You did your first layer! let's recover progress but.... wait! theres new content unlocked, a 4x CN Stats! good job! And one more thing... the choice upgrades from A now are free!",
+    description: "You did your first layer! let's recover progress but.... wait! theres new content unlocked, a 4x CN Stats! good job! And one more thing... the choice upgrades from A now are free! and the craziest thing is that skill is automated!! huge W!!",
     cost: new Decimal(1),
 
     
@@ -3971,7 +3971,7 @@ fullDisplay() {
         },
         117:{
             title: "#165: Locomotion 7",
-            description: "Automates Skill Upgrades",
+            description: "+0.02 to upgrade #4 exponent.",
             cost: new Decimal(1e92),
        
           currencyInternalName: "points",
