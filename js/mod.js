@@ -12,7 +12,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.27",
+	num: "1.28",
 	name: "TDUT(TE) - Tiered Obbies",
 }
 

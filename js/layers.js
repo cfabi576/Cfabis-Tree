@@ -690,7 +690,7 @@ if (player.p.buyables[11].gte(500)) exp2 = exp2+0.015
                       effect() {
                        let base = 1e11
                        if (hasUpgrade("p", 67)) base = 1e17
-                          if (hasUpgrade("uf", 55)) base = ("1e100000000000000")
+                          if (hasUpgrade("uf", 55)) base = ("1e1000")
                        if (player.points < base)
                        return 3; else return 1.5
                   
@@ -3117,7 +3117,7 @@ upgrades: {
     description: "Two CURRIENCIES??? FOR WHEN WE SEEN THAT! 2.5x Skill,Cash Gain RAHHH!",
      cost: new Decimal(0),
 canAfford() {
-return (player.points.gte(1e60) & player.c.points.gte(1e28))
+return (player.points.gte(1e60) && player.c.points.gte(1e28))
 },
    
     onPurchase() {
@@ -3186,7 +3186,7 @@ fullDisplay() {
     description: "This Cost since this upgrade improves the multiplier boost formula!!!!!!!!!!!!! wait i actually meant that makes #30 uncapped. ",
      cost: new Decimal(0),
 canAfford() {
-return (player.points.gte(3.22e62) & player.c.points.gte(4.5e29))
+return (player.points.gte(3.22e62) && player.c.points.gte(4.5e29))
 },
    
     onPurchase() {
@@ -4718,7 +4718,7 @@ passiveGeneration() {if ((hasUpgrade("loop", 21))) return 1; else return 0},
     requires: new Decimal("1e112"),
     type: "normal",
     
-  layerShown() { return ((player.t.points).gt(0) == false) && player.points.gte("1e112") || player.jp.unlocked},
+  layerShown() { return ((player.t.points).gt(0) == false) && (player.points.gte("1e112") || player.jp.unlocked)},
   gainMult() { 
     let mult = new Decimal(10) // base 10
  if (hasMilestone("sp", 5)) mult = mult.add(5)
@@ -5945,7 +5945,7 @@ addLayer("sn", {
       resetsNothing() {return hasMilestone("sa", 0)},
 
     layerShown() {
-        return player.points.gte("1.79e308") & ((player.t.points).gt(0) == false)
+        return player.points.gte("1.79e308") && ((player.t.points).gt(0) == false)
     },
 
     resource: "Supernova Shards",
@@ -8448,7 +8448,7 @@ automate() {
     },
 
     layerShown() {
-      return  ((player.t.points).gt(0) == false) && player.uf.uflevel.gte("10000") || player.loop.unlocked
+      return  ((player.t.points).gt(0) == false) && (player.uf.uflevel.gte("10000") || player.loop.unlocked)
     },
 
     resource: "Looplets",
@@ -10040,7 +10040,7 @@ addLayer("o", {
     },
 
     layerShown() {
-        return layerVisible(this.layer) & hasMilestone("sp", 5)
+        return layerVisible(this.layer) && hasMilestone("sp", 5)
     },
 
     nodeStyle() {
