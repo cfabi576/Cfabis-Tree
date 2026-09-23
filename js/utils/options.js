@@ -17,7 +17,7 @@ function getStartOptions() {
 		oldStyle: false,
 		tooltipForcing: true,
 		endgameShown: false,
-		maximumOoMsInCommas: 12,
+		maximumOoMsInCommas: 6,
 		
 	}
 }

@@ -21,7 +21,7 @@ function startPlayerBase() {
 		keepGoing: false,
 		hasNaN: false,
 		notation: "Standard",
-		maximumOoMsInCommas: 12,
+		maximumOoMsInCommas: 6,
 
 		points: modInfo.initialStartPoints,
 		subtabs: {},
