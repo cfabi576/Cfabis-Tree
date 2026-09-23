@@ -2504,7 +2504,7 @@ addLayer("uf", {
 
     }},
      passiveGeneration() {if ((hasUpgrade("uf", 133)) || (hasUpgrade("loop", 14))) return 1; else return 0},
-       layerShown() { return layerVisible(this.layer) & ((player.t.points).gt(0) == false) & (player.points.gte("1e40"))},
+       layerShown() { return layerVisible(this.layer) & ((player.t.points).gt(0) == false) & (player.points.gte("1e40")) || player.uf.unlocked},
        resetsNothing() {return hasMilestone("sa", 0)},
     color: "#b96effff",
   onPrestige() {
@@ -4718,7 +4718,7 @@ passiveGeneration() {if ((hasUpgrade("loop", 21))) return 1; else return 0},
     requires: new Decimal("1e112"),
     type: "normal",
     
-  layerShown() { return ((player.t.points).gt(0) == false) && player.points.gte("1e112")},
+  layerShown() { return ((player.t.points).gt(0) == false) && player.points.gte("1e112") || player.jp.unlocked},
   gainMult() { 
     let mult = new Decimal(10) // base 10
  if (hasMilestone("sp", 5)) mult = mult.add(5)
@@ -8448,7 +8448,7 @@ automate() {
     },
 
     layerShown() {
-      return  ((player.t.points).gt(0) == false) && player.uf.uflevel.gte("10000")
+      return  ((player.t.points).gt(0) == false) && player.uf.uflevel.gte("10000") || player.loop.unlocked
     },
 
     resource: "Looplets",
