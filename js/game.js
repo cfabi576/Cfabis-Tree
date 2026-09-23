@@ -17,12 +17,12 @@ bgMusicRealm.volume = 0.5;
 
 // Configuración inicial
 if (localStorage.getItem("musicEnabled") === null) {
-    localStorage.setItem("musicEnabled", "true");
+    localStorage.setItem("musicEnabled", "false");
 }
 
 // Control de música final
 function updateMusicState() {
-    let enabled = localStorage.getItem("musicEnabled") === "true";
+    let enabled = localStorage.getItem("musicEnabled") === "false";
 
     if (!enabled) {
         bgMusicNormal.pause();

@@ -20,6 +20,8 @@ function startPlayerBase() {
 		timePlayed: 0,
 		keepGoing: false,
 		hasNaN: false,
+		notation: "Standard",
+		maximumOoMsInCommas: 12,
 
 		points: modInfo.initialStartPoints,
 		subtabs: {},
@@ -199,6 +201,11 @@ function load() {
 		loadOptions();
 	}
 
+	player.notation = "Standard";
+	player.maximumOoMsInCommas = 12;
+	options.notation = "Standard";
+	options.maximumOoMsInCommas = 12;
+
 	if (options.offlineProd) {
 		if (player.offTime === undefined)
 			player.offTime = { remain: 0 };
@@ -225,6 +232,8 @@ function loadOptions() {
 	else 
 		options = getStartOptions()
 	if (themes.indexOf(options.theme) < 0) theme = "default"
+	options.notation = "Standard";
+	options.maximumOoMsInCommas = 12;
 	fixData(options, getStartOptions())
 
 }

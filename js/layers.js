@@ -2302,8 +2302,7 @@ challenges: {
                 ["display-text", () => `<h3>What ARE buyables? </h3>`],
                  "blank",
                  ["display-text", () => `<h3>The buyables are upgrades that can be upgraded more than a single. meaning that can be 10 levels or more even uncapped. </h3>`],
-                  "blank",
-                  ["display-text", () => `<h3>You currently exactly have... <span style="color:#c1ff9fff">${format(player.p.points)}</span> Skill!</h3>`],
+              
                 "blank",
                 "buyables",
             ],
@@ -2316,8 +2315,7 @@ challenges: {
                 ["display-text", () => `<h3>What ARE generators? </h3>`],
                  "blank",
                  ["display-text", () => `<h3>Those are challenges that are not for debuff, for buff, do not be afraid, do not take this that is a challenge </h3>`],
-                  "blank",
-                  ["display-text", () => `<h3>You currently exactly have... <span style="color:#c1ff9fff">${format(player.p.points)}</span> Skill!</h3>`],
+        
                 "blank",
                 "challenges",
             ],
@@ -2506,7 +2504,7 @@ addLayer("uf", {
 
     }},
      passiveGeneration() {if ((hasUpgrade("uf", 133)) || (hasUpgrade("loop", 14))) return 1; else return 0},
-       layerShown() { return layerVisible(this.layer) & ((player.t.points).gt(0) == false) },
+       layerShown() { return layerVisible(this.layer) & ((player.t.points).gt(0) == false) & (player.points.gte("1e40"))},
        resetsNothing() {return hasMilestone("sa", 0)},
     color: "#b96effff",
   onPrestige() {
@@ -4720,7 +4718,7 @@ passiveGeneration() {if ((hasUpgrade("loop", 21))) return 1; else return 0},
     requires: new Decimal("1e112"),
     type: "normal",
     
-  layerShown() { return ((player.t.points).gt(0) == false)},
+  layerShown() { return ((player.t.points).gt(0) == false) && player.points.gte("1e112")},
   gainMult() { 
     let mult = new Decimal(10) // base 10
  if (hasMilestone("sp", 5)) mult = mult.add(5)
@@ -7799,13 +7797,13 @@ addLayer("sa", {
 
     startData() {
         return {
-            unlocked: true,
+            unlocked: false,
             points: new Decimal(0),
         }
     },
 
     layerShown() {
-        return ((player.t.points).gt(0) == false)
+        return ((player.t.points).gt(0) == false && player.points.gte("1e750")) && player.sa.unlocked
     },
 
     resource: "Star Tiers",
@@ -8450,7 +8448,7 @@ automate() {
     },
 
     layerShown() {
-      return  ((player.t.points).gt(0) == false)
+      return  ((player.t.points).gt(0) == false) && player.uf.uflevel.gte("10000")
     },
 
     resource: "Looplets",
@@ -10118,7 +10116,7 @@ addLayer("o", {
     clickables: {
         11: {
             title() { 
-                let enabled = localStorage.getItem("musicEnabled") === "true";
+                let enabled = localStorage.getItem("musicEnabled") === "false";
                 return enabled ? "🔊 Music: ON" : "🔇 Music: OFF";
             },
             canClick() { return true },
@@ -10128,7 +10126,7 @@ addLayer("o", {
                 updateMusicState();
             },
             style() {
-                let enabled = localStorage.getItem("musicEnabled") === "true";
+                let enabled = localStorage.getItem("musicEnabled") === "false";
                 return {
                     "background-color": enabled ? "#90EE90" : "#FF6666",
                     "color": "black",

@@ -12,12 +12,12 @@ function getStartOptions() {
 		hqTree: false,
 		offlineProd: true,
 		hideChallenges: false,
-	
+	    notation: "Standard",
 		forceOneTab: false,
 		oldStyle: false,
 		tooltipForcing: true,
 		endgameShown: false,
-		maximumOoMsInCommas: 9,
+		maximumOoMsInCommas: 12,
 		
 	}
 }
@@ -25,6 +25,7 @@ function getStartOptions() {
 let notations = ['Standard','Scientific']
 
 function changeNotation() {
+	
 	player.notation = notations[(notations.indexOf(player.notation) + 1) % notations.length]
 }
 

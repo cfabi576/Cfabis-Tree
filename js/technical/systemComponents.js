@@ -109,7 +109,7 @@ var systemComponents = {
 			<br>Game Speed: {{format(player.devSpeed)}}x<br>
 		</span>
 			<span v-if>
-			<br>NOTE: CHANGE MAXIMUM OOMS TO 3 OR 6! AND CLICK THE NOTATION BUTTON OR ELSE UNDEFINED BTW RELOAD WHEN DOING IT<br>
+			<br>you dont need to do it anymore :D (rip music)<br>
 		</span>
 		
 		<span v-if="player.offTime !== undefined"  class="overlayThing">
