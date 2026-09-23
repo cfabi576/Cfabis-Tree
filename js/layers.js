@@ -2209,14 +2209,14 @@ challenges: {
        11: {
                 name: "Basic Generator",
                 challengeDescription: "Basic. so x1.5 Skill gain.",
-                canComplete: function() {return player.points.gte(1e300000000000000008)},
+                canComplete: function() {return player.points.gte("1e300000000000000008")},
               
                 
             },
   12: {
                 name: "New Gen Generator",
                 challengeDescription: "New Generation! x2 Skill gain, x1.1 Cash Gain",
-                canComplete: function() {return player.points.gte(1e300000000000000008)},
+                canComplete: function() {return player.points.gte("1e300000000000000008")},
                 unlocked() {
                             return hasUpgrade("p", 96)
                         
