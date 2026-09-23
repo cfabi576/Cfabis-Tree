@@ -64,7 +64,7 @@ if (player.p.buyables[11].gte(500)) exp2 = exp2+0.015
                         return player.points.gte(this.cost())
                     },
                     buy() {
-                        let cost = new Decimal (1)
+                        let cost = new Decimal(1)
                         player.points = player.points.sub(this.cost().mul(cost))
                         setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
                     },
@@ -10157,6 +10157,7 @@ addLayer("o", {
         }
     },
 },
+
 },
 })
 addLayer("dv", {
