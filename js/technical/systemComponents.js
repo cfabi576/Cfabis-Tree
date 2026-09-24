@@ -109,7 +109,7 @@ var systemComponents = {
 			<br>Game Speed: {{format(player.devSpeed)}}x<br>
 		</span>
 			<span v-if>
-			<br>you dont need to do it anymore :D (rip music)<br>
+			<br>WARNING: CRITICAL BUG IN AUTOBUY!!! THANKS MR UNNANER BCUZ HE APPLIED A "TEMPORARY" PATCH CODE!!!<br>
 		</span>
 		
 		<span v-if="player.offTime !== undefined"  class="overlayThing">

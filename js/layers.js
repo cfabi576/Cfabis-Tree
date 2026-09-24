@@ -55,7 +55,8 @@ if (player.p.buyables[11].gte(500)) exp2 = exp2+0.015
 },
                       onPurchase() {
         // Reproduce un sonido al comprar
-        
+        if (player.points < new Decimal(0)) player.points = new Decimal(10)
+        // EVITA QUE TENGAS PUNTOS NEGATIVOS PARA QUE NO SE PONGA "NAN" 
         const audio = new Audio("sounds/bell.mp3");
         audio.volume = 0.75; // volumen entre 0.0 y 1.0
         audio.play();
@@ -65,7 +66,9 @@ if (player.p.buyables[11].gte(500)) exp2 = exp2+0.015
                     },
                     buy() {
                         let cost = new Decimal(1)
+                        if (player.points.lt(0) || (player.points.isNaN && player.points.isNaN())) player.points = new Decimal(1)
                         player.points = player.points.sub(this.cost().mul(cost))
+                        if (player.points.lt(0) || (player.points.isNaN && player.points.isNaN())) player.points = new Decimal(1)
                         setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
                     },
                     effect(x) {
