@@ -253,11 +253,11 @@ if (player.p.buyables[11].gte(500)) exp2 = exp2+0.015
         },
         22: {
             title: "#9: The Lower Gap 2",
-            description: "We are back! Your time played is gonna multiply skill gain!",
+            description: "We are back! Your time played is gonna multiply skill gain! up to 5x lol",
             cost: new Decimal(125),
                    effect() {
                                let time = player.timePlayed
-                return new Decimal(time).pow(0.2).add(1.25)
+                return new Decimal(time).pow(0.18).add(1.25).min(5)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
           currencyInternalName: "points",
@@ -10115,7 +10115,11 @@ addLayer("o", {
     startData() { return { unlocked: true }},
     color: "#cccccc",
     row: "side",
+    resource: "updates! lol",
     layerShown() { return true },
+      tooltip() { // Optional, tooltip displays when the layer is locked
+            return ("Optional Music Settings")
+        },
     clickables: {
         11: {
             title() { 
@@ -10169,7 +10173,9 @@ addLayer("dv", {
     row: "side",
     position: 0,
     color: "#aaaaaa",
-
+      tooltip() { // Optional, tooltip displays when the layer is locked
+            return ("Most useless Decimal Viewer")
+        },
     startData() {
         return {
             unlocked: true,
