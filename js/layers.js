@@ -2433,6 +2433,7 @@ addLayer("c", {
                                                     if (hasMilestone("e", 3)) cash = cash.times(player.e.points.div(1e4).pow(0.2).add(1))  
                                                         cash = cash.times(buyableEffect('jp', 12))
                                                      if (hasUpgrade("jp", 14)) cash = cash.times(upgradeEffect("jp", 14))  
+                                                          player.dz.unlocked = true
             let gain = new Decimal(cash).times(diff); // 0.01 por segundo
             player.c.points = player.c.points.add(gain);
             
@@ -8244,7 +8245,7 @@ addLayer("dz", {
     update(diff) {
         let p = player.dz
         if (!p.inCombat) return
-
+      
         let speed = p.attackSpeed
         let dt = Decimal.mul(diff, speed)
 
