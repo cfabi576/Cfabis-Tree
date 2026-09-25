@@ -8845,7 +8845,7 @@ Effect: ×${format(this.effect())} Skill
             13: {
                 name: " Negativity (Research)",
                 challengeDescription: "No more upgrades tab!! Main Tab is locked. But #36 can be buyable. and the base cost is reduced. ",
-                goalDescription: "5T Skill",
+                goalDescription: "500B Skill",
                 rewardDescription: "Research Power is powered by ^1.5",
                 canComplete: function() {return player.points.gte(5e11)},
                 unlocked() { return (hasUpgrade("uf", 83)) },
