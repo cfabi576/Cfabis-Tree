@@ -80,6 +80,42 @@ if (player.p.buyables[11].gte(500)) exp2 = exp2+0.015
                     },
                 }, 
                 }, 
+              clickables: {
+    11: {
+        title: "BUY MAX!!",
+        display() {
+            return "WHAT...? THIS IS AMAZING!!!"
+        },
+        canClick() {
+            return hasUpgrade("p", 57) || inChallenge("r", 13)
+        },
+        onClick() {
+            let amount = getBuyableAmount("p", 11)
+            let limit = 500
+
+            if (hasUpgrade("uf", 76))
+                limit += 100
+
+            while (amount.lt(limit)) {
+                let cost = layers.p.buyables[11].cost(amount)
+
+                if (player.points.lt(cost))
+                    break
+
+                player.points = player.points.sub(cost)
+                amount = amount.add(1)
+            }
+
+            setBuyableAmount("p", 11, amount)
+
+            if (
+                player.points.lt(0) ||
+                (player.points.isNaN && player.points.isNaN())
+            )
+                player.points = new Decimal(1)
+        },
+    },
+},
     upgrades: {
          
       11: {
@@ -2211,8 +2247,9 @@ if (player.p.buyables[11].gte(500)) exp2 = exp2+0.015
 challenges: {
        11: {
                 name: "Basic Generator",
-                challengeDescription: "Basic. so x1.5 Skill gain.",
-                canComplete: function() {return player.points.gte("1e300000000000000008")},
+                challengeDescription: "Basic, so x1.5 Skill gain. Wait, from when it was completable?",
+                goal() {return new Decimal("1e10000")},
+                rewardDescription: "Your reward is a secret acheivement, but you will never beat it",
               
                 
             },
@@ -2308,6 +2345,8 @@ challenges: {
               
                 "blank",
                 "buyables",
+                 "blank",
+                "clickables",
             ],
         },
          "Generators": {
@@ -2500,7 +2539,7 @@ addLayer("uf", {
     startData() { return {
         unlocked: false,
 		points: new Decimal(0),
-
+   neverUFReset: true,
          ufexperience: new Decimal(0),
     ufexperiencegain: new Decimal(1), // base 1/tick
     uflevel: new Decimal(0),
@@ -2516,7 +2555,7 @@ addLayer("uf", {
       const explosion = new Audio("sounds/explosion.mp3");
         explosion.volume = 0.8;
         explosion.play().catch(() => {});
-
+player.uf.neverUFReset = false
         // 🔔 campana 400ms después
         setTimeout(() => {
             const bell = new Audio("sounds/uf.mp3");
@@ -8164,7 +8203,7 @@ addLayer("dz", {
     symbol: "⚔",
     position: 1,
     row: 4,
-
+  tooltip: "Dungeon Zone",
     color: "#5a2d82",
     nodeStyle() {
         return {
@@ -8821,7 +8860,7 @@ Effect: ×${format(this.effect())} Skill
             },
         15: {
                 name: "Friendliness (Research)",
-                challengeDescription: "Skill is now equivalent to Multiplier.",
+                challengeDescription: "Skill gain is now equivalent to your multiplier multi.",
                 goalDescription: "1M Skill",
                 rewardDescription: "10x UF XP.",
                 canComplete: function() {return player.points.gte(1e6)},
@@ -10175,7 +10214,7 @@ addLayer("dv", {
     position: 0,
     color: "#aaaaaa",
       tooltip() { // Optional, tooltip displays when the layer is locked
-            return ("Most useless Decimal Viewer")
+            return ("Most useless Decimal Viewer (DEPRECATED AFTER V1.3)")
         },
     startData() {
         return {
@@ -10459,6 +10498,54 @@ ${d.gt("1e1000000") ? format(d.slog()) : "—"}
         	tabFormat: [
 			"blank", 
 			["display-text", function() { return "Achievements: "+player.a.achievements.length+"/"+(Object.keys(tmp.a.achievements).length-2) }], 
+			"blank", "blank",
+			"achievements",
+		],
+    },
+ )
+ addLayer("ssa", {
+        startData() { return {
+            unlocked: true,
+        }},
+        color: "#330785",
+        row: "side",
+        symbol: "SA", // This appears on the layer's node. Default is the id with the first letter capitalized
+        layerShown() {return true}, 
+        tooltip() { // Optional, tooltip displays when the layer is locked
+            return ("TOP SECRET ACHEIVEMENTS 'BONUS CONTENT WARNING!'")
+        },
+        
+        achievements: {
+    
+            11: {
+                name: "Im not getting outakilled, creator. I AM the skill",
+                done() { return player.timePlayed > 3600 },
+                tooltip: "Play for a entire hour..",
+            },
+           12: {
+                name: "Chinese water torture",
+                done() { return player.timePlayed > 86400 },
+                tooltip: "Play for a entire day bro are you real anymore??",
+            },
+               13: {
+                name: "Light Work No Reaction",
+                done() { return player.points.gte(1e44) && player.uf.neverUFReset == true },
+                tooltip: "Reach 100TDe Skill without doing even a UF reset. Impressive.",
+            },
+             14: {
+             name() {
+                return hasAchievement("ssa", 14) ? "You are an cheater..." : "Bro"
+            },
+                done() { return (hasChallenge("p", 11)) },
+                tooltip: "You could never complete a generator, trust me!",
+                 tooltip() {
+                return hasAchievement("ssa", 14) ? "Hehe.. i guess that you used console, no?" : "You could never complete a generator, trust me!"
+            },
+            },
+            },
+        	tabFormat: [
+			"blank", 
+			["display-text", function() { return "Secret Achievements: "+player.ssa.achievements.length+"/"+(Object.keys(tmp.ssa.achievements).length-2) }], 
 			"blank", "blank",
 			"achievements",
 		],
