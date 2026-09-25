@@ -181,7 +181,8 @@ if (player.p.buyables[11].gte(500)) exp2 = exp2+0.015
                        if (hasUpgrade("p", 25)) pow = pow.add(0.25)       
                                       if (hasUpgrade("p", 92)) pow = pow.add(0.1)    
                                                       if (hasUpgrade("uf", 14)) pow = pow.add(0.05)  
-                                                           if (hasUpgrade("uf", 16)) pow = pow.add(0.1)   
+                                                           if (hasUpgrade("uf", 16)) pow = pow.add(0.1)  
+                                                                  if (hasUpgrade("uf", 105)) pow = pow.add(0.02)    
                                             if (hasUpgrade("p", 154)) pow = pow.add(0.25)    
                 return player.points.log10().pow(pow).add(1).max(1)
             },
@@ -988,7 +989,7 @@ if (player.p.buyables[11].gte(500)) exp2 = exp2+0.015
             cost: new Decimal(5e14),
    effect() {
                              let dec = 1.02
-                           if (hasUpgrade("uf", 86))   dec = dec+0.03
+                           if (hasUpgrade("uf", 86))   dec = dec+0.04
                 return new Decimal(dec).pow(player.points.log10().round())
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
@@ -3559,7 +3560,7 @@ fullDisplay() {
 },
 86: {
     title: "#144: Vintage 6",
-    description: "Imporves the Formula of #42 now the base get added a additional +0.03.",
+    description: "Imporves the Formula of #42 now the base get added a additional +0.04.",
    
      cost: new Decimal(1.5e5),
     currencyDisplayName: "Research Power",
@@ -3818,7 +3819,7 @@ fullDisplay() {
         }, 
         105:{
             title: "#156: Happylike 5",
-            description: "Unlock UF Leveling.",
+            description: "Unlock UF Leveling, with +0.02 additional pow to #4!!",
             cost: new Decimal(5e86),
      
           currencyInternalName: "points",
