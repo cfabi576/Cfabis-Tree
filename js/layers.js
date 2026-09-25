@@ -2374,6 +2374,7 @@ addLayer("c", {
                                                                            if (hasUpgrade("uf", 12)) cash = cash.times(1.7)
                                                                              if (hasUpgrade("uf", 15)) cash = cash.times(1.25)
                                                                                       if (hasUpgrade("uf", 37)) cash = cash.times(1.2)
+                                                                                            if (hasUpgrade("uf", 87)) cash = cash.times(1.25)
   if (hasUpgrade("uf", 22)) cash = cash.times(1.5)       
       if (hasUpgrade("uf", 33)) cash = cash.times(5)      
             if (hasUpgrade("uf", 36)) cash = cash.times(1.5)      
@@ -3539,7 +3540,7 @@ fullDisplay() {
 },
 87: {
     title: "#145: Vintage 7",
-    description: "Keep Skill Levels on UF reset.",
+    description: "1.25x Cash.",
      cost: new Decimal(4.65e72),
    currencyDisplayName: "Skill",
    currencyInternalName: "points",
