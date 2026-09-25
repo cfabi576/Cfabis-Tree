@@ -8215,7 +8215,7 @@ addLayer("dz", {
 
     startData() {
         return {
-            unlocked: false,
+            unlocked: true,
 
             stage: new Decimal(1),
 
