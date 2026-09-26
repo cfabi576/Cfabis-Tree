@@ -550,7 +550,7 @@ if (player.p.buyables[11].gte(500)) exp2 = exp2+0.015
         }, 
       41: {
             title: "#22: Unimpossible 1",
-            description: "Cash boosts skill! for real! Caps at 100Mx",
+            description: "Cash boosts skill! for real! Caps at 100M (1e8)x",
             cost: new Decimal(1e8),
                effect() {
                                    
@@ -724,7 +724,7 @@ if (player.p.buyables[11].gte(500)) exp2 = exp2+0.015
      52: {
             title: "#30: Friendliness 2",
            description() {
-                return hasUpgrade("p", 67) ? "x3 if you have below 100Qd skill, else x1.5" : "x3 if you have below 100B skill, else x1.5"
+                return hasUpgrade("p", 67) ? "x3 if you have below 100Qd (1e17)skill, else x1.5" : "x3 if you have below 100B skill, else x1.5"
             },
             cost: new Decimal(8e9),
                       effect() {
@@ -757,7 +757,7 @@ if (player.p.buyables[11].gte(500)) exp2 = exp2+0.015
         }, 
          53: {
             title: "#31: Friendliness 3",
-            description: "x2 skill if you have below 250B Skill, else x1.25",
+            description: "x2 skill if you have below 250B (2.5e11) Skill, else x1.25",
             cost: new Decimal(1.5e10),
                       effect() {
                        let base = 2.5e11
@@ -1011,7 +1011,7 @@ if (player.p.buyables[11].gte(500)) exp2 = exp2+0.015
         },      
 67: {
             title: "#43: True Ease 8 ",
-            description: "1Qd! wow! now the #30 cap's is now 100Qd btw prepared for the next choice?",
+            description: "1Qd! wow! now the #30 cap's is now 100Qd (1e17) btw prepared for the next choice?",
             cost: new Decimal(1e15),
    
           currencyInternalName: "points",
@@ -1077,7 +1077,7 @@ if (player.p.buyables[11].gte(500)) exp2 = exp2+0.015
         },    
   73:{
             title: "#46: A 3 ",
-            description: "Cash Boosts Itself???? uhm.. please its capped at 1Sxx...",
+            description: "Cash Boosts Itself???? uhm.. please its capped at 1Sx (1e21)x ...",
             cost: new Decimal(5.5e15),
      effect() {
                                    let aw = 0.22
@@ -1105,7 +1105,7 @@ if (player.p.buyables[11].gte(500)) exp2 = exp2+0.015
         },  
   74:{
             title: "#47: A 4 ",
-            description: "Skill and Cash Boosts Skill, whaat? Caps at 150T x.",
+            description: "Skill and Cash Boosts Skill, whaat? Caps at 150T (1.5e14) x.",
             cost: new Decimal(0.75),
      effect() {
                                    
@@ -2268,7 +2268,7 @@ challenges: {
         },
   milestones: {
             1: {
-                requirementDescription: "Level 1 - Req: 10UVg Skill",
+                requirementDescription: "Level 1 - Req: 10UVg (1e67) Skill",
                 effectDescription: "3x Skill.",
                 done() { return player.points.gte(1e67) & ((player.t.points).gt(0) == false) },
                 unlocked() {
@@ -2277,7 +2277,7 @@ challenges: {
                 },
             }, 
              2: {
-                requirementDescription: "Level 2 - Req: 1TVg Skill",
+                requirementDescription: "Level 2 - Req: 1TVg (1e72) Skill",
                 effectDescription: "Multiply UF gain based on per square rooted <span style='color:#c1ff9fff'>Skill Level</span></h3>",
                 done() { return player.points.gte(1e72) & ((player.t.points).gt(0) == false)},
                 unlocked() {
@@ -2286,7 +2286,7 @@ challenges: {
                 },
             },  
               3: {
-                requirementDescription: "Level 3 - Req: 1QdVg Skill",
+                requirementDescription: "Level 3 - Req: 1QdVg (1e75) Skill",
                 effectDescription: "1.5x Skill.",
                 done() { return player.points.gte(1e75) & ((player.t.points).gt(0) == false)},
                 unlocked() {
@@ -2295,7 +2295,7 @@ challenges: {
                 },
             }, 
              4: {
-                requirementDescription: "Level 4 - Req: 100QdVg Skill",
+                requirementDescription: "Level 4 - Req: 100QdVg (1e77) Skill",
                 effectDescription: "Multiply Skill gain based on translated ^1.5 <span style='color:#c1ff9fff'>Skill Level</span></h3>",
                 done() { return player.points.gte(1e77) & ((player.t.points).gt(0) == false)},
                 unlocked() {
@@ -2304,7 +2304,7 @@ challenges: {
                 },
             }, 
               5: {
-                requirementDescription: "Level 5 - Req: 100QnVg Skill",
+                requirementDescription: "Level 5 - Req: 100QnVg (1e80) Skill",
                 effectDescription: "Nothing.",
                 done() { return player.points.gte(1e80) & ((player.t.points).gt(0) == false)},
                 unlocked() {
@@ -2313,7 +2313,7 @@ challenges: {
                 },
             },
             6: {
-                requirementDescription: "Level 6 - Req: 1SpVg Skill",
+                requirementDescription: "Level 6 - Req: 1SpVg (1e84) Skill",
                 effectDescription: "No Boosts :c",
                 done() { return player.points.gte(1e84) & ((player.t.points).gt(0) == false)},
                 unlocked() {
@@ -3172,14 +3172,15 @@ return (player.points.gte(1e60) && player.c.points.gte(1e28))
         audio.volume = 0.5;
         audio.play();
     },
-fullDisplay() {
+
+    fullDisplay() {
         return `
-        
             <h3>${this.title}</h3>
             <br>
             ${this.description}
             <br><br>
-            Cost: 1NoDe Skill, 10Oc Cash
+            Cost: ${format(new Decimal(1e60))} Skill,
+            ${format(new Decimal(1e28))} Cash
         `
     },
    
@@ -3236,19 +3237,20 @@ return (player.points.gte(3.22e62) && player.c.points.gte(4.5e29))
    
     onPurchase() {
         player.points = player.points.sub(3.22e62)
-             player.c.points = player.points.sub(4.5e29)
+             player.c.points = player.c.points.sub(4.5e29)
         const audio = new Audio("sounds/bell.mp3");
         audio.volume = 0.5;
         audio.play();
     },
-fullDisplay() {
+
+    fullDisplay() {
         return `
-        
             <h3>${this.title}</h3>
             <br>
             ${this.description}
             <br><br>
-            Cost: 322NoDe Skill, 450Oc Cash
+            Cost: ${format(new Decimal(3.22e62))} Skill,
+            ${format(new Decimal(4.5e29))} Cash
         `
     },
    
@@ -3794,7 +3796,7 @@ fullDisplay() {
 },
 104:{
             title: "#155: Happylike 4",
-            description: "Cash Boosts Abnormal Skill, Caps at 100Tx.",
+            description: "Cash Boosts Abnormal Skill, Caps at 100T (1e14) x.",
             cost: new Decimal(1.25e86),
      effect() {
                                    
@@ -8839,7 +8841,9 @@ Effect: ×${format(this.effect())} Skill
     12: {
                 name: "The Lower Gap (Research)",
                 challengeDescription: "You can't use generators, upgrade #36 is locked. and nerfs skill gain by ^0.8",
-                goalDescription: "1QdDe Skill",
+               goalDescription: function() {
+        return format(new Decimal(1e45)) + " Skill"
+    },
                 rewardDescription: "4x Skill and Research Power Generation is improved.",
                 canComplete: function() {return player.points.gte(1e45)},
                 unlocked() { return (hasUpgrade("uf", 74)) },
@@ -8847,7 +8851,9 @@ Effect: ×${format(this.effect())} Skill
             13: {
                 name: " Negativity (Research)",
                 challengeDescription: "No more upgrades tab!! Main Tab is locked. But #36 can be buyable. and the base cost is reduced. ",
-                goalDescription: "500B Skill",
+                goalDescription: function() {
+        return format(new Decimal(5e11)) + " Skill"
+    },
                 rewardDescription: "Research Power is powered by ^1.5",
                 canComplete: function() {return player.points.gte(5e11)},
                 unlocked() { return (hasUpgrade("uf", 83)) },
@@ -8855,7 +8861,9 @@ Effect: ×${format(this.effect())} Skill
 14: {
                 name: "Unimpossible (Research)",
                 challengeDescription: "Raise Skill by ^0.08. but at the same time boost skill by 5x",
-                goalDescription: "10K Skill",
+                goalDescription: function() {
+        return format(new Decimal(1e4)) + " Skill"
+    },
                 rewardDescription: "5x Abnormal Skill.",
                 canComplete: function() {return player.points.gte(1e4)},
                 unlocked() { return (hasUpgrade("as", 23))  },
@@ -8863,7 +8871,9 @@ Effect: ×${format(this.effect())} Skill
         15: {
                 name: "Friendliness (Research)",
                 challengeDescription: "Skill gain is now equivalent to your multiplier multi.",
-                goalDescription: "1M Skill",
+                goalDescription: function() {
+        return format(new Decimal(1e6)) + " Skill"
+    },
                 rewardDescription: "10x UF XP.",
                 canComplete: function() {return player.points.gte(1e6)},
                 unlocked() { return (hasUpgrade("uf", 122)) },
