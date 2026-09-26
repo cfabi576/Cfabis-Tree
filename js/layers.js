@@ -634,7 +634,7 @@ if (player.p.buyables[11].gte(500)) exp2 = exp2+0.015
         },        
           45: {
             title: "#26: Unimpossible 5",
-            description: "Ok its unbalancing fast. Does'nt mean that you are not a victor, but you are considered a beginner: so i can grant you a precious x2 skill gain!",
+            description: "Ok its unbalancing fast. Doesn't mean that you are not a victor, but you are considered a beginner: so i can grant you a precious x2 skill gain!",
             cost: new Decimal(1e9),
              
           currencyInternalName: "points",
@@ -2250,7 +2250,7 @@ challenges: {
                 name: "Basic Generator",
                 challengeDescription: "Basic, so x1.5 Skill gain. Wait, from when it was completable?",
                 goal() {return new Decimal("1e10000")},
-                rewardDescription: "Your reward is a secret acheivement, but you will never beat it",
+                rewardDescription: "Your reward is a secret achievement, but you will never beat it",
               
                 
             },
@@ -3621,7 +3621,7 @@ fullDisplay() {
 },
 92: {
     title: "#147: Just Air 2",
-    description: "Multiply Skill by 2x by every Skill level that you acheived.",
+    description: "Multiply Skill by 2x by every Skill level that you achieved.",
          effect() {
                 return new Decimal(2).pow(player.p.milestones.length)
             },
@@ -8376,9 +8376,9 @@ addLayer("dz", {
     milestones: {
        
         0: {
-            requirementDescription: "Stage 100",
-            effectDescription: "Unlock ????",
-            done() { return player.dz.stage.gte(100) },
+            requirementDescription: "Stage 10000",
+            effectDescription: "Fun milestone",
+            done() { return player.dz.stage.gte(10000) },
         },
     },
 
@@ -8465,7 +8465,7 @@ automate() {
     }
 
     // ───── UF ─────
-    if (hasUpgrade("loop", 15) && player.loop.auto.uf) {
+    if (hasUpgrade("loop", 14) && player.loop.auto.uf) {
         for (let id in layers.uf.upgrades)
             if (canBuyUpgrade("uf", id)) buyUpgrade("uf", id)
     }
@@ -8550,15 +8550,10 @@ upgrades: {
     12: { title: "Loop Automation II", description: "Automate Abnormal Skill upgrades.", cost: new Decimal(1) },
     13: { title: "Loop Automation III", description: "Automate Function buyables.", cost: new Decimal(1) },
     14: { title: "Loop Automation IV", description: "Automate UF upgrades.", cost: new Decimal(1) },
-    15: { title: "Loop Automation V", description: "Automate Research.", cost: new Decimal(1) },
-
-    21: { title: "Loop Automation VI", description: "Automate Jumpernova.", cost: new Decimal(1) },
-    22: { title: "Loop Automation VII", description: "Automate Splittify.", cost: new Decimal(1) },
-    23: { title: "Loop Automation VIII", description: "Automate Corrosion.", cost: new Decimal(1) },
-    24: { title: "Loop Automation IX", description: "Automate Mining.", cost: new Decimal(1) },
+   
 
     25: {
-        title: "Perfect Loop",
+        title: "Perfect Loop (BUY THIS FIRST)",
         description: "Loop effect is multiplied by 1.5×. both supernova and loop does not do anything now",
         cost: new Decimal(1),
         effect() {
@@ -10358,7 +10353,7 @@ ${d.gt("1e1000000") ? format(d.slog()) : "—"}
             },
              21: {
                 name: "UF",
-                done() { return player.mul.points.gt(0) },
+                done() { return player.uf.points.gt(0) },
                    image: "images/ufize.png",
                 tooltip: "Get your first UF",
             },
@@ -10524,7 +10519,7 @@ ${d.gt("1e1000000") ? format(d.slog()) : "—"}
         symbol: "SA", // This appears on the layer's node. Default is the id with the first letter capitalized
         layerShown() {return true}, 
         tooltip() { // Optional, tooltip displays when the layer is locked
-            return ("TOP SECRET ACHEIVEMENTS 'BONUS CONTENT WARNING!'")
+            return ("TOP SECRET ACHIEVEMENTS 'BONUS CONTENT WARNING!'")
         },
         
         achievements: {
