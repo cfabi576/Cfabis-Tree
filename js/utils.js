@@ -360,26 +360,36 @@ var popupID = 0;
 
 // Function to show popups
 function doPopup(type = "none", text = "This is a test popup.", title = "", timer = 3, color = "") {
-	switch (type) {
-		case "achievement":
-			popupTitle = "Achievement Unlocked!";
-			popupType = "achievement-popup"
-			break;
-		case "challenge":
-			popupTitle = "Challenge Complete";
-			popupType = "challenge-popup"
-			break;
-		default:
-			popupTitle = "Something Happened?";
-			popupType = "default-popup"
-			break;
-	}
-	if (title != "") popupTitle = title;
-	popupMessage = text;
-	popupTimer = timer;
 
-	activePopups.push({ "time": popupTimer, "type": popupType, "title": popupTitle, "message": (popupMessage + "\n"), "id": popupID, "color": color })
-	popupID++;
+    switch (type) {
+        case "achievement":
+            popupTitle = "Achievement Unlocked!";
+            popupType = "achievement-popup";
+            break;
+        case "challenge":
+            popupTitle = "Challenge Complete";
+            popupType = "challenge-popup";
+            break;
+        default:
+            popupTitle = "Something Happened?";
+            popupType = "default-popup";
+            break;
+    }
+
+    if (title != "") popupTitle = title;
+    popupMessage = text;
+    popupTimer = timer;
+
+    activePopups.push({
+        "time": popupTimer,
+        "type": popupType,
+        "title": popupTitle,
+        "message": (popupMessage + "\n"),
+        "id": popupID,
+        "color": color
+    });
+
+    popupID++;
 }
 
 

@@ -10501,6 +10501,30 @@ ${d.gt("1e1000000") ? format(d.slog()) : "—"}
             
                 tooltip: "Submittify.",
             },
+               55: {
+                name: "TRAINING TRAINING TRAINING OMGGGGGG",
+                done() { return player.tr.points.gt(0) },
+            
+                tooltip: "Bro you are gonna beat CoIV soon trust me",
+            },
+             56: {
+                name: "Yes i beat a Soul Crushing Tower",
+                done() { return player.i.points.gt(0) },
+            
+                tooltip: "Do a Insanity Reset",
+            },
+             57: {
+                name: "Research 2.0",
+                done() { return player.nc.points.gt(0) },
+            
+                tooltip: "Unlock Nerve Control.",
+            },
+             61: {
+                name: "And, we just replay..??",
+                done() { return (hasChallenge("tc", 11)) },
+            
+                tooltip: "Beat Level is a Antagonism Timeline Challenge",
+            },
             },
         	tabFormat: [
 			"blank", 

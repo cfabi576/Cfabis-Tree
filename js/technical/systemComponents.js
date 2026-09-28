@@ -193,6 +193,7 @@ var systemComponents = {
             </tr>
 			<tr>
 				<td><button class="opt" onclick="changeEndgameShown()">Show Endgame (Spoiler): {{ options.endgameShown?"ON":"OFF" }}</button></td>
+					<td><button class="opt" onclick="killmilestones()">Kill Milestone Popups (Dont Deactivate, its a suffer!) {{ options.hideMilestonePopups?"ON":"OFF" }}</button></td>
 				<td><button class="opt" onclick="changeMaximumOoMsInCommas()">Maximum OoMs in Commas (Not affact all notations): {{ formatWhole(options.maximumOoMsInCommas) }} </button></td>
 			</tr>
 

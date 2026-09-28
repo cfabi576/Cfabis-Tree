@@ -12,17 +12,17 @@ function getStartOptions() {
 		hqTree: false,
 		offlineProd: true,
 		hideChallenges: false,
-	    notation: "Standard",
+	    notation: "Mixed Scientific",
 		forceOneTab: false,
 		oldStyle: false,
 		tooltipForcing: true,
 		endgameShown: false,
 		maximumOoMsInCommas: 6,
-		
+		hideMilestonePopups: true,
 	}
 }
 
-let notations = ['Standard','Scientific']
+let notations = ['Mixed Scientific','Scientific']
 
 function changeNotation() {
 	
@@ -63,7 +63,9 @@ function toggleAuto(toggle) {
 	Vue.set(player[toggle[0]], [toggle[1]], !player[toggle[0]][toggle[1]]);
 	needCanvasUpdate=true
 }
-
+function killmilestones() {
+	options.hideMilestonePopups = !options.hideMilestonePopups
+}
 const MS_DISPLAYS = ["ALL", "LAST, AUTO, INCOMPLETE", "AUTOMATION, INCOMPLETE", "INCOMPLETE", "NONE"];
 
 const MS_SETTINGS = ["always", "last", "automation", "incomplete", "never"];

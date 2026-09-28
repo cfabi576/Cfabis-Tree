@@ -20,7 +20,7 @@ function startPlayerBase() {
 		timePlayed: 0,
 		keepGoing: false,
 		hasNaN: false,
-		notation: "Standard",
+		notation: "Mixed Scientific",
 		maximumOoMsInCommas: 6,
 
 		points: modInfo.initialStartPoints,
@@ -201,9 +201,9 @@ function load() {
 		loadOptions();
 	}
 
-	player.notation = "Standard";
+	player.notation = "Mixed Scientific";
 	player.maximumOoMsInCommas = 12;
-	options.notation = "Standard";
+	options.notation = "Mixed Scientific";
 	options.maximumOoMsInCommas = 12;
 
 	if (options.offlineProd) {
@@ -232,7 +232,7 @@ function loadOptions() {
 	else 
 		options = getStartOptions()
 	if (themes.indexOf(options.theme) < 0) theme = "default"
-	options.notation = "Standard";
+	options.notation = "Mixed Scientific";
 	options.maximumOoMsInCommas = 12;
 	fixData(options, getStartOptions())
 
