@@ -7850,7 +7850,7 @@ addLayer("sa", {
     },
 
     layerShown() {
-        return ((player.t.points).gt(0) == false && player.points.gte("1e750")) && player.sa.unlocked
+        return ((player.t.points).gt(0) == false && player.points.gte("1e750")) 
     },
 
     resource: "Star Tiers",
