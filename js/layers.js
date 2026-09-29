@@ -6648,12 +6648,12 @@ addLayer("tr", {
 
     startData() {
         return {
-    unlocked: false,
+    unlocked: true,
     points: new Decimal(0), // Disponibles
     total: new Decimal(0),  // Total obtenidos
 }
     },
-
+ 
     layerShown() {
         return hasUpgrade("sub", 15) && (inChallenge("tc", 11) == false)
     },
